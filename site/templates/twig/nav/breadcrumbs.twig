@@ -1,0 +1,11 @@
+<nav aria-label="breadcrumb">
+	<ol class="breadcrumb rounded-0">
+		{% for parent in page.parents() %}
+			<li class="breadcrumb-item text-info">
+				<i class="fa fa-list" aria-hidden="true"></i>
+				<a href="{{ parent.url }}" class="text-info">{{ parent.title }}</a>
+			</li>
+		{% endfor %}
+		<li class="breadcrumb-item active" aria-current="page">{{ page.get('headline|title') }}</li>
+	</ol>
+</nav>

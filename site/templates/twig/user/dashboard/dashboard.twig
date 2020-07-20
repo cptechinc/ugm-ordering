@@ -1,0 +1,23 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	navpages               ProcessWire\Pages[]
+#}
+<div class="card">
+	<div class="card-body bg-primary">
+		<div class="row ">
+			{% for link in navpages %}
+				<div class="col-sm-3">
+					<div class="card bg-white">
+						<a href="{{ link.page.url }}">
+							<div class="card-body">
+								<h1 class="text-center text-danger"><i class="fa {{ link.icon }} fa-2x" aria-hidden="true"></i></h1>
+								<p class="card-text font-weight-bold text-center text-danger">{{ link.page.title }}</p>
+							</div>
+						</a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>

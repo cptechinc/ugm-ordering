@@ -1,0 +1,16 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	items                  Page(template=item)[]|PageArray
+	dpluspricing           ItemSearchDplus
+#}
+
+{% if items.count() %}
+	{% include 'items/list.twig' with {'page': page, 'items': items} %}
+{% else %}
+	<div class="text-center">
+		<h4>no results found</h4>
+		for "{{ q }}"
+	</div>
+{% endif %}

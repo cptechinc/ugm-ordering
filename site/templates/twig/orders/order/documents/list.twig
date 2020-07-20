@@ -1,0 +1,35 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	ordn                   Order #
+	documents              Documents[]|ObjectCollection
+#}
+<table class="table table-striped">
+	<tr class="bg-primary">
+		<th>Title</th>
+		<th>File Type</th>
+		<th>Filename</th>
+		<th>Date</th>
+		<th>Time</th>
+	</tr>
+	{% if documents.count() %}
+		{% for document in documents %}
+			<tr id="doc-{{ document.filename }}">
+				<td>{{ document.title }}</td>
+				<td>{{ document.get_folderdescription() }}</td>
+				<td>
+					<a href="{{ page.documentload(document.folder, document.filename, ordn) }}" class="link" target="_blank">
+						{{ document.filename }}
+					</a>
+				</td>
+				<td>{{ document.date|convertdate }}</td>
+				<td>{{ (document.date ~ document.time[:4])|convertdate("h:i A") }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<td colspan="5" class="bg-warning text-dark text-center">
+			No Documents Found for Order # {{ ordn }}
+		</td>
+	{% endif %}
+</table>

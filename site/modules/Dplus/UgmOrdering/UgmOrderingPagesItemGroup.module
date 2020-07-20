@@ -1,0 +1,229 @@
+<?php namespace ProcessWire;
+
+use InvGroupCodeQuery, InvGroupCode;
+
+/**
+ * class Dpages
+ *
+ * Installs fields, templates, pages, hooks necessary for Top Menus
+ * NOTE: Also installs the basic fields, templates, to build the rest of the Application
+ */
+class UgmOrderingPagesItemGroup extends PwPages implements Module {
+	const FIELDS = array(
+		'groupcode' => array(
+			'name'  => 'groupcode',
+			'type'  => 'text',
+			'label' => 'Item Group Code'
+		),
+	);
+
+	const TEMPLATES = array(
+		'items-menu' => array(
+			'name'   => 'items-menu',
+			'fields' => array('summary'),
+			'paginated' => true
+		),
+		'item-group' => array(
+			'name'   => 'item-group',
+			'fields' => array('groupcode', 'summary'),
+			'paginated' => true
+		),
+		'items-search' => array(
+			'name'   => 'items-search',
+			'fields' => array(),
+			'paginated' => true
+		),
+		'items-json' => array(
+			'name'   => 'items-json',
+			'fields' => array(),
+			'paginated' => true
+		),
+	);
+
+	const PAGES = array(
+		'items-menu' => array(
+			'template' => 'items-menu',
+			'name'     => 'items',
+			'title'    => 'Items',
+			'summary'  => 'Browse Items',
+			'parent'   => '/'
+		),
+		'items-search' => array(
+			'template' => 'items-search',
+			'name'     => 'search',
+			'title'    => 'Search Items',
+			'summary'  => 'Search Items',
+			'parent'   => '/items/'
+		),
+		'items-json' => array(
+			'template' => 'items-json',
+			'name'     => 'json',
+			'title'    => 'Items JSON',
+			'summary'  => 'JSON API for items',
+			'parent'   => '/items/'
+		),
+	);
+
+	const TEMPLATE_ITEMGROUP = 'item-group';
+
+	public function get_itemgroups() {
+		return InvGroupCodeQuery::create()->find();
+	}
+
+	/**
+	 * Create / Update Item Group Pages
+	 * @return array
+	 */
+	public function update_itemgroup_pages() {
+		$groups = $this->get_itemgroups();
+		$updated = array();
+
+		foreach ($groups as $group) {
+			if ($this->group_page_exists($group)) {
+				$updated[$group->code] = $this->update_group_page($group);
+			} else {
+				$updated[$group->code] = $this->create_group_page($group);
+			}
+
+			if ($this->group_page_exists($group)) {
+				$this->update_group_page_visibility($group, true);
+			}
+		}
+		return $updated;
+	}
+
+	/**
+	 * Toggle Invsibility for all Item Group Pages
+	 * @return void
+	 */
+	public function turn_itemgroup_pages_invisible() {
+		$template = self::TEMPLATE_ITEMGROUP;
+		$pages = $this->wire('pages')->find("template=$template");
+
+		foreach ($pages as $p) {
+			$this->update_group_page_visibility($p->name, $visible = false);
+		}
+	}
+
+	/**
+	 * Creates Item Group Page
+	 * @param  InvGroupCode $group Item Group
+	 * @return bool
+	 */
+	public function create_group_page(InvGroupCode $group) {
+		$parent = $this->wire('pages')->get('template=items-menu');
+		$p = new Page();
+		$p->of(false);
+		$p->parent  = $parent;
+		$p->template = self::TEMPLATE_ITEMGROUP;
+		$p->name = $this->wire('sanitizer')->pageName($group->code);
+		$p->title = $group->description;
+		$saved = $p->save();
+
+		if ($saved) {
+			return $this->update_group_page($group);
+		} else {
+			return $saved;
+		}
+	}
+
+	/**
+	 * Updates Item Group Page
+	 * @param  InvGroupCode $group Item Group
+	 * @return bool
+	 */
+	public function update_group_page(InvGroupCode $group) {
+		$p = $this->get_group_page($group);
+		$p->of(false);
+		$p->name = $this->wire('sanitizer')->pageName($group->code);
+		$p->title = $group->description;
+		$p->groupcode = $group->code;
+		return $p->save();
+	}
+
+	/**
+	 * Sets visibility for Item Group Page
+	 * @param  InvGroupCode|string $group   Item Group | Code
+	 * @param  bool   $visible
+	 * @return void
+	 */
+	public function update_group_page_visibility($group, bool $visible) {
+		$p = $this->get_group_page($group);
+		$p->of(false);
+
+		if ($visible) {
+			$p->status(['hidden' => false, 'unpublished' => false]);
+		} else {
+			$p->status(['hidden' => false, 'unpublished' => false]);
+		}
+		return $p->save();
+	}
+
+	/**
+	 * Returns if Item Group Exists
+	 * @param  InvGroupCode|string $group   Item Group | Code
+	 * @return bool
+	 */
+	public function group_page_exists($group) {
+		$itemgroup = is_object($group) ? $group->code : $group;
+		$template = self::TEMPLATE_ITEMGROUP;
+		$p = $this->wire('pages')->get("template=$template, groupcode=$itemgroup");
+		return boolval($p->id);
+	}
+
+	/**
+	 * Returns Item Group Page
+	 * @param  InvGroupCode|string $group   Item Group | Code
+	 * @return Page
+	 */
+	public function get_group_page($group) {
+		$itemgroup = is_object($group) ? $group->code : $group;
+		$template = self::TEMPLATE_ITEMGROUP;
+		return $this->wire('pages')->get("template=$template, groupcode=$itemgroup");
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	public function update() {
+		parent::update();
+		$this->turn_itemgroup_pages_invisible();
+		$this->update_itemgroup_pages();
+	}
+
+	public function init() {
+		$template = self::TEMPLATE_ITEMGROUP;
+
+		$this->addHookProperty("Page(template=$template)::itemgroup", function($event) {
+			$p = $event->object;
+			if (array_key_exists('itemgroup', $p->data)) {
+				$group = $p->itemgroup;
+			} else {
+				$p->itemgroup = InvGroupCodeQuery::create()->findOneById($p->groupcode);
+				$group = $p->itemgroup;
+			}
+			$event->return = $group;
+		});
+
+		$this->addHookProperty("Pages::itemgroups", function($event) {
+			$event->return = $this->wire('pages')->get('template=items-menu');
+		});
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dpluso Pages Modules',
+			'version' => 101,
+			'summary' => 'Installs and creates Ugm Ordering Pages',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('PwPages'),
+		);
+	}
+}

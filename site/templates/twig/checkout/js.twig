@@ -1,0 +1,58 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	checkoutm              module Checkout
+	billing                Billing
+#}
+$(function() {
+	var shiptos = {{ checkoutm.get_shiptos_js()|json_encode()|raw }};
+	var form = $('#checkout-form');
+
+	$("body").on('change', 'select[name=shiptoid]', function(e) {
+
+		var select = $(this);
+		var shiptoid = select.val();
+		fillout_shipto_fields(shiptoid);
+	});
+
+	function fillout_shipto_fields(shiptoid) {
+		var shipto = new Shipto();
+
+		if (shiptoid in shiptos) {
+			shipto = get_shiptodata(shipto, shiptoid);
+			console.log('true');
+		}
+		form.find('input[name=sconame]').val(shipto.name);
+		form.find('input[name=sname]').val(shipto.name);
+		form.find('input[name=saddress]').val(shipto.address1);
+		form.find('input[name=saddress2]').val(shipto.address2);
+		form.find('input[name=scity]').val(shipto.city);
+		form.find('select[name=sstate]').val(shipto.state);
+		form.find('input[name=szip]').val(shipto.zip);
+	}
+
+	function get_shiptodata(shipto, shiptoid) {
+		var shipto_data = shiptos[shiptoid];
+		shipto.id = shipto_data.shiptoid;
+		shipto.name     = shipto_data.name;
+		shipto.address1 = shipto_data.address1;
+		shipto.address2 = shipto_data.address2;
+		shipto.contact  = shipto_data.contact;
+		shipto.city     = shipto_data.city;
+		shipto.state    = shipto_data.state;
+		shipto.zip      = shipto_data.zip;
+		return shipto;
+	}
+
+	function Shipto() {
+		this.id       = '';
+		this.name     = '';
+		this.address1 = '';
+		this.address2 = '';
+		this.contact  = '';
+		this.city     = '';
+		this.state    = '';
+		this.zip      = '';
+	}
+});

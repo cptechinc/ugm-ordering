@@ -1,0 +1,22 @@
+{
+  "name": "Custom",
+  "fonts": {
+    "headings": "Noto Serif",
+    "base": "Noto Sans JP"
+  },
+  "desc": "A DIY theme cloned from Tequila.",
+  "images": {
+    "bg": "https://images.unsplash.com/photo-1503756043224-101dab0dcb30?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=4bd62d181f78bd2f85ab23a677acd6f4&auto=format&fit=crop&w=1600&q=80"
+  },
+  "colors": {
+    "primary": "#FF9E19",
+    "secondary": "#f15a29",
+    "success": "#399E5A",
+    "danger": "#BF211E",
+    "info": "#124054",
+    "warning": "#E3F02B",
+    "light": "#eef0f2",
+    "dark": "#58595b"
+  },
+  "cloned": "Tequila"
+}

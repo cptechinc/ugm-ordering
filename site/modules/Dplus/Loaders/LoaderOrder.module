@@ -1,0 +1,82 @@
+<?php namespace ProcessWire;
+
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use SalesOrderQuery, SalesOrder;
+use SalesHistoryQuery, SalesHistory;
+
+/**
+ * Lookup Sales Orders
+ *
+ * Class for Looking up / Validating Sales Orders
+ *
+ * @property string $exists  Sales Order / Invoice Exists
+ * @property string $ordn    Sales Order / Invoice Number
+ * @property string $request What was sent to find Sales Order / Invoice Number
+ * @property string $source  so_head | so_head_hist
+ */
+class LoaderOrder extends WireData implements Module {
+	public function __construct() {
+		$this->exists  = false;
+		$this->ordn  = '';
+		$this->source = '';
+	}
+
+	public function exists($ordn) {
+		return $this->validator->order($ordn) || $this->validator->invoice($ordn);
+	}
+
+	public function validate_user($ordn, User $user) {
+		return $this->validator->order_user($ordn, $user) || $this->validator->invoice_user($ordn, $user);
+	}
+
+	public function load($ordn) {
+		if ($this->validator->order($ordn)) {
+			return $this->get_order($ordn);
+		} elseif ($this->validator->invoice($ordn)) {
+			return $this->get_invoice($ordn);
+		}
+	}
+
+	public function get_order($ordn) {
+		return SalesOrderQuery::create()->findOneByOrdernumber($ordn);
+	}
+
+	public function get_invoice($ordn) {
+		return SalesinvoiceQuery::create()->findOneByOrdernumber($ordn);
+	}
+
+	/* =============================================================
+		ProcessWire Module Functions
+	============================================================= */
+	public function init() {
+		$this->validator = $this->wire('modules')->get('ValidateOrder');
+
+		$this->addHookProperty("Page(template=order)::ordn", function($event) {
+			$p = $event->object;
+			$event->return = $p->fullURL->query->get('ordn');
+		});
+
+		$this->addHook("Page(template=order)::is_invoice", function($event) {
+			$p = $event->object;
+			$ordn = $event->arguments(0) ? $event->arguments(0) : $p->ordn;
+			$event->return = $this->validator->invoice($ordn);
+		});
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Sales Order Validate Module',
+			'version' => 101,
+			'summary' => 'Handles Order # Validation',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array()
+		);
+	}
+}

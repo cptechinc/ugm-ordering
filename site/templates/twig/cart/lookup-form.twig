@@ -1,0 +1,30 @@
+<form action="{{ page.url }}" method="post" id="add-item-form">
+	<input type="hidden" name="action" value="add-item">
+	{% block misc_fields %}
+
+	{% endblock %}
+
+	<div class="row">
+		<div class="col-3">
+			<input type="text" class="form-control form-control-sm" name="itemID" placeholder="Item ID / Description">
+			<small class="text-muted description1">Description</small> <br>
+			<small class="text-muted description2"></small> <br>
+			<small class="text-muted available"></small>
+		</div>
+		<div class="col-1 text-center">
+			<span class="uom_sale"></span>
+		</div>
+		<div class="col-2 text-right">
+			<input type="number" class="form-control form-control-sm w-75 pull-right qty-input" name="qty" id="addqty" min="1">
+		</div>
+		<div class="col">
+			<button type="submit" class="btn btn-success">
+				Add <i class="fa fa-cart-plus" aria-hidden="true"></i>
+			</button>
+		</div>
+		<div class="col text-right">
+
+		</div>
+		<div class="col"></div>
+	</div>
+</form>

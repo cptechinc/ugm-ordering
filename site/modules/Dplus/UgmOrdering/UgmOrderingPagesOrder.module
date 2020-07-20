@@ -1,0 +1,117 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+
+/**
+ * class UgmOrderingPagesOrder
+ *
+ * Installs fields, templates, pages, hooks necessary for Top Menus
+ * NOTE: Also installs the basic fields, templates, to build the rest of the Application
+ */
+class UgmOrderingPagesOrder extends PwPages implements Module {
+	const FIELDS = array();
+
+	const TEMPLATES = array(
+		'orders' => array(
+			'name'   => 'orders',
+			'fields' => array(),
+			'paginated' => true
+		),
+		'order' => array(
+			'name'   => 'order',
+			'fields' => array(),
+			'paginated' => false
+		),
+		'invoices' => array(
+			'name'   => 'invoices',
+			'fields' => array(),
+			'paginated' => true
+		),
+		'order-documents' => array(
+			'name'   => 'order-documents',
+			'fields' => array(),
+			'paginated' => false
+		),
+		'order-edit' => array(
+			'name'   => 'order-edit',
+			'fields' => array(),
+			'paginated' => false
+		),
+	);
+
+	const PAGES = array(
+		'orders' => array(
+			'template' => 'orders',
+			'name'     => 'orders',
+			'title'    => 'Orders',
+			'summary'  => 'View / Search Sales Orders',
+			'parent'   => '/'
+		),
+		'order' => array(
+			'template' => 'order',
+			'name'     => 'order',
+			'title'    => 'Order',
+			'summary'  => 'View Sales Order',
+			'parent'   => '/orders/'
+		),
+		'edit-order' => array(
+			'template' => 'order-edit',
+			'name'     => 'edit',
+			'title'    => 'Edit Order',
+			'summary'  => 'Edit Sales Order',
+			'parent'   => '/orders/order/'
+		),
+		'documents' => array(
+			'template' => 'order-documents',
+			'name'     => 'documents',
+			'title'    => 'Order Documents',
+			'summary'  => 'View Sales Order Documents',
+			'parent'   => '/orders/order/'
+		),
+		'invoices' => array(
+			'template' => 'invoices',
+			'name'     => 'history',
+			'title'    => 'History',
+			'summary'  => 'View / Search Order History',
+			'parent'   => '/orders/'
+		)
+	);
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	public function init() {
+		$this->addHook("Page(template=orders|invoices)::orderURL", function($event) {
+			$ordn = $event->arguments(0);
+			$url = new Url($this->wire('pages')->get('template=order')->url);
+			$url->query->set('ordn', $ordn);
+			$event->return = $url->getUrl();
+		});
+
+		$this->addHook("Page(template=order)::listpage", function($event) {
+			$ordn = $event->arguments(0);
+			$validator = $this->wire('modules')->get('ValidateOrder');
+			$template = $validator->invoice($ordn) ? 'invoices' : 'orders';
+			$event->return = $this->wire('pages')->get('template=orders');
+		});
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'UGM order pages Module',
+			'version' => 101,
+			'summary' => 'Installs and creates Ugm Ordering Pages',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('PwPages'),
+			'installs' => array(),
+		);
+	}
+
+}

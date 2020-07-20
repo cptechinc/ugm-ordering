@@ -1,0 +1,514 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use SalesOrderQuery, SalesOrder;
+use CustomerQuery, Customer;
+use ShipviaQuery, Shipvia;
+
+use OrdrhedQuery, Ordrhed;
+use OrdrdetQuery, Ordrdet;
+use StatesQuery, States;
+
+include_once(__DIR__.'/../DplusResponse.php');
+
+/**
+ * Handles Order Editing, sending Requests to Dplus
+ */
+class EditOrder extends WireData implements Module {
+	/**
+	 * Return Ordrhed Query
+	 * @param  string       $ordn Sales Order Number
+	 * @return OrdrhedQuery
+	 */
+	public function get_query_order($ordn) {
+		$q = OrdrhedQuery::create();
+		$q->filterBySessionid(session_id());
+		$q->filterByOrderno($ordn);
+		return $q;
+	}
+
+	/**
+	 * Return Ordrdet Query
+	 * @param  string        $ordn Sales Order Number
+	 * @return OrdrdetQuery
+	 */
+	public function get_query_details($ordn) {
+		$q = OrdrdetQuery::create();
+		$q->filterBySessionid(session_id());
+		$q->filterByOrderno($ordn);
+		return $q;
+	}
+
+	/**
+	 * Returns if Order is Editable
+	 * @param  string $ordn Sales Order Number
+	 * @return bool
+	 */
+	public function can_edit_order($ordn) {
+		$validate_order = $this->wire('modules')->get('ValidateOrder');
+
+		if ($validate_order->order($ordn)) {
+			$order = SalesOrderQuery::create()->findOneByOrdernumber($ordn);
+
+			if ($order->status == SalesOrder::STATUS_NEW && $order->heldby == '') {
+				return true;
+			}
+		}
+		return false;
+	}
+
+/* =============================================================
+	Get Functions
+============================================================= */
+	/**
+	 * Return Ordrhed Record
+	 * @param  string   $ordn  Sales Order Number
+	 * @return Ordrhed
+	 */
+	public function get_order_header($ordn) {
+		$q = $this->get_query_order($ordn);
+		return $q->findOne();
+	}
+
+	/**
+	 * Return if Edit Order Record Exists
+	 * @param  string   $ordn  Sales Order Number
+	 * @return bool
+	 */
+	public function has_order_header($ordn) {
+		$q = $this->get_query_order($ordn);
+		return boolval($q->count());
+	}
+
+	/**
+	 * Return Ordrdet Records
+	 * @param  string   $ordn  Sales Order Number
+	 * @return Ordrdet[]|ObjectCollection
+	 */
+	public function get_order_details($ordn) {
+		$q = $this->get_query_details($ordn);
+		return $q->find();
+	}
+
+	/**
+	 * Return if Edit Order Record Exists
+	 * @param  string   $ordn  Sales Order Number
+	 * @return bool
+	 */
+	public function has_order_details($ordn) {
+		$q = $this->get_query_details($ordn);
+		return boolval($q->count());
+	}
+
+	/**
+	 * Return Edit Order Detail Record
+	 * @param  string $ordn    Sales Order Number
+	 * @param  int    $linenbr Line Number
+	 * @return Ordrdet
+	 */
+	public function get_order_detail($ordn, int $linenbr) {
+		$q = $this->get_query_details($ordn);
+		$q->filterByLinenbr($linenbr);
+		return $q->findOne();
+	}
+
+	/**
+	 * Return Edit Order Detail Record
+	 * @param  string $ordn    Sales Order Number
+	 * @param  int    $linenbr Line Number
+	 * @return bool
+	 */
+	public function order_detail_exists($ordn, int $linenbr) {
+		$q = $this->get_query_details($ordn);
+		$q->filterByLinenbr($linenbr);
+		return boolval($q->count());
+	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
+	/**
+	 * Take Input and process action
+	 * @param  WireInput $input Input Data
+	 * @return void
+	 */
+	public function process_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+
+		if ($values->action && $values->ordn) {
+			switch ($values->text('action')) {
+				case 'update-order':
+					$this->update_order_input($input);
+					break;
+				case 'exit-order':
+					$this->request_order_exit($values->text('ordn'));
+					break;
+				case 'update-item-qty':
+					$this->update_item_qty_input($input);
+					break;
+				case 'delete-item':
+					$this->delete_item_input($input);
+					break;
+				case 'add-item':
+					$this->add_item_input($input);
+					break;
+				case 'update-notes':
+				case 'delete-notes':
+					$qnotes = $this->wire('modules')->get('QnotesSalesOrder');
+					$qnotes->process_input($input);
+					break;
+			}
+		} else {
+			$this->wire('session')->response_checkout = DplusResponse::create_error("No Order Action provided");
+		}
+	}
+
+	/**
+	 * Updates Ordrhed Record
+	 * @param  WireInput  $input  Input Data
+	 * @return void
+	 */
+	public function update_order_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$ordn = $values->text('ordn');
+
+		if ($this->can_edit_order($ordn)) {
+			$editorder = $this->get_order_header($ordn);
+			$editorder->setShiptoid($values->text('shiptoid'));
+			$editorder->setShipname($values->text('shipname'));
+			$editorder->setContact($values->text('contact'));
+			$editorder->setShipaddress($values->text('shipaddress'));
+			$editorder->setShipaddress2($values->text('shipaddress2'));
+			$editorder->setShipcity($values->text('shipcity'));
+			$editorder->setShipstate($values->text('shipstate'));
+			$editorder->setShipzip($values->text('shipzip'));
+			$editorder->setEmail($values->text('email'));
+			$editorder->setPhone($values->text('phone'));
+			$editorder->setCustpo($values->text('custpo'));
+			$editorder->setShipviacd($values->text('shipvia'));
+			$editorder->setRqstdate($values->text('rqstdate'));
+			$editorder->save();
+			$this->request_order_update($ordn);
+		} else {
+			$this->wire('session')->response_edit = DplusResponse::create_error("Error editing Order $ordn line # $linenbr");
+		}
+	}
+
+	/**
+	 * Updates Qty on the Detail Line
+	 * @param  WireInput  $input  Input Data
+	 * @return void
+	 */
+	public function update_item_qty_input($input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$ordn = $values->text('ordn');
+		$linenbr = $values->int('linenbr');
+
+		if ($this->can_edit_order($ordn) && $this->order_detail_exists($ordn, $linenbr)) {
+			$item = $this->get_order_detail($ordn, $linenbr);
+			$item->setQty($values->int('qty'));
+			$item->save();
+			$this->request_item_update($ordn, $linenbr);
+		} else {
+			$this->wire('session')->response_edit = DplusResponse::create_error("Error editing Order $ordn line # $linenbr");
+		}
+	}
+
+	/**
+	 * Deletes Line Item
+	 * @param  WireInput  $input  Input Data
+	 * @return void
+	 */
+	public function delete_item_input($input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$ordn = $values->text('ordn');
+		$linenbr = $values->int('linenbr');
+
+		if ($this->can_edit_order($ordn) && $this->order_detail_exists($ordn, $linenbr)) {
+			$item = $this->get_order_detail($ordn, $linenbr);
+			$item->setQty(0);
+			$item->save();
+			$this->request_item_delete($ordn, $linenbr);
+		} else {
+			$this->wire('session')->response_edit = DplusResponse::create_error("Error editing Order $ordn line # $linenbr");
+		}
+	}
+
+	/**
+	 * Adds Item
+	 * @param WireInput $input Input Data
+	 */
+	public function add_item_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$ordn = $values->text('ordn');
+		$itemID = $values->text('itemID');
+		$qty = $values->int('qty');
+
+		if ($this->can_edit_order($ordn)) {
+			$this->request_item_add($ordn, $itemID, $qty);
+		} else {
+			$this->wire('session')->response_edit = DplusResponse::create_error("Error editing Order $ordn line # $linenbr");
+		}
+	}
+
+/* =============================================================
+	Dplus Cobol Request Functions
+============================================================= */
+	/**
+	 * Send Create Order Edit Request to Dplus
+	 * @return void
+	 */
+	public function request_order_edit($ordn) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$order = $this->wire('modules')->get('LoaderOrder')->load($ordn);
+		$data = array("DBNAME=$dplusdb", "ORDRDET=$ordn", "CUSTID=$order->custid");
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Update Order Request to Dplus
+	 * @return void
+	 */
+	public function request_order_update($ordn) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$order = $this->wire('modules')->get('LoaderOrder')->load($ordn);
+		$data = array("DBNAME=$dplusdb", 'SALESHEAD', "ORDERNO=$ordn", "CUSTID=$order->custid");
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Update Order Request to Dplus
+	 * @return void
+	 */
+	public function request_order_exit($ordn) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$order = $this->wire('modules')->get('LoaderOrder')->load($ordn);
+		$data = array("DBNAME=$dplusdb", 'SALESHEAD', "ORDERNO=$ordn", "CUSTID=$order->custid", 'UNLOCK');
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Update Order Item
+	 * @return void
+	 */
+	public function request_item_update($ordn, int $linenbr) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$order = $this->wire('modules')->get('LoaderOrder')->load($ordn);
+		$data = array("DBNAME=$dplusdb", 'SALEDET', "ORDERNO=$ordn", "LINENO=$linenbr", "CUSTID=$order->custid");
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Delete Order Item
+	 * @return void
+	 */
+	public function request_item_delete($ordn, int $linenbr) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$order = $this->wire('modules')->get('LoaderOrder')->load($ordn);
+		$data = array("DBNAME=$dplusdb", 'SALEDET', "ORDERNO=$ordn", "LINENO=$linenbr", "QTY=0", "CUSTID=$order->custid");
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Create Order Item
+	 * @return void
+	 */
+	public function request_item_add($ordn, $itemID, int $qty) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$order = $this->wire('modules')->get('LoaderOrder')->load($ordn);
+		$data = array("DBNAME=$dplusdb", 'SALEDET', "ORDERNO=$ordn", "ITEMID=$itemID", "QTY=$qty", "CUSTID=$order->custid");
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Customer from Order
+	 * @param  string $ordn Order Number
+	 * @return Customer
+	 */
+	public function get_customer($ordn) {
+		$custID = $this->get_custid($ordn);
+		return CustomerQuery::create()->findOneByCustid($custID);
+	}
+
+	/**
+	 * Return Custid from Order
+	 * @param  string $ordn Order Number
+	 * @return string
+	 */
+	public function get_custid($ordn) {
+		$q = SalesOrderQuery::create();
+		$q->select(SalesOrder::get_aliasproperty('custid'));
+		return $q->findOneByOrdernumber($ordn);
+	}
+
+	/**
+	 * Return Item Master Item
+	 * @param  string $itemID Item ID
+	 * @return ItemMasterItem
+	 */
+	public function get_item($itemID) {
+		return $this->wire('modules')->get('LoaderItem')->load($itemID);
+	}
+
+	/**
+	 * Return Shiptos Address information
+	 * @return array
+	 */
+	public function get_shiptos_js() {
+		$array = array();
+		$user = $this->wire('user');
+		$shiptos = $user->customer->get_shiptos();
+
+		foreach ($shiptos as $shipto) {
+			$array[$shipto->shiptoid] = array(
+				'shiptoid' => $shipto->shiptoid,
+				'name'     => $shipto->name,
+				'contact'  => '',
+				'address1' => $shipto->address1,
+				'address2' => $shipto->address2,
+				'city' => $shipto->city,
+				'state' => $shipto->state,
+				'zip' => $shipto->zip,
+			);
+		}
+		return $array;
+	}
+
+	/**
+	 * Return Shipvias
+	 * @return Shipvia[]|ObjectCollection
+	 */
+	public function get_shipvias() {
+		return ShipviaQuery::create()->find();
+	}
+
+	/**
+	 * Return States
+	 * @return States[]|ObjectCollection
+	 */
+	public function get_states() {
+		return StatesQuery::create()->find();
+	}
+/* =============================================================
+	URL Functions
+============================================================= */
+	/**
+	 * Return Edit Order URL for Order Number
+	 * @param  string $ordn Order Number
+	 * @return string
+	 */
+	public function get_order_editURL($ordn) {
+		$url = new Url($this->wire('pages')->get('template=order-edit')->url);
+		$url->query->set('ordn', $ordn);
+		return $url->getUrl();
+	}
+
+	/**
+	 * Return URL to send Delete Item Request
+	 * @param  string $ordn    Order Number
+	 * @param  int    $linenbr Line Number
+	 * @return string
+	 */
+	public function get_order_deleteitemURL($ordn, int $linenbr) {
+		$url = new Url($this->wire('pages')->get('template=order-edit')->url);
+		$url->query->set('action', 'delete-item');
+		$url->query->set('ordn', $ordn);
+		$url->query->set('linenbr', $linenbr);
+		return $url->getUrl();
+	}
+
+	/**
+	 * Return Exit Order URL for Order Number
+	 * @param  string $ordn Order Number
+	 * @return string
+	 */
+	public function get_order_exitURL($ordn) {
+		$url = new Url($this->wire('pages')->get('template=order-edit')->url);
+		$url->query->set('action', 'exit-order');
+		$url->query->set('ordn', $ordn);
+		return $url->getUrl();
+	}
+
+	/**
+	 * Return view Order URL for Order Number
+	 * @param  string $ordn Order Number
+	 * @return string
+	 */
+	public function get_order_viewURL($ordn) {
+		$url = new Url($this->wire('pages')->get('template=order')->url);
+		$url->query->set('ordn', $ordn);
+		return $url->getUrl();
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Ecomm Edit Order Module',
+			'version' => 101,
+			'summary' => 'Handles Ecomm Editing of Order',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+
+	public function init() {
+		$this->addHook('Page(template=order|order-edit)::url_editorder', function($event) {
+			$ordn = $event->arguments(0);
+			$event->return = $this->get_order_editURL($ordn);
+		});
+
+		$this->addHook('Page(template=order|order-edit)::url_deleteitem', function($event) {
+			$ordn    = $event->arguments(0);
+			$linenbr = $event->arguments(1);
+			$event->return = $this->get_order_deleteitemURL($ordn, $linenbr);
+		});
+
+		$this->addHook('Page(template=order-edit)::url_exitorder', function($event) {
+			$ordn = $event->arguments(0);
+			$event->return = $this->get_order_exitURL($ordn);
+		});
+
+		$this->addHook('Page(template=order-edit)::url_vieworder', function($event) {
+			$ordn = $event->arguments(0);
+			$event->return = $this->get_order_viewURL($ordn);
+		});
+
+		$this->addHookProperty('Page(template=order-edit)::url_search', function($event) {
+			$event->return = $this->wire('pages')->get('template=items-search')->url;
+		});
+
+		$this->addHookProperty('Page(template=order-edit)::url_itemjson', function($event) {
+			$event->return = $this->wire('pages')->get('template=items-json')->url;
+		});
+
+	}
+}

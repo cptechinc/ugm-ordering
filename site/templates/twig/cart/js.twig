@@ -1,0 +1,24 @@
+$(function() {
+	$('.placard.placard-qty').on('shown.fu.placard', function () {
+		var placard = $(this);
+		var qty = placard.find('input[name=qty]').attr('data-qty');
+		placard.find('.placard-header').find('.qty').text(': ' + qty);
+	});
+
+	$("body").on('click', '.delete-item', function(e) {
+		e.preventDefault();
+		var button = $(this);
+
+		swal2.fire({
+			title: 'Delete Item?',
+			text: 'Delete ' + button.data('itemid') + ' from cart?',
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonText: 'Yes'
+		}).then(function (result) {
+			if (result.value) {
+				window.location.href = button.attr('href');
+			}
+		});
+	});
+});

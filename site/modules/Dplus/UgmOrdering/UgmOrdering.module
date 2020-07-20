@@ -1,0 +1,51 @@
+<?php namespace ProcessWire;
+
+
+/**
+ * class Dpages
+ *
+ * Installs fields, templates, pages, hooks necessary for Top Menus
+ * NOTE: Also installs the basic fields, templates, to build the rest of the Application
+ */
+class UgmOrdering extends PwPages implements Module {
+	const FIELDS = array();
+
+	const TEMPLATES = array();
+
+	const PAGES = array();
+
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Ugm Ordering Modules',
+			'version' => 101,
+			'summary' => 'Installs and creates Ugm Ordering Modules',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array(
+				'UgmOrderingPages',
+			),
+		);
+	}
+
+	public function update() {
+		$info = self::getModuleInfo();
+		$modules = $this->wire('modules');
+		$modules->refresh();
+
+		foreach ($info['installs'] as $module_name) {
+			$modules->install($module_name);
+		}
+
+		parent::update();
+	}
+}

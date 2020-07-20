@@ -1,0 +1,32 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	checkoutm              module Checkout
+	billing                Billing
+#}
+
+<div class="form-group">
+	<label for="email">Email</label>
+	<input type="email" class="form-control" name="email" value="{{ billing.email }}">
+</div>
+<div class="form-group">
+	<label for="phone">Phone</label>
+	<input type="text" class="form-control phone-input" name="phone" id="phone" value="{{ billing.phone }}">
+</div>
+<div class="form-group">
+	<label for="custpo">Purchase Order Number</label>
+	<input type="text" class="form-control" name="pono" id="pono" value="{{ billing.pono }}">
+</div>
+<div class="form-group">
+	<label for="shipvia">Ship via</label>
+	<select name="shipvia" id="shipvia" class="form-control">
+		{% for shipvia in checkoutm.get_shipvias() %}
+			<option value="{{ shipvia.code }}">{{ shipvia.description }}</option>
+		{% endfor %}
+	</select>
+</div>
+<div class="form-group">
+	<label for="rqstdate">Requested Ship Date</label>
+	{% include 'util/date-picker.twig' with {'name': 'rqstdate', 'value': "now"|date_modify("+7 days")|date("m/d/Y"), 'id': 'rqstdate', 'required': 'true'} %}
+</div>

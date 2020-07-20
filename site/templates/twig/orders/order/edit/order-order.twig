@@ -1,0 +1,33 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	editm                  module EditOrder
+	orderedit              Ordrhed
+	qnotes                 module QnotesSalesOrder
+#}
+
+<div class="form-group">
+	<label for="email">Email</label>
+	<input type="email" class="form-control form-control-sm" name="email" value="{{ orderedit.email }}">
+</div>
+<div class="form-group">
+	<label for="phone">Phone</label>
+	<input type="text" class="form-control form-control-sm phone-input" name="phone" id="phone" value="{{ orderedit.phone }}">
+</div>
+<div class="form-group">
+	<label for="custpo">Purchase Order Number</label>
+	<input type="text" class="form-control form-control-sm" name="custpo" id="custpo" value="{{ orderedit.custpo }}">
+</div>
+<div class="form-group">
+	<label for="shipvia">Ship via</label>
+	<select name="shipvia" id="shipvia" class="form-control form-control-sm">
+		{% for shipvia in editm.get_shipvias() %}
+			<option value="{{ shipvia.code }}" {{ orderedit.shipviacd == shipvia.code ? 'selected' : ''}}>{{ shipvia.description }}</option>
+		{% endfor %}
+	</select>
+</div>
+<div class="form-group">
+	<label for="rqstdate">Requested Ship Date</label>
+	{% include 'util/date-picker.twig' with {'name': 'rqstdate', 'value': orderedit.rqstdate|convertdate, 'id': 'rqstdate', 'required': 'true'} %}
+</div>

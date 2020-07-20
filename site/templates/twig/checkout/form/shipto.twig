@@ -1,0 +1,53 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	checkoutm              module Checkout
+	billing                Billing
+	customer               Customer
+#}
+
+<div class="form-group">
+	<label for="shiptoid">ShiptoID</label>
+	<select name="shiptoid" id="shiptoid" class="form-control">
+		<option value="">None</option>
+		{% for shipto in customer.get_shiptos() %}
+			<option value="{{ shipto.id }}" {{ shipto.id == billing.shiptoid ? 'selected' : ''}}>{{ shipto.id ~ ' - ' ~ shipto.name }}</option>
+		{% endfor %}
+	</select>
+</div>
+<div class="form-group">
+	<label for="sconame">Name</label>
+	<input type="text" class="form-control" name="sconame" id="sconame" value="{{ billing.sconame }}">
+</div>
+<div class="form-group">
+	<label for="sname">Contact</label>
+	<input type="text" class="form-control" name="sname" id="sname" value="{{ billing.sname }}">
+</div>
+<div class="form-group">
+	<label for="saddress">Address</label>
+	<input type="text" class="form-control" name="saddress" id="saddress" value="{{ billing.saddress }}">
+</div>
+<div class="form-group">
+	<label for="saddress2">Address 2</label>
+	<input type="text" class="form-control" name="saddress2" id="saddress2" value="{{ billing.saddress2 }}">
+</div>
+
+<div class="form-row">
+	<div class="form-group col-sm-5">
+		<label for="scity">City</label>
+		<input type="text" class="form-control" name="scity" id="scity" value="{{ billing.scity }}">
+	</div>
+	<div class="form-group col-sm-4">
+		<label for="sstate">State</label>
+		<select name="sstate" id="sstate" class="form-control">
+			{% for state in checkoutm.get_states() %}
+				<option value="{{ state.abbreviation }}" {{ state.abbreviation == billing.sst ? 'selected' : ''}}>{{ state.name }}</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class="form-group col-sm-3">
+		<label for="szip">Zip</label>
+		<input type="text" class="form-control" name="szip" id="szip" value="{{ billing.szip }}">
+	</div>
+</div>

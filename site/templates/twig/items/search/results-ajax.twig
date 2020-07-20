@@ -1,0 +1,32 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	items                  Page(template=item)[]|PageArray
+	dpluspricing           ItemSearchDplus
+#}
+
+<div class="list-group">
+	<div class="list-group-item bg-primary">
+		<div class="row">
+			<div class="col">Item</div>
+			<div class="col text-right">UoM</div>
+			<div class="col text-right">Available</div>
+		</div>
+	</div>
+	{% for item in items %}
+		{% set pricing = dpluspricing.get_pricing_item(item.itemid) %}
+		<div class="list-group-item">
+			<div class="row">
+				<div class="col">
+					<h5 class="mb-1">
+						<a href="#" class="link item-lookup-itemid" data-itemid="{{ item.itemid }}">{{ item.itemid }}</a>
+					</h5>
+					<p class="mb-1 text-muted">{{ item.title }}</p>
+				</div>
+				<div class="col text-right">{{ item.item.uom_sale }}</div>
+				<div class="col text-right">{{ pricing.qty }}</div>
+			</div>
+		</div>
+	{% endfor %}
+</div>

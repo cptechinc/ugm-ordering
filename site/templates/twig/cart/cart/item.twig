@@ -1,0 +1,52 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	cart                   module Cart
+	item                   Cart
+#}
+{% set imitem = cart.get_item(item.itemid) %}
+<div class="row">
+	<div class="col-3">
+		{{ item.itemid }} <br>
+		<small class="text-muted">{{ item.desc1 }}</small>
+	</div>
+	<div class="col-1 text-center">
+		{{ imitem.uom_sale }}
+	</div>
+	<div class="col-2 text-right">
+		<form action="{{ page.url }}" method="post">
+			<input type="hidden" name="action" value="update-item-qty">
+			<input type="hidden" name="itemID" value="{{ item.itemid }}">
+
+			<div class="placard placard-qty" data-ellipsis="true" data-initialize="placard">
+				<div class="placard-popup"></div>
+				<div class="placard-header">
+					<b>Qty</b> <span class="qty"></span>
+				</div>
+				<input class="form-control placard-field form-control-sm text-right pull-right w-50 qty-input" type="number" name="qty" value="{{ item.qty }}" data-qty="{{ item.qty }}" autocomplete="off">
+				<div class="placard-footer">
+					<a class="placard-cancel" href="#">Cancel</a>
+					<button class="btn btn-success btn-sm placard-accept" type="button">
+						<i class="fa fa-floppy-o" aria-hidden="true"></i> Save
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="col-1 text-right">
+		$ {{ item.price|currency }}
+	</div>
+	<div class="col-1 text-right">
+		$ {{ item.amount|currency }}
+	</div>
+	<div class="col-2 text-center">
+		<a href="{{ page.url_item_delete(item.itemid) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
+			<i class="fa fa-trash" aria-hidden="true"></i> Delete
+		</a>
+		{% set notesclass = qnotes.notes_exist(item.itemid) ? 'btn-info text-white' : 'btn-light border border-dark' %}
+		<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal" aria-controls="notes-modal" data-itemid="{{ item.itemid }}">
+			<i class="fa fa-commenting" aria-hidden="true"></i> Notes
+		</button>
+	</div>
+</div>

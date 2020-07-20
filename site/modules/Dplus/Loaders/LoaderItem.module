@@ -1,0 +1,72 @@
+<?php namespace ProcessWire;
+
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use ItemMasterItemQuery, ItemMasterItem;
+
+/**
+ * LoaderItem
+ *
+ * Class for Loading Items
+ *
+ * @property string $exists  Item Exists
+ * @property string $itemID  Item ID
+ * @property string $request What was sent to find Item
+ */
+class LoaderItem extends WireData implements Module {
+	public function __construct() {
+		$this->exists  = false;
+		$this->itemid  = '';
+	}
+
+	/**
+	 * Return if Item Exists
+	 * @param  string $itemID Item ID
+	 * @return bool
+	 */
+	public function exists($itemID) {
+		return $this->validator->validate($itemID);
+	}
+
+	/**
+	 * Return Item From Item Master
+	 * @param  string $itemID Item ID
+	 * @return ItemMasterItem
+	 */
+	public function load($itemID) {
+		return $this->get_item($itemID);
+	}
+
+	/**
+	 * Return Item From Item Master
+	 * @param  string $itemID Item ID
+	 * @return ItemMasterItem
+	 */
+	public function get_item($itemID) {
+		return ItemMasterItemQuery::create()->findOneByItemid($itemID);
+	}
+
+
+	/* =============================================================
+		ProcessWire Module Functions
+	============================================================= */
+	public function init() {
+		$this->validator = $this->wire('modules')->get('ValidateItem');
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Item Master Loader Module',
+			'version' => 101,
+			'summary' => 'Loads Items from Item Master',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array()
+		);
+	}
+}

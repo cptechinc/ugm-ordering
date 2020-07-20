@@ -1,0 +1,41 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	order                  SalesOrder|SalesHistory
+	docm                   module DocumentManagementSo
+	qnotes                 module QnotesSales
+	editm                  module EditOrder
+#}
+{% include 'orders/order/page/links.twig' with {'page': page, 'docm': docm} %}
+
+<div class="mb-3">
+	{% if page.is_invoice %}
+		{% include 'orders/invoices/invoice/page/header.twig' with {'page': page, 'order': order} %}
+	{% else %}
+		{% include 'orders/order/page/header.twig' with {'page': page, 'order': order} %}
+	{% endif %}
+</div>
+
+<div class="mb-3">
+	<div class="d-flex w-100 justify-content-between">
+		<h3 class="text-secondary">Items</h3>
+
+		<a href="{{ page.url_editorder(order.ordernumber) }}" class="btn btn-warning">
+			<i class="fa fa-pencil" aria-hidden="true"></i> Edit Order
+		</a>
+	</div>
+	{% include 'orders/order/page/items.twig' with {'page': page, 'order': order, 'qnotes': qnotes} %}
+</div>
+
+<div id="documents">
+	<h3 class="text-secondary">
+		Documents <i class="fa fa-file-text" aria-hidden="true"></i>
+	</h3>
+	{% include 'orders/order/documents/list.twig' with {'page': page, 'ordn': order.ordernumber, 'documents': docm.get_documents(order.ordernumber)} %}
+</div>
+
+<div class="mb-3">
+	<h3 class="text-secondary">Notes <i class="fa fa-commenting" aria-hidden="true"></i></h3>
+	{% include 'orders/order/page/notes.twig' with {'page': page, 'ordn': order.ordernumber, 'qnotes': qnotes} %}
+</div>

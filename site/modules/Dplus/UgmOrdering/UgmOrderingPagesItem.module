@@ -1,0 +1,197 @@
+<?php namespace ProcessWire;
+
+use ItemMasterItemQuery, ItemMasterItem;
+
+/**
+ * class Dpages
+ *
+ * Installs fields, templates, pages, hooks necessary for Top Menus
+ * NOTE: Also installs the basic fields, templates, to build the rest of the Application
+ */
+class UgmOrderingPagesItem extends PwPages implements Module {
+	const FIELDS = array(
+		'itemid' => array(
+			'name'  => 'itemid',
+			'type'  => 'text',
+			'label' => 'Item ID'
+		),
+	);
+
+	const TEMPLATES = array(
+		'item' => array(
+			'name'   => 'item',
+			'fields' => array('itemid', 'summary'),
+			'paginated' => false
+		),
+	);
+
+	const PAGES = array();
+
+	const TEMPLATE_ITEM = 'item';
+
+	public function get_items() {
+		return ItemMasterItemQuery::create()->find();
+	}
+
+	/**
+	 * Update / Create Item Pages
+	 * @return array
+	 */
+	public function update_item_pages() {
+		$items = $this->get_items();
+		$updated = array();
+
+		foreach ($items as $item) {
+			if ($this->item_page_exists($item)) {
+				$updated[$item->itemid] = $this->update_item_page($item);
+			} else {
+				$updated[$item->itemid] = $this->create_item_page($item);
+			}
+
+			if ($this->item_page_exists($item)) {
+				$this->update_item_page_visibility($item, true);
+			}
+		}
+		return $updated;
+	}
+
+	/**
+	 * Turn Visibility off for Item Pages
+	 * @return void
+	 */
+	public function turn_item_pages_invisible() {
+		$template = self::TEMPLATE_ITEM;
+		$pages = $this->wire('pages')->find("template=$template");
+
+		foreach ($pages as $p) {
+			$this->update_item_page_visibility($p->name, $visible = false);
+		}
+	}
+
+	/**
+	 * Creates Item Group Page
+	 * @param  ItemMasterItem $item Item Group
+	 * @return bool
+	 */
+	public function create_item_page(ItemMasterItem $item) {
+		$m_groups = $this->wire('modules')->get('UgmOrderingPagesItemGroup');
+
+		if (!$m_groups->group_page_exists($item->itemgroup)) {
+			return false;
+		}
+
+		$parent = $m_groups->get_group_page($item->itemgroup);
+		$p = new Page();
+		$p->of(false);
+		$p->parent  = $parent;
+		$p->template = self::TEMPLATE_ITEM;
+		$p->name = $this->wire('sanitizer')->pageName($item->itemid);
+		$p->itemid = $item->itemid;
+		$p->title = $item->description;
+		$saved = $p->save();
+
+		if ($saved) {
+			return $this->update_item_page($item);
+		} else {
+			return $saved;
+		}
+	}
+
+	/**
+	 * Updates Item Group Page
+	 * @param  ItemMasterItem $item Item Group
+	 * @return bool
+	 */
+	public function update_item_page(ItemMasterItem $item) {
+		$p = $this->get_item_page($item);
+		$p->of(false);
+		$p->name = $this->wire('sanitizer')->pageName($item->itemid);
+		$p->itemid = $item->itemid;
+		$p->title = $item->description;
+		return $p->save();
+	}
+
+	/**
+	 * Sets visibility for Item Group Page
+	 * @param  ItemMasterItem|string $item   Item Group | Code
+	 * @param  bool   $visible
+	 * @return void
+	 */
+	public function update_item_page_visibility($item, bool $visible) {
+		$p = $this->get_item_page($item);
+		$p->of(false);
+
+		if ($visible) {
+			$p->status(['hidden' => false, 'unpublished' => false]);
+		} else {
+			$p->status(['hidden' => false, 'unpublished' => false]);
+		}
+
+		return $p->save();
+	}
+
+	/**
+	 * Returns if Item Group Exists
+	 * @param  ItemMasterItem|string $item   Item Group | Code
+	 * @return bool
+	 */
+	public function item_page_exists($item) {
+		$itemid = is_object($item) ? $item->itemid : $item;
+		$template = self::TEMPLATE_ITEM;
+		$p = $this->wire('pages')->get("template=$template, itemid=$itemid");
+		return boolval($p->id);
+	}
+
+	/**
+	 * Returns Item Group Page
+	 * @param  ItemMasterItem|string $item   Item Group | Code
+	 * @return Page
+	 */
+	public function get_item_page($item) {
+		$itemid = is_object($item) ? $item->itemid : $item;
+		$template = self::TEMPLATE_ITEM;
+		return $this->wire('pages')->get("template=$template,itemid=$itemid");
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	public function update() {
+		parent::update();
+		$this->turn_item_pages_invisible();
+		$this->update_item_pages();
+	}
+
+	public function init() {
+		$template = self::TEMPLATE_ITEM;
+
+		$this->addHookProperty("Page(template=$template)::item", function($event) {
+			$p = $event->object;
+
+			if ($p->imitem) {
+				$item = $p->imitem;
+			} else {
+				$p->imitem = $this->wire('modules')->get('LoaderItem')->load($p->itemid);
+				$item = $p->imitem;
+			}
+			$event->return = $item;
+		});
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dpluso Pages Modules',
+			'version' => 101,
+			'summary' => 'Installs and creates Ugm Ordering Pages',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('PwPages'),
+		);
+	}
+}

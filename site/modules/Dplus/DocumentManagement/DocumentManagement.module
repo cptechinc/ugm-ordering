@@ -1,0 +1,115 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+use DocumentFoldersQuery, DocumentFolders;
+use DocumentsQuery, Documents;
+
+/**
+ * Document Management
+ *
+ * Handles Document Retrieval for Dplus
+ */
+class DocumentManagement extends WireData implements Module {
+	const TAG_ARINVOICE  = 'AR';
+	const TAG_SALESORDER = 'SO';
+
+	const TAG_ITEM       = 'IT';
+	const TAG_VENDORPO   = 'PO';
+	const TAG_APINVOICE  = 'AP';
+
+	const FOLDER_ARINVOICE = 'ARINVC';
+	const FOLDER_ARINVOICE_ALT = 'ARINV';
+
+	const EXTENSIONS_IMAGES = array(
+		'jpg',
+		'gif',
+		'png'
+	);
+
+	/**
+	 * Return Tag Code for tag name
+	 * @uses self::TAG_*
+	 *
+	 * @param  string $tagname Tag name
+	 * @return string          Tag Code
+	 */
+	public function get_tag($tagname) {
+		$tag = strtoupper($tagname);
+		return constant("self::TAG_$tag");
+	}
+
+	/**
+	 * Finds a Document from the Documents table and creates a copy
+	 * @uses self::move_file()
+	 *
+	 * @param  string $folder      Which Folder to Filter the document to
+	 * @param  string $filename    File Name
+	 * @param  string $destination Directory to move the file to
+	 * @return void
+	 */
+	public function move_document($folder, $filename, $destination = '') {
+		$documents_master = DocumentsQuery::create();
+		$documents_master->filterByFolder($folder);
+		$documents_master->filterByFilename($filename);
+		$document = $documents_master->findOne();
+
+		$folder = DocumentFoldersQuery::create()->findOneByFolder($folder);
+		$this->move_file($folder->directory, $document->filename, $destination);
+	}
+
+	/**
+	 * Copies a file from a directory into the destination directory
+	 * @param  string $directory   Directory which the file resides
+	 * @param  string $filename    File Name
+	 * @param  string $destination Destination Directory
+	 * @return bool                Was file copied to the new directory
+	 */
+	public function move_file($directory, $filename, $destination = '') {
+		$srcfile = "$directory/$filename";
+		$destination = empty($destination) ? $this->wire('config')->directory_webdocs : $destination;
+		$destination = rtrim($destination, '/');
+		$newfile = "$destination/$filename";
+		return copy($srcfile, $newfile);
+	}
+
+	/**
+	 * Return filepath for Document
+	 * @param  string $folder   Document Folder
+	 * @param  string $filename File Name
+	 * @return string
+	 */
+	public function whereis_document($folder, $filename) {
+		$documents_master = DocumentsQuery::create();
+		$documents_master->filterByFolder($folder);
+		$documents_master->filterByFilename($filename);
+		$document = $documents_master->findOne();
+
+		$folder = DocumentFoldersQuery::create()->findOneByFolder($folder);
+		return "$folder->directory/$filename";
+	}
+
+	/**
+	 * Returns if file is already in the web access directory
+	 * @param  string $filename File Name
+	 * @return bool             Is the file in the web access directory?
+	 */
+	public function is_filewebaccessible($filename) {
+		return file_exists($this->wire('config')->directory_webdocs.$filename);
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dplus Document Management',
+			'version' => 101,
+			'summary' => 'Module for getting Documents / Document Info out of Dplus',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array(
+				'DocumentManagementSo'
+			)
+		);
+	}
+}

@@ -1,0 +1,286 @@
+<?php namespace ProcessWire;
+
+
+use ConfigArQuery, ConfigAr;
+
+
+use NotesCartQuery, NotesCart;
+use Map\NotesCartTableMap;
+use Map\LoginTableMap;
+
+include_once(__DIR__.'/QnotesResponse.php');
+
+/**
+ * QnotesCart
+ *
+ * Class for Writing and Reading Qnotes for Cart
+ */
+class QnotesCart extends WireData implements Module {
+	const MODEL              = 'NotesCart';
+	const MODEL_KEY          = 'sessionid, itemid, sequence';
+	const DESCRIPTION        = 'Cart Note';
+	const DESCRIPTION_RECORD = 'Cart Note';
+	const DESCRIPTION_RESPONSE = 'Cart ';
+	const MODEL_TABLE = 'notes_cart';
+
+	/**
+	 * Return the Max Number of columns for Note Type
+	 * @return int
+	 */
+	public function get_column_count() {
+		$configAR = ConfigArQuery::create()->findOne();
+		return $configAR->columns_notes_invoice;
+	}
+
+	/**
+	 * Returns Cart Notes Query
+	 * @return NotesCartQuery
+	 */
+	public function get_query() {
+		return NotesCartQuery::create();
+	}
+
+	public function get_header_itemid() {
+		return 'header';
+	}
+
+/* =============================================================
+	CRUD Read, Validate Functions
+============================================================= */
+	/**
+	 * Returns if Notes Exist
+	 * @param  int    $itemID Itemid
+	 * @return bool
+	 */
+	public function notes_exist($itemID) {
+		$q = $this->get_query();
+		$q->filterBySessionid($this->sessionid);
+		$q->filterByItemid($itemID);
+		return boolval($q->count());
+	}
+
+	/**
+	 * Returns Itemid 1 of Every Note
+	 * @param  int    $itemID Itemid
+	 * @return NotesCart[]|ObjectCollection
+	 */
+	public function get_notes_summarized($itemID) {
+		$q = $this->get_query();
+		$q->filterBySessionid($this->sessionid);
+		$q->filterByItemid($itemID);
+		$q->filterBySequence(1);
+		return $q->find();
+	}
+
+	/**
+	 * Return Notes for Form
+	 * @param  int    $itemID Itemid
+	 * @return array
+	 */
+	public function get_notes_form_array($itemID) {
+		$q = $this->get_query();
+		$q->select('note');
+		$q->filterBySessionid("$this->sessionid");
+		$q->filterByItemid("$itemID");
+		return $q->count() ? $q->find()->toArray() : array();
+	}
+
+/* =============================================================
+	CRUD Delete
+============================================================= */
+	/**
+	 * Delete Notes for Form
+	 * @param  int    $itemID Itemid
+	 * @return array
+	 */
+	public function delete_notes($itemID) {
+		$q = $this->get_query();
+		$q->filterBySessionid($this->sessionid);
+		$q->filterByItemid($itemID);
+
+		if ($q->count()) {
+			return $q->delete();
+		}
+		return true;
+	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
+	/**
+	 * Takes Input, Processes it, updates Cart Notes in the Database
+	 *
+	 * @param  WireInput $input Input
+	 * @return void
+	 */
+	public function process_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		
+		switch ($values->text('action')) {
+			case 'update-notes':
+				$this->update_notes_input($input);
+				break;
+			case 'delete-notes':
+				$this->delete_notes_input($input);
+				break;
+		}
+	}
+
+	/**
+	 * Takes Input, Processes it, deletes Cart Notes
+	 *
+	 * @param  WireInput $input Input
+	 * @return void
+	 */
+	public function delete_notes_input($input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+
+		$itemID = $input->$rm->text('itemID');
+		$q = $this->get_query();
+		$q->filterBySessionid($this->sessionid);
+		$q->filterByItemid($itemID);
+
+		if ($q->count()) {
+			$note = $q->findOne();
+		} else {
+			$note = new NotesCart();
+			$note->setSessionid($this->sessionid);
+			$note->setItemid($itemID);
+		}
+		$success = $this->delete_notes($itemID);
+
+		$this->wire('session')->response_qnote = $this->process_response_delete($note, $this->sessionid, $success);
+	}
+
+	/**
+	 * Takes Input, Processes it, updates Cart Notes
+	 *
+	 * @param  WireInput $input Input
+	 * @return void
+	 */
+	public function update_notes_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+
+		$itemID = $input->$rm->text('itemID');
+		$note_lines = explode(PHP_EOL, $input->$rm->textarea('note'));
+		$lines_saved = array();
+
+		$this->delete_notes($itemID);
+
+		foreach ($note_lines as $key => $line) {
+			$sequence = $key + 1;
+			$record = new NotesCart();
+			$record->setSessionid($this->sessionid);
+			$record->setItemid($itemID);
+			$record->setSequence($sequence); // PK
+			$record->setNote($line);
+			$record->setDate(date('Ymd'));
+			$record->setTime(date('His'));
+			$lines_saved[$sequence] = $record->save();
+		}
+		$this->wire('session')->response_qnote = $this->process_responses($record, $lines_saved);
+	}
+
+/* =============================================================
+	CRUD Response Functions
+============================================================= */
+	/**
+	 * Return Code Table Response based on the number of lines that were written to the database
+	 * @param  array  $lines_saved  array of line numbers and if they got saved e.g. (1 => true, 2 => false)
+	 * @return CodeTableResponse
+	 */
+	protected function process_responses(NotesCart $note, array $lines_saved) {
+		$message = self::DESCRIPTION_RESPONSE . " ($note->itemid) Note Lines";
+
+		$response = new QnotesResponse();
+		$response->set_key("{$note->itemid}}");
+
+		if (in_array(false, $lines_saved)) {
+			$lines_error =
+			array_filter($lines_saved, function($value, $key) {
+				return  $value == false;
+			}, ARRAY_FILTER_USE_BOTH);
+			$message .= implode(", ", array_keys($lines_error));
+			$message .= " were not able to be saved";
+
+			if (sizeof($lines_error)) {
+				$response->set_error(true);
+			}
+		} else {
+			$response->set_success(true);
+			$message .= " were able to be saved";
+		}
+
+		$response->set_action(QnotesResponse::CRUD_UPDATE);
+		$response->set_message($message);
+		return $response;
+	}
+
+	/**
+	 * Return QnoteResponse based if Notes were able to be Deleted
+	 * @param  NotesCart   $note         Attributes are needed to generate key
+	 * @param  array             $success      Were Notes able to be deleted?
+	 * @return QnoteResponse
+	 */
+	public function process_response_delete(NotesCart $note, bool $success) {
+		$message = self::DESCRIPTION_RESPONSE . " ($note->itemid) Notes ";
+
+		$response = new QnotesResponse();
+		$response->set_key("{$note->itemid}");
+
+		if ($success) {
+			$response->set_success(true);
+			$message .= " were able to be deleted";
+		} else {
+			$response->set_success(true);
+			$message .= " were not able to be deleted";
+		}
+
+		$response->set_action(QnotesResponse::CRUD_DELETE);
+		$response->set_message($message);
+
+		return $response;
+	}
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Default forms
+	 * @return array
+	 */
+	public function get_default_forms() {
+		$config_so = ConfigSalesOrderQuery::create()->findOne();
+		$defaults = array(
+			'pick' => $config_so->note_default_pick,
+			'pack' => $config_so->note_default_pack,
+			'invoice' => $config_so->note_default_invoice,
+			'acknowledgement' => $config_so->note_default_acknowledgement,
+		);
+		return $defaults;
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dplus Qnotes Ecomm Cart',
+			'version' => 101,
+			'summary' => 'Dplus Qnotes Ecomm Cart methods',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('Qnotes')
+		);
+	}
+
+	public function __construct() {
+		$this->sessionid = session_id();
+	}
+
+	public function init() {
+		$this->sessionid = session_id();
+	}
+}

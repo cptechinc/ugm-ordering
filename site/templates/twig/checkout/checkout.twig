@@ -1,0 +1,30 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	checkoutm              module Checkout
+	cart                   module Cart
+	qnotes                 module QnotesCart
+#}
+{% set billing = checkoutm.get_billing() %}
+{% set customer = checkoutm.get_customer(billing.custid) %}
+{% include 'checkout/summary.twig' %}
+
+<form id="checkout-form" action="{{ page.url }}">
+	<input type="hidden" name="action" value="update-billing">
+
+	<div class="row">
+		<div class="col-sm-6">
+			<h3 class="font-weight-bold text-secondary mt-4">Shipping</h3>
+			{% include 'checkout/form/shipto.twig' %}
+		</div>
+
+		<div class="col-sm-6">
+			<h3 class="font-weight-bold text-secondary mt-4">Order Information</h3>
+			{% include 'checkout/form/order.twig' %}
+		</div>
+	</div>
+	<button type="submit" class="btn btn-success">
+		Continue
+	</button>
+</form>

@@ -1,0 +1,13 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	checkoutm              module Checkout
+#}
+{% set billing = checkoutm.get_billing() %}
+{% set customer = checkoutm.get_customer(billing.custid) %}
+{% include 'checkout/confirm/summary.twig' %}
+
+<a href="{{ page.url }}?action=confirm-checkout" class="btn btn-success">
+	<i class="fa fa-cloud-upload" aria-hidden="true"></i> Submit Order
+</a>

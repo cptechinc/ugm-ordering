@@ -1,0 +1,92 @@
+$(function() {
+	var shiptos = {{ editm.get_shiptos_js()|json_encode()|raw }};
+	var form = $('#order-form');
+
+/* =============================================================
+	Event Functions
+============================================================= */
+	$("body").on('change', 'select[name=shiptoid]', function(e) {
+		var select = $(this);
+		var shiptoid = select.val();
+		fillout_shipto_fields(shiptoid);
+	});
+
+	$('.placard.placard-qty').on('shown.fu.placard', function () {
+		var placard = $(this);
+		var qty = placard.find('input[name=qty]').attr('data-qty');
+		placard.find('.placard-header').find('.qty').text(': ' + qty);
+	});
+
+/* =============================================================
+	Unsaved Fields Alert
+============================================================= */
+	origForm = form.serialize();
+
+	$("body").on("click", "a:not(#order-form a, #ajax-modal a)", function(e) {
+		if (form.serialize() !== origForm) {
+			e.preventDefault();
+			var a = $(this);
+			var href = a.attr('href');
+
+			swal2.fire({
+				title: 'You have unsaved changes!',
+				text: 'Do you want to save?',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: '<i class="fa fa-floppy-o" aria-hidden="true"></i> Yes',
+				cancelButtonText: 'No',
+			}).then((result) => {
+				if (result.value) {
+					form.find('button[type=submit]').click();
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					window.location.href = href;
+				}
+			});
+		}
+	});
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+
+	function fillout_shipto_fields(shiptoid) {
+		var shipto = new Shipto();
+
+		if (shiptoid in shiptos) {
+			shipto = get_shiptodata(shipto, shiptoid);
+
+		}
+		//form.find('input[name=sconame]').val(shipto.name);
+		form.find('input[name=shipname]').val(shipto.name);
+		form.find('input[name=shipaddress]').val(shipto.address1);
+		form.find('input[name=shipaddress2]').val(shipto.address2);
+		form.find('input[name=shipcity]').val(shipto.city);
+		form.find('select[name=shipstate]').val(shipto.state);
+		form.find('input[name=shipzip]').val(shipto.zip);
+	}
+
+	function get_shiptodata(shipto, shiptoid) {
+		var shipto_data = shiptos[shiptoid];
+		shipto.id = shipto_data.shiptoid;
+		shipto.name     = shipto_data.name;
+		shipto.address1 = shipto_data.address1;
+		shipto.address2 = shipto_data.address2;
+		shipto.contact  = shipto_data.contact;
+		shipto.city     = shipto_data.city;
+		shipto.state    = shipto_data.state;
+		shipto.zip      = shipto_data.zip;
+		return shipto;
+	}
+
+	function Shipto() {
+		this.id       = '';
+		this.name     = '';
+		this.address1 = '';
+		this.address2 = '';
+		this.contact  = '';
+		this.city     = '';
+		this.state    = '';
+		this.zip      = '';
+	}
+
+});

@@ -1,0 +1,287 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+use Propel\Runtime\ActiveQuery\Criteria;
+
+
+use CartQuery;
+use Cart as CartItem;
+
+include_once(__DIR__.'/../DplusResponse.php');
+
+/**
+ * Handles Cart Actions
+ */
+class Cart extends WireData implements Module {
+
+	/**
+	 * Return CartQuery
+	 * @return CartQuery
+	 */
+	public function get_query() {
+		$q = CartQuery::create();
+		$q->filterBySessionid(session_id());
+		return $q;
+	}
+
+	/**
+	 * Return Query for CartItems
+	 * @return CartQuery
+	 */
+	public function get_query_items() {
+		$q = $this->get_query();
+		$q->filterByItemid('', Criteria::ALT_NOT_EQUAL);
+		return $q;
+	}
+
+/* =============================================================
+	Get Functions
+============================================================= */
+	/**
+	 * Return Items
+	 * @return Cart[]|ObjectCollection
+	 */
+	public function items() {
+		$q = $this->get_query_items();
+		return $q->find();
+	}
+
+	/**
+	 * Return the number of Items in cart
+	 * @return int
+	 */
+	public function count_items() {
+		$q = $this->get_query_items();
+		return $q->count();
+	}
+
+	/**
+	 * Return that Item Exists in cart
+	 * @param  string $itemID Item ID
+	 * @return bool
+	 */
+	public function exists($itemID) {
+		$q = $this->get_query_items();
+		$q->filterByItemid($itemID);
+		return boolval($q->count());
+	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
+	/**
+	 * Processes Input and calls appropriate functions
+	 * @param  WireInput $input Input Data
+	 * @return void
+	 */
+	public function process_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+
+		if ($values->action) {
+			switch ($values->text('action')) {
+				case 'add-item':
+					$this->add_item_input($input);
+					break;
+				case 'update-item-qty':
+					$this->update_item_qty_input($input);
+					break;
+				case 'delete-item':
+					$this->delete_item_input($input);
+					break;
+				case 'checkout':
+					$this->checkout($input);
+					break;
+				case 'update-notes':
+				case 'delete-notes':
+					$qnotes = $this->wire('modules')->get('QnotesCart');
+					$qnotes->process_input($input);
+					break;
+			}
+		} else {
+			$this->wire('session')->response_cart = DplusResponse::create_error("No Cart Action provided");
+		}
+	}
+
+	/**
+	 * Processes Input for Add To Cart Request
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function add_item_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$validate_item = $this->wire('modules')->get('ValidateItem');
+		$itemID = $values->text('itemID');
+		$qty = $values->int('qty') ? $values->int('qty') : 1;
+
+		if ($validate_item->validate($itemID)) {
+			$this->request_item_add($itemID, $qty);
+		} else {
+			$this->wire('session')->response_cart = DplusResponse::create_error("Item $itemID not found");
+		}
+	}
+
+	/**
+	 * Processes Input for Edit Item Qty Request
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function update_item_qty_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$itemID = $values->text('itemID');
+		$qty = $values->int('qty') ? $values->int('qty') : 1;
+
+		if ($this->exists($itemID)) {
+			$this->request_item_update($itemID, $qty);
+		} else {
+			$this->wire('session')->response_cart = DplusResponse::create_error("Item $itemID is not in cart");
+		}
+	}
+
+	/**
+	 * Processes Input for Delete Item Qty Request
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function delete_item_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$itemID = $values->text('itemID');
+
+		if ($this->exists($itemID)) {
+			$this->request_item_delete($itemID);
+
+			if (!$this->exists($itemID)) {
+				$qnotes = $this->wire('modules')->get('QnotesCart');
+				$qnotes->delete_notes($itemID);
+			}
+		} else {
+			$this->wire('session')->response_cart = DplusResponse::create_error("Item $itemID is not in cart");
+		}
+	}
+
+	/**
+	 * Processes Checkout Request
+	 * @return void
+	 */
+	public function checkout() {
+		if ($this->count_items()) {
+			$this->request_checkout();
+
+			if ($this->modules->get('Checkout')->has_billing()) {
+				$url = $this->wire('pages')->get('template=checkout')->url;
+				$this->wire('session')->redirect($url, $http301 = false);
+			} else {
+				$this->wire('session')->response_cart = DplusResponse::create_error("Unable to Checkout");
+			}
+		} else {
+			$this->wire('session')->response_cart = DplusResponse::create_error("You don't have items in your cart");
+		}
+	}
+
+/* =============================================================
+	Dplus Cobol Request Functions
+============================================================= */
+	/**
+	 * Send Add Item Request
+	 * @param  string $itemID Item ID
+	 * @param  int    $qty    Qty
+	 * @return void
+	 */
+	protected function request_item_add($itemID, int $qty) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", "ADDTOCART", "ITEMID=$itemID", "QTY=$qty");
+		$this->send_request($data);
+	}
+
+	/**
+	 * Send Update Item Request
+	 * @param  string $itemID Item ID
+	 * @param  int    $qty    Qty
+	 * @return void
+	 */
+	protected function request_item_update($itemID, int $qty) {
+		$this->request_item_add($itemID, $qty);
+	}
+
+	/**
+	 * Send Delete Item Request
+	 * @param  string $itemID Item ID
+	 * @return void
+	 */
+	protected function request_item_delete($itemID) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", "ADDTOCART", "ITEMID=$itemID", "QTY=0");
+		$this->send_request($data);
+	}
+
+	/**
+	 * Send Checkout Request
+	 * @return void
+	 */
+	protected function request_checkout() {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", 'PREBILL');
+		$this->send_request($data);
+	}
+
+	/**
+	 * Write Session File and Make CGI Request
+	 * @param  array  $data
+	 * @return void
+	 */
+	protected function send_request(array $data) {
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Item Master Item
+	 * @param  string $itemID Item ID
+	 * @return ItemMasterItem
+	 */
+	public function get_item($itemID) {
+		return $this->wire('modules')->get('LoaderItem')->load($itemID);
+	}
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Ecomm Cart Module',
+			'version' => 101,
+			'summary' => 'Handles Ecomm Cart Functionality',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+
+	public function init() {
+		$this->addHookProperty('Page(template=cart)::url_itemjson', function($event) {
+			$event->return = $this->wire('pages')->get('template=items-json')->url;
+		});
+
+		$this->addHookProperty('Page(template=cart)::url_search', function($event) {
+			$event->return = $this->wire('pages')->get('template=items-search')->url;
+		});
+
+		$this->addHook('Page(template=cart)::url_item_delete', function($event) {
+			$itemID = $event->arguments(0);
+			$url = new Url($this->wire('pages')->get('template=cart')->url);
+			$url->query->set('action', 'delete-item');
+			$url->query->set('itemID', $itemID);
+			$event->return = $url->getUrl();
+		});
+	}
+}

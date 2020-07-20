@@ -1,0 +1,119 @@
+<?php namespace ProcessWire;
+
+/**
+ * class Dpages
+ *
+ * Installs fields, templates, pages, hooks necessary for Top Menus
+ * NOTE: Also installs the basic fields, templates, to build the rest of the Application
+ */
+class UgmOrderingPages extends PwPages implements Module {
+	const FIELDS = array();
+
+	const TEMPLATES = array(
+		'build' => array(
+			'name'   => 'build',
+			'fields' => array('summary'),
+			'paginated' => false
+		),
+		'login' => array(
+			'name'   => 'login',
+			'fields' => array(),
+			'paginated' => false
+		),
+		'cart' => array(
+			'name'   => 'cart',
+			'fields' => array(),
+			'paginated' => false
+		),
+		'checkout' => array(
+			'name'   => 'checkout',
+			'fields' => array(),
+			'paginated' => false
+		),
+		'checkout-confirm' => array(
+			'name'   => 'checkout-confirm',
+			'fields' => array(),
+			'paginated' => false
+		),
+		'checkout-confirmed' => array(
+			'name'   => 'checkout-confirmed',
+			'fields' => array(),
+			'paginated' => false
+		),
+	);
+
+	const PAGES = array(
+		'build' => array(
+			'template' => 'build',
+			'name'     => 'build',
+			'title'    => 'Rebuild Pages',
+			'summary'  => 'Rebuild Pages',
+			'parent'   => '/'
+		),
+		'cart' => array(
+			'template' => 'cart',
+			'name'     => 'cart',
+			'title'    => 'Cart',
+			'summary'  => 'Cart',
+			'parent'   => '/'
+		),
+		'checkout' => array(
+			'template' => 'checkout',
+			'name'     => 'checkout',
+			'title'    => 'Checkout',
+			'summary'  => 'Checkout',
+			'parent'   => '/'
+		),
+		'checkout-confirm' => array(
+			'template' => 'checkout-confirm',
+			'name'     => 'confirm',
+			'title'    => 'Confirm Your Order',
+			'summary'  => 'Confirm Order',
+			'parent'   => '/checkout/'
+		),
+		'checkout-confirmed' => array(
+			'template' => 'checkout-confirmed',
+			'name'     => 'thanks',
+			'title'    => 'Thank You for your Order',
+			'summary'  => 'Order Confirmed',
+			'parent'   => '/checkout/confirm/'
+		),
+	);
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dpluso Pages Modules',
+			'version' => 101,
+			'summary' => 'Installs and creates Ugm Ordering Pages',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array('PwPages'),
+			'installs' => array(
+				'UgmOrderingPagesItemGroup',
+				'UgmOrderingPagesItem',
+				'UgmOrderingPagesOrder',
+			),
+		);
+	}
+
+	public function update() {
+		$info = self::getModuleInfo();
+		$modules = $this->wire('modules');
+		$modules->refresh();
+
+		foreach ($info['installs'] as $module_name) {
+			$modules->install($module_name);
+		}
+
+		parent::update();
+	}
+}

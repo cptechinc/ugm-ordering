@@ -1,0 +1,117 @@
+<?php namespace ProcessWire;
+
+/**
+ * Module for Searching Item Pages
+ * @property string $selector     Selector String
+ * @property string $q            Search Query
+ * @property bool   $onlystocked  Search only items with available stock? default = true
+ */
+class ItemSearch extends WireData implements Module {
+	// Processwire Selectors
+	// https://processwire.com/api/selectors/
+	const SELECTOR_TEMPLATE = 'template=item';
+	const SELECTOR_BASE = 'template=item, title|body|itemid|name';
+
+	public function __construct() {
+		$this->selector = self::SELECTOR_BASE;
+		$this->q = '';
+		$this->onlystocked = true;
+	}
+
+	/**
+	 * Set Search string
+	 * @param string $q
+	 */
+	public function set_search($q) {
+		$this->q = $q;
+	}
+
+	/**
+	 * Set if Searching only Items that have available stock
+	 * @param bool $onlystocked
+	 */
+	public function set_onlystocked($onlystocked = true) {
+		$this->onlystocked = true;
+	}
+
+	/**
+	 * Return the number of Item Pages that match selector
+	 * @return int
+	 */
+	public function count() {
+		$selector = $this->get_q_selector();
+		$this->selector = $selector;
+		$count = $this->wire('pages')->count($selector);
+		return $this->onlystocked ? $this->count_stocked($selector) : $count;
+	}
+
+	/**
+	 * Return the Number of Item Pages that match selector and have stock
+	 * @param  string $selector
+	 * @return int
+	 */
+	public function count_stocked($selector) {
+		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
+		$items = $this->wire('pages')->find($selector);
+		return $this->find_stocked($items)->count();
+	}
+
+	/**
+	 * Return Pages(template=item) that match Selector
+	 * @param  int    $pagenbr  What Page number to start on
+	 * @param  int    $limit    Number of Pages to return
+	 * @return PageArray
+	 */
+	public function find($pagenbr = 1, $limit = 10) {
+		$start = $pagenbr > 1 ? $pagenbr * $limit : 0;
+		$selector = $this->get_q_selector();
+		$selector .= ", limit=$limit, start=$start";
+		$this->selector = $selector;
+		$items = $this->wire('pages')->find($selector);
+		return $this->onlystocked ? $this->find_stocked($items) : $items;
+	}
+
+	/**
+	 * Return Pages(template=item) that match Selector, and that are stocked
+	 * @param  int    $pagenbr  What Page number to start on
+	 * @param  int    $limit    Number of Pages to return
+	 * @return PageArray
+	 */
+	public function find_stocked(PageArray $items) {
+		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
+		$itemIDs = $items->explode('itemid');
+		$dpluspricing->request_multi($itemIDs);
+		$itemIDs_stocked = $dpluspricing->get_pricing_itemids_stocked($itemIDs);
+		return $items->find('itemid='.implode('|', $itemIDs_stocked));
+	}
+
+	/**
+	 * Return Selector for searching
+	 * @return string
+	 */
+	protected function get_q_selector() {
+		$sanitizer = $this->wire('sanitizer');
+		$selector = $this->q ? self::SELECTOR_BASE : self::SELECTOR_TEMPLATE;
+		$selector .= $this->q ? "%=$this->q" : '';
+		return $selector;
+	}
+
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Search Items Module',
+			'version' => 101,
+			'summary' => 'Handles Item Searching',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+}

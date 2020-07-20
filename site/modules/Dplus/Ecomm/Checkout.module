@@ -1,0 +1,246 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use CustomerQuery, Customer;
+use ShipviaQuery, Shipvia;
+
+use BillingQuery, Billing;
+use StatesQuery, States;
+
+include_once(__DIR__.'/../DplusResponse.php');
+
+/**
+ * Handles Checkout Functionality and Sends Requests to Dplus
+ */
+class Checkout extends WireData implements Module {
+
+	/**
+	 * Return Billing Query
+	 * @return BillingQuery
+	 */
+	public function get_query() {
+		$q = BillingQuery::create();
+		$q->filterBySessionid(session_id());
+		return $q;
+	}
+
+/* =============================================================
+	Get Functions
+============================================================= */
+	/**
+	 * Return Billing Record
+	 * @return Billing
+	 */
+	public function get_billing() {
+		$q = $this->get_query();
+		return $q->findOne();
+	}
+
+	/**
+	 * Return if Billing Record exists
+	 * @return bool
+	 */
+	public function has_billing() {
+		$q = $this->get_query();
+		return boolval($q->count());
+	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
+	/**
+	 * Take Input and process action
+	 * @param  WireInput $input Input Data
+	 * @return void
+	 */
+	public function process_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+
+		if ($values->action) {
+			switch ($values->text('action')) {
+				case 'update-billing':
+					$this->update_billing_input($input);
+					break;
+				case 'confirm-checkout':
+					$this->confirm_checkout();
+					break;
+				case 'update-notes':
+				case 'delete-notes':
+					$qnotes = $this->wire('modules')->get('QnotesCart');
+					$qnotes->process_input($input);
+					break;
+			}
+		} else {
+			$this->wire('session')->response_checkout = DplusResponse::create_error("No Checkout Action provided");
+		}
+	}
+
+	/**
+	 * Sends Order Request
+	 * @return void
+	 */
+	public function confirm_checkout() {
+		$this->request_order();
+		$billing = $this->get_billing();
+
+		if (!$billing->has_error()) {
+			$this->wire('session')->redirect($this->wire('pages')->get('template=checkout-confirmed')->url);
+		}
+	}
+
+	/**
+	 * Updates Billing record with Input Date
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function update_billing_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$billing = $this->get_billing();
+		$billing->setShiptoid($values->text('shiptoid'));
+		$billing->setSconame($values->text('sconame'));
+		$billing->setSname($values->text('sname'));
+		$billing->setSaddress($values->text('saddress'));
+		$billing->setSaddress2($values->text('saddress2'));
+		$billing->setScity($values->text('scity'));
+		$billing->setSzip($values->text('szip'));
+		$billing->setEmail($values->text('email'));
+		$billing->setPono($values->text('pono'));
+		$billing->setPhone($values->text('phone'));
+		$billing->setPaymenttype('bill');
+		$billing->setShipmeth($values->text('shipvia'));
+		$billing->setRqstdate($values->text('rqstdate'));
+
+		if ($billing->save()) {
+			$response = new DplusResponse();
+			$response->set_success(true);
+			$response->set_message("Order info was updated");
+		} else {
+			$response = DplusResponse::create_error("Unable to update order info");
+		}
+		$this->wire('session')->response_checkout = $response;
+	}
+
+/* =============================================================
+	Dplus Cobol Request Functions
+============================================================= */
+	/**
+	 * Send Create Order Request to Dplus
+	 * @return void
+	 */
+	protected function request_order() {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", 'BILL');
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Customer
+	 * @param  string $custID Customer ID
+	 * @return Customer
+	 */
+	public function get_customer($custID) {
+		return CustomerQuery::create()->findOneByCustid($custID);
+	}
+
+	/**
+	 * Return States
+	 * @return States[]|ObjectCollection
+	 */
+	public function get_states() {
+		return StatesQuery::create()->find();
+	}
+
+	/**
+	 * Return State
+	 * @return States
+	 */
+	public function get_state($abbr) {
+		return StatesQuery::create()->findOneByAbbreviation($abbr);
+	}
+
+	/**
+	 * Return Cart Items
+	 * @return Cart[]|ObjectCollection
+	 */
+	public function get_cartitems() {
+		$cart = $this->wire('modules')->get('Cart');
+		return $cart->items();
+	}
+
+	/**
+	 * Return Shiptos Address information
+	 * @return array
+	 */
+	public function get_shiptos_js() {
+		$array = array();
+		$user = $this->wire('user');
+		$shiptos = $user->customer->get_shiptos();
+
+		foreach ($shiptos as $shipto) {
+			$array[$shipto->shiptoid] = array(
+				'shiptoid' => $shipto->shiptoid,
+				'name'     => $shipto->name,
+				'contact'  => '',
+				'address1' => $shipto->address1,
+				'address2' => $shipto->address2,
+				'city' => $shipto->city,
+				'state' => $shipto->state,
+				'zip' => $shipto->zip,
+			);
+		}
+		return $array;
+	}
+
+	/**
+	 * Return Shipvias
+	 * @return Shipvia[]|ObjectCollection
+	 */
+	public function get_shipvias() {
+		return ShipviaQuery::create()->find();
+	}
+
+	/**
+	 * Return Shipvia
+	 * @return Shipvia
+	 */
+	public function get_shipvia($code) {
+		return ShipviaQuery::create()->findOneByCode($code);
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Ecomm Checkout Module',
+			'version' => 101,
+			'summary' => 'Handles Ecomm Checkout',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+
+	public function init() {
+		$this->addHook('Page(template=checkout|checkout-confirm)::url_cart', function($event) {
+			$event->return = $this->wire('pages')->get('template=cart')->url;
+		});
+
+		$this->addHook('Page(template=checkout-confirm)::url_checkout', function($event) {
+			$event->return = $this->wire('pages')->get('template=checkout')->url;
+		});
+	}
+}

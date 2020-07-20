@@ -1,0 +1,15 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	error                  module AlertData
+#}
+<div class="mb-3">
+	<a href="{{ page.parent.url }}" class="btn btn-primary">
+		<i class="fa fa-step-backward" aria-hidden="true"></i> {{ page.parent.title }}
+	</a>
+</div>
+<div class="mb-3">
+	{% include 'util/alert.twig' with {'type': error.type, 'title': error.title, 'iconclass': error.icon, 'message': error.message} %}
+</div>
+{% include 'orders/order/lookup-form.twig' with {'page': page} %}

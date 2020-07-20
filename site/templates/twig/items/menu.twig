@@ -1,0 +1,12 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	itemgroups             ProcessWire\PageArray | Page('template=item-group')[]
+#}
+<div class="list-group">
+	{% for itemgroup in itemgroups %}
+		<a href="{{ itemgroup.url }}" class="list-group-item list-group-item-action">
+			{{ itemgroup.title }}
+		</a>
+	{% endfor %}
+</div>

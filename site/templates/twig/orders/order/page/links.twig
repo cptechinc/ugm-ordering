@@ -1,0 +1,43 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	order                  SalesOrder|SalesJistory
+	docm                   module DocumentManagementSo
+#}
+<div class="mb-3">
+	<div class="row">
+		<div class="col">
+			<a href="#" class="btn btn-light" aria-label="Return to last page" onclick="window.history.back();">
+				<i class="fa fa-undo" aria-hidden="true"></i> Go back
+			</a>
+			&nbsp;
+			<a href="{{ page.listpage.url }}" class="btn btn-light">
+				<i class="fa fa-list" aria-hidden="true"></i> {{ page.listpage.title }}
+			</a>
+		</div>
+		<div class="col text-right">
+			{% if docm.count_documents(order.ordernumber) %}
+				<a href="#documents" title="View Documents" aria-label="View Documents">
+					<i class="fa fa-file-text fa-2x" aria-hidden="true"></i>
+				</a>
+			{% else %}
+				<span title="View Documents" aria-label="View Documents">
+					<i class="fa fa-file-text fa-2x text-light" aria-hidden="true"></i>
+				</span>
+			{% endif %}
+			{% if editm.can_edit_order(order.ordernumber) %}
+				<a href="#edit-order" title="Order is Editable" aria-label="Order is Editable">
+					<i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+				</a>
+			{% else %}
+				<span title="Order can't be edited" aria-label="Order can't be edited">
+					<i class="fa fa-pencil fa-2x text-light" aria-hidden="true"></i>
+				</span>
+			{% endif %}
+			<a href="#notes" class="{{ order.count_notes() ? 'text-success' : 'text-muted'}}" title="View Notes" aria-label="View Notes">
+				<i class="fa fa-commenting fa-2x" aria-hidden="true"></i>
+			</a>
+		</div>
+	</div>
+</div>

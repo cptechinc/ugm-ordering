@@ -1,0 +1,40 @@
+$(function() {
+	var modal_notes = $('#notes-modal');
+	var form_notes = $('#cart-notes-form');
+
+	modal_notes.on('show.bs.modal', function (event) {
+		var modal = $(this);
+		var button = $(event.relatedTarget);
+		var itemid = button.data('itemid');
+		var note = $('#notes-'+itemid).val();
+
+		modal.find('span.itemid').text(itemid);
+		modal.find('input[name=itemID]').val(itemid);
+		modal.find('textarea').val(note);
+	});
+
+	form_notes.validate({
+		submitHandler: function(form) {
+			var action = $(this.submitButton).attr("value");
+
+			if (action == 'delete-notes') {
+				var itemid = form_notes.find('input[name=itemID]').val();
+
+				swal2.fire({
+					title: 'Are you sure?',
+					text: 'Delete Item '+ itemid + ' notes?',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'Yes'
+				}).then(function (result) {
+					if (result.value) {
+						$('<input type="hidden" name="action" value="delete-notes">').appendTo(form_notes);
+						form.submit();
+					}
+				});
+			} else {
+				form.submit();
+			}
+		}
+	});
+});

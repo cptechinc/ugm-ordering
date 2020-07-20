@@ -1,0 +1,51 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	cart                   module Cart
+	user                   ProcessWire\User
+	qnotes                 module QnotesCart
+#}
+<div class="card">
+	<div class="card-header bg-secondary text-white">
+		<div class="d-flex w-100 justify-content-between">
+			Cart for {{ user.customer.name }}
+			{% set notesclass = qnotes.notes_exist('header') ? 'btn-info text-white' : 'btn-light border border-dark' %}
+			<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal"aria-controls="notes-modal" data-itemid="header">
+				<i class="fa fa-commenting" aria-hidden="true"></i> Header Notes
+			</button>
+			<div class="collapse">
+				<textarea name="name" id="notes-header" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array('header')|join('\r') }}</textarea>
+			</div>
+		</div>
+	</div>
+	<div class="list-group list-group-flush">
+		<div class="list-group-item bg-primary">
+			{% include 'cart/cart/headings.twig' %}
+		</div>
+
+		{% for item in cart.items() %}
+			<div class="list-group-item">
+				{% include 'cart/cart/item.twig' %}
+			</div>
+			<div class="list-group-item collapse">
+				<textarea name="name" id="notes-{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
+			</div>
+		{% endfor %}
+		<div class="list-group-item">
+			{% include 'cart/lookup-form.twig' %}
+		</div>
+	</div>
+	<div class="card-body collapse bg-light">
+		<div id="lookup-results">
+
+		</div>
+	</div>
+	<div class="card-footer">
+		<div class="text-right">
+			<a href="{{ page.url }}?action=checkout" class="btn btn-success">
+				<i class="fa fa-cart-arrow-down" aria-hidden="true"></i> Checkout
+			</a>
+		</div>
+	</div>
+</div>

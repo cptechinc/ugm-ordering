@@ -1,0 +1,48 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+
+/**
+ * Module for Installing other Ecomm related Modules
+ */
+class Ecomm extends WireData implements Module {
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dplus Ecomm Module',
+			'version' => 101,
+			'summary' => 'Manager Module for installing Ecomm Related Modules',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array(
+				'DplusLogin',
+				'Cart',
+				'Checkout',
+				'ItemSearch',
+				'ItemSearchDplus',
+				'EditOrder',
+			)
+		);
+	}
+
+	public function update() {
+		$info = self::getModuleInfo();
+		$modules = $this->wire('modules');
+		$modules->refresh();
+
+		foreach ($info['installs'] as $module_name) {
+			if (!$modules->isInstalled($module_name)) {
+				$result = $modules->install($module_name);
+			}
+		}
+	}
+
+}

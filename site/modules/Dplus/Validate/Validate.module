@@ -1,0 +1,43 @@
+<?php namespace ProcessWire;
+
+/**
+ * Validate
+ *
+ * Parent Module to Install Sub Lookup Modules
+ */
+class Validate extends WireData implements Module {
+
+	public function update() {
+		$info = self::getModuleInfo();
+		$modules = $this->wire('modules');
+		$modules->refresh();
+
+		foreach ($info['installs'] as $module_name) {
+			if (!$modules->isInstalled($module_name)) {
+				$result = $modules->install($module_name);
+			}
+		}
+	}
+
+	/* =============================================================
+		ProcessWire Module Functions
+	============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Validate Module',
+			'version' => 101,
+			'summary' => 'Handles Validate Modules Installation & Updates',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array(
+				'ValidateItem',
+				'ValidateOrder',
+			)
+		);
+	}
+}

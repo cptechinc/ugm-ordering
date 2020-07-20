@@ -1,0 +1,43 @@
+{% extends 'checkout/summary.twig' %}
+
+{% block order_summary %}
+	<div class="row mb-3">
+		<div class="col-sm-4">
+			<h3 class="font-weight-bold text-secondary mt-4">Bill-To</h3>
+			<address>
+				{{ customer.name }} ({{ customer.id }})<br>
+				{{ customer.address1 }} <br>
+				{% if customer.address2 %}
+					{{ customer.address2 }} <br>
+				{% endif %}
+				{{ customer.city ~ ', ' ~ customer.state ~ ' ' ~ customer.zip }}
+			</address>
+		</div>
+		<div class="col-sm-4">
+			<h3 class="font-weight-bold text-secondary mt-4">Shipping</h3>
+			<address class="">
+				{{ billing.sname }} <br>
+				{{ billing.sconame }} ({{ billing.shiptoid }}) <br>
+				{{ billing.saddress }} <br>
+				{% if billing.saddress2 %}
+					{{ billing.saddress2 }} <br>
+				{% endif %}
+				{{ billing.scity }}, {{ billing.sst }} {{ billing.szip }}
+			</address>
+		</div>
+		<div class="col-sm-4">
+			<h3 class="font-weight-bold text-secondary mt-4">Order Information</h3>
+			<address>
+				{% set shipvia = checkoutm.get_shipvia(billing.shipmeth) %}
+				{{ billing.email }} <br>
+				{{ billing.phone }} <br>
+				<b>PO #:</b> {{ billing.pono }} <br>
+				<b>Ship:</b> {{ shipvia.code ~ ' - ' ~ shipvia.description }} <br>
+				<b>Ship By:</b> {{ billing.rqstdate }}
+			</address>
+		</div>
+	</div>
+	<a href="{{ page.url_checkout() }}" class="btn btn-warning mb-3">
+		<i class="fa fa-pencil" aria-hidden="true"></i> Edit Order / Shipping
+	</a>
+{% endblock %}

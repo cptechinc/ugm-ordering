@@ -1,0 +1,100 @@
+<?php namespace ProcessWire;
+
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use PricingQuery, Pricing;
+
+/**
+ * Module for Searching Item Pages
+ */
+class ItemSearchDplus extends WireData implements Module {
+
+	/**
+	 * Return Pricing Record
+	 * @param  string $itemID Item ID
+	 * @return Pricing
+	 */
+	public function get_pricing_item($itemID) {
+		$q = PricingQuery::create();
+		$q->filterBySessionid(session_id());
+		$q->filterByItemid($itemID);
+		return $q->findOne();
+	}
+
+	/**
+	 * Return Pricing Records for these item IDs
+	 * @param  array  $itemIDs item IDs
+	 * @return Pricing[]|ObjectCollection
+	 */
+	public function get_pricing_itemids_stocked(array $itemIDs) {
+		$q = PricingQuery::create();
+		$q->select('itemid');
+		$q->filterBySessionid(session_id());
+		$q->filterByItemid($itemIDs);
+		$q->filterByQty(0, Criteria::GREATER_THAN);
+		return $q->find()->toArray();
+	}
+
+	/**
+	 * Request Pricing Record for Item
+	 * @param  string $itemID Item ID
+	 * @return void
+	 */
+	public function request_one($itemID) {
+		$this->request_multi(array($itemID));
+	}
+
+	/**
+	 * Request Pricing Record for Items
+	 * @param  array  $itemIDs Item IDs
+	 * @return void
+	 */
+	public function request_multi(array $itemIDs) {
+		$data = $this->create_search_data($itemIDs);
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Return Data array necessary to request Item Pricing Records
+	 * @param  array  $itemIDs Item IDs
+	 * @return array
+	 */
+	protected function create_search_data(array $itemIDs) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", 'ITMPRIMULT');
+		foreach ($itemIDs as $itemID) {
+			$data[] = "ITEMID=$itemID";
+		}
+		return $data;
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	public function init() {
+		$this->addHook('Page(template=item-group)::get_stocked_items', function($event) {
+			$p = $event->object;
+			$itemIDs = $p->children()->explode('itemid');
+			$this->request_multi($itemIDs);
+			$itemIDs_stocked = $this->get_pricing_itemids_stocked($itemIDs);
+			$event->return = $p->children()->find('itemid='.implode('|', $itemIDs_stocked));
+		});
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Search Items Module',
+			'version' => 101,
+			'summary' => 'Handles Item Searching',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+}

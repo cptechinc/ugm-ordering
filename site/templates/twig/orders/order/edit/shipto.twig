@@ -1,0 +1,53 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	editm              module Checkout
+	orderedit              Ordrhed
+	customer               Customer
+#}
+
+<div class="form-group">
+	<label for="shiptoid">ShiptoID</label>
+	<select name="shiptoid" id="shiptoid" class="form-control form-control-sm">
+		<option value="">None</option>
+		{% for shipto in customer.get_shiptos() %}
+			<option value="{{ shipto.id }}" {{ shipto.id == orderedit.shiptoid ? 'selected' : ''}}>{{ shipto.id ~ ' - ' ~ shipto.name }}</option>
+		{% endfor %}
+	</select>
+</div>
+<div class="form-group">
+	<label for="shipname">Name</label>
+	<input type="text" class="form-control form-control-sm" name="shipname" id="shipname" value="{{ orderedit.shipname }}">
+</div>
+<div class="form-group">
+	<label for="contact">Contact</label>
+	<input type="text" class="form-control form-control-sm" name="contact" id="contact" value="{{ orderedit.contact }}">
+</div>
+<div class="form-group">
+	<label for="shipaddress">Address</label>
+	<input type="text" class="form-control form-control-sm" name="shipaddress" id="shipaddress" value="{{ orderedit.shipaddress }}">
+</div>
+<div class="form-group">
+	<label for="shipaddress2">Address 2</label>
+	<input type="text" class="form-control form-control-sm" name="shipaddress2" id="shipaddress2" value="{{ orderedit.shipaddress2 }}">
+</div>
+
+<div class="form-row">
+	<div class="form-group col-sm-5">
+		<label for="shipcity">City</label>
+		<input type="text" class="form-control form-control-sm" name="shipcity" id="shipcity" value="{{ orderedit.shipcity }}">
+	</div>
+	<div class="form-group col-sm-4">
+		<label for="shipstate">State</label>
+		<select name="shipstate" id="shipstate" class="form-control form-control-sm">
+			{% for state in editm.get_states() %}
+				<option value="{{ state.abbreviation }}" {{ state.abbreviation == orderedit.sst ? 'selected' : ''}}>{{ state.name }}</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class="form-group col-sm-3">
+		<label for="shipzip">Zip</label>
+		<input type="text" class="form-control form-control-sm" name="shipzip" id="shipzip" value="{{ orderedit.shipzip }}">
+	</div>
+</div>

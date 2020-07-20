@@ -1,0 +1,20 @@
+$(function() {
+	var modal_notes = $('#notes-modal');
+
+	modal_notes.on('show.bs.modal', function (event) {
+		var modal = $(this);
+		var button = $(event.relatedTarget);
+		var linenbr = parseInt(button.data('linenbr'));
+		var note = $('#notes-line-'+linenbr).val();
+		var title = '';
+		
+		if (linenbr > 0) {
+			title = "Line #" + linenbr;
+		} else {
+			title = "Header";
+		}
+		modal.find('span.linenbr').text(title);
+		modal.find('input[name=linenbr]').val(linenbr);
+		modal.find('textarea').val(note);
+	})
+});

@@ -1,0 +1,134 @@
+<?php namespace ProcessWire;
+
+use SalesOrderNotesQuery, SalesOrderNotes;
+use ConfigArQuery, ConfigAr;
+use ConfigSalesOrderQuery, ConfigSalesOrder;
+
+include_once(__DIR__.'/QnotesResponse.php');
+
+/**
+ * QnotesSales
+ *
+ * Class for for CRUD methods for Qnotes,
+ * calls the correct Qnote module based on the Sales Order #
+ */
+class QnotesSales extends WireData implements Module {
+
+	public function allow_add(User $user, $ordn) {
+		return true;
+	}
+
+	/**
+	 * Return the Max Number of columns for Note Type
+	 * @return int
+	 */
+	public function get_column_count() {
+		$configAR = ConfigArQuery::create()->findOne();
+		return $configAR->columns_notes_invoice;
+	}
+
+/* =============================================================
+	CRUD Read, Validate Functions
+============================================================= */
+	/**
+	 * Returns if Notes Exist
+	 * @param  string $ordn    Order Number
+	 * @param  int    $linenbr Line Number
+	 * @return bool
+	 */
+	public function notes_exist($ordn, $linenbr) {
+		$qnotes = $this->validator->invoice($ordn) ? $this->notes->invoice : $this->notes->order;
+		return $qnotes->notes_exist($ordn, $linenbr);
+	}
+
+	/**
+	 * Returns Line 1 of Every Note
+	 * @param  string $ordn    Order Number
+	 * @param  int    $linenbr Line Number
+	 * @return SalesOrderNotes[]|ObjectCollection
+	 */
+	public function get_notes_summarized($ordn, $linenbr) {
+		$qnotes = $this->validator->invoice($ordn) ? $this->notes->invoice : $this->notes->order;
+		return $qnotes->get_notes_summarized($ordn, $linenbr);
+	}
+
+	/**
+	 * Return Notes for Form
+	 * @param  string $ordn    Order Number
+	 * @param  int    $linenbr Line Number
+	 * @param  string $form    Form to Match to e.g YYYN
+	 * @return array
+	 */
+	public function get_notes_form_array($ordn, $linenbr, $form) {
+		$qnotes = $this->validator->invoice($ordn) ? $this->notes->invoice : $this->notes->order;
+		return $qnotes->get_notes_form_array($ordn, $linenbr, $form);
+	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
+	/**
+	 * Takes Input, Processes it, updates Sales Order Notes in the Database
+	 *
+	 * @param  WireInput $input Input
+	 * @return void
+	 */
+	public function process_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$ordn = $input->$rm->text('ordn');
+
+		if ($this->validator->invoice($ordn)) {
+			$this->notes->invoice->process_input($input);
+		} else {
+			$this->notes->order->process_input($input);
+		}
+	}
+
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Default forms
+	 * @return array
+	 */
+	public function get_default_forms() {
+		$config_so = ConfigSalesOrderQuery::create()->findOne();
+		$defaults = array(
+			'pick' => $config_so->note_default_pick,
+			'pack' => $config_so->note_default_pack,
+			'invoice' => $config_so->note_default_invoice,
+			'acknowledgement' => $config_so->note_default_acknowledgement,
+		);
+		return $defaults;
+	}
+
+	public function get_default_forms_string() {
+		return implode('', array_values($this->get_default_forms()));
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Dplus Qnotes Sales',
+			'version' => 101,
+			'summary' => 'Dplus Qnotes Sales',
+			'singular' => true,
+			'autoload' => true,
+			'requires' => array(
+				'Qnotes',
+				'QnotesSalesOrder',
+				'QnotesSalesHistory',
+			)
+		);
+	}
+
+	public function init() {
+		$this->validator = $this->wire('modules')->get('ValidateOrder');
+		$this->notes = new WireData();
+		$this->notes->order = $this->wire('modules')->get('QnotesSalesOrder');
+		$this->notes->invoice = $this->wire('modules')->get('QnotesSalesHistory');
+	}
+}

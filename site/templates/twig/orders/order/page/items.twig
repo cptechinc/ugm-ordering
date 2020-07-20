@@ -1,0 +1,47 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	order                  SalesOrder
+	order.items            SalesOrderDetail[]
+	qnotes                 QnotesSales
+#}
+<div class="list-group">
+	<div class="list-group-item bg-primary">
+		<div class="row">
+			<div class="col">Item ID</div>
+			<div class="col">UoM</div>
+			<div class="col text-right">Qty</div>
+			<div class="col text-right">Price</div>
+			<div class="col text-right">Total Price</div>
+			<div class="col text-right">Notes</div>
+		</div>
+	</div>
+	{% for detail in order.items %}
+		<div class="list-group-item">
+			<div class="row">
+				<div class="col">
+					{{ detail.itemid }} <br>
+					<small>{{ detail.desc1 }}</small>
+				</div>
+				<div class="col">
+					{{ detail.item.uom_sale }}
+				</div>
+				<div class="col text-right">{{ detail.qty_ordered|number_format() }}</div>
+				<div class="col text-right">$ {{ detail.price|currency }}</div>
+				<div class="col text-right">$ {{ detail.total_price|currency }}</div>
+				<div class="col text-right">
+					<a data-toggle="collapse" href="#line-{{ detail.linenbr }}-note" role="button" aria-expanded="false" aria-controls="line-{{ detail.linenbr }}-note" class="h4 {{ detail.has_notes() ? 'text-success' : 'text-muted'}}">
+						<i class="fa fa-commenting" aria-hidden="true"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="list-group-item bg-light collapse" id="line-{{ detail.linenbr }}-note">
+			<textarea name="name" id="notes-line-{{ detail.linenbr }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(order.ordernumber, detail.linenbr, qnotes.get_default_forms_string())|join('\r') }}</textarea>
+			<button class="btn btn-warning" type="button" data-toggle="modal" data-target="#notes-modal" data-linenbr="{{ detail.linenbr }}">
+				<i class="fa fa-pencil" aria-hidden="true"></i> Edit
+			</button>
+		</div>
+	{% endfor %}
+</div>
