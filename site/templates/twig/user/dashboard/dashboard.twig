@@ -7,9 +7,9 @@
 	<div class="card-body bg-primary">
 		<div class="row ">
 			{% for link in navpages %}
-				<div class="col-sm-3">
+				<div class="col-sm-3 form-group">
 					<div class="card bg-white">
-						<a href="{{ link.page.url }}">
+						<a href="{{ link.page.url }}" target="{{ link.target }}">
 							<div class="card-body">
 								<h1 class="text-center text-danger"><i class="fa {{ link.icon }} fa-2x" aria-hidden="true"></i></h1>
 								<p class="card-text font-weight-bold text-center text-danger">{{ link.page.title }}</p>
