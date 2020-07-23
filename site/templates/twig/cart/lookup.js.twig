@@ -18,10 +18,12 @@ $(function() {
 		input_qty.focus();
 	});
 
-	$("body").on('click', '#ajax-modal .paginator-link', function(e) {
+	$("body").on('click', '#lookup-results .paginator-link', function(e) {
 		e.preventDefault();
 		var href = $(this).attr('href');
-		modal_ajax.find('.modal-body').load(href);
+		div_results.loadin(href, function() {
+			
+		});
 	});
 
 /* =============================================================
@@ -75,7 +77,7 @@ $(function() {
 		}, function() {
 			swal2.fire({
 				title: 'Item not found.',
-				text: input_itemid.val() + ' cannot be found.',
+				text: '"'+input_itemid.val() +'"' + ' cannot be found.',
 				icon: 'warning',
 				showCancelButton: true,
 				confirmButtonText: 'Make advanced search?'
