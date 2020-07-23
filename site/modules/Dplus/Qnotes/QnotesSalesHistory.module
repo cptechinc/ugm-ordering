@@ -175,11 +175,12 @@ class QnotesSalesHistory extends WireData implements Module {
 	 */
 	public function update_notes_input(WireInput $input) {
 		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
 		$ordn  = $input->$rm->text('ordn');
 
 		$linenbr = $input->$rm->text('linenbr');
 		$form    = $input->$rm->text('form');
-		$note_lines = explode(PHP_EOL, $input->$rm->textarea('note'));
+		$note_lines = $this->wire('modules')->get('Qnotes')->note_lines($values->textarea('note'), $this->get_column_count());
 		$lines_saved = array();
 
 		if (empty($form)) {
