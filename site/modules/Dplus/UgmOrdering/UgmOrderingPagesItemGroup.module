@@ -79,6 +79,7 @@ class UgmOrderingPagesItemGroup extends PwPages implements Module {
 		$updated = array();
 
 		foreach ($groups as $group) {
+
 			if ($this->group_page_exists($group)) {
 				$updated[$group->code] = $this->update_group_page($group);
 			} else {
@@ -118,6 +119,7 @@ class UgmOrderingPagesItemGroup extends PwPages implements Module {
 		$p->template = self::TEMPLATE_ITEMGROUP;
 		$p->name = $this->wire('sanitizer')->pageName($group->code);
 		$p->title = $group->description;
+		$p->groupcode = $group->code;
 		$saved = $p->save();
 
 		if ($saved) {
@@ -167,6 +169,7 @@ class UgmOrderingPagesItemGroup extends PwPages implements Module {
 	public function group_page_exists($group) {
 		$itemgroup = is_object($group) ? $group->code : $group;
 		$template = self::TEMPLATE_ITEMGROUP;
+
 		$p = $this->wire('pages')->get("template=$template, groupcode=$itemgroup");
 		return boolval($p->id);
 	}
