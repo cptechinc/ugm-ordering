@@ -10,11 +10,52 @@ $(function() {
 	var form = $('#checkout-form');
 
 	$("body").on('change', 'select[name=shiptoid]', function(e) {
-
 		var select = $(this);
 		var shiptoid = select.val();
 		fillout_shipto_fields(shiptoid);
 	});
+
+	$("body").on('change', 'input[name=rqstdate]', function(e) {
+		var select = $(this);
+		var date = select.val();
+		console.log(validate_requestdate(date));
+	});
+
+/* =============================================================
+	Validation Functions
+============================================================= */
+jQuery.validator.addMethod("rqstdate", function(value, element) {
+		return this.optional(element) || validate_requestdate(value);
+	}, "Ship Date must be 7 days or more out from today");
+
+	form.validate({
+		errorClass: "is-invalid",
+		validClass: "is-valid",
+		errorPlacement: function(error, element) {
+			var jq = $(element);
+
+			if (jq.closest('.input-group').length) {
+				var parent = jq.closest('.input-group');
+				error.insertAfter(parent).addClass('invalid-feedback');
+			} else {
+				error.insertAfter(element).addClass('invalid-feedback');
+			}
+		},
+		rules: {
+			rqstdate: {rqstdate: true}
+		},
+		messages: {
+		},
+		submitHandler: function(form) {
+			form.submit();
+		}
+	});
+
+	function validate_requestdate(date) {
+		var weekfromnow = moment().add(7, 'days');
+		var momentdate = moment(date, "MM/DD/YYYY");
+		return momentdate >= weekfromnow;
+	}
 
 	function fillout_shipto_fields(shiptoid) {
 		var shipto = new Shipto();
