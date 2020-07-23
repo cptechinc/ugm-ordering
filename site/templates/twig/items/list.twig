@@ -19,7 +19,7 @@
 					<p class="card-text">UoM : {{ item.item.uom_sale }}</p>
 
 					<form class="" action="{{ page.carturl }}" method="post">
-						<input type="hidden" name="action" value="add-to-cart">
+						<input type="hidden" name="action" value="add-item">
 						<input type="hidden" name="itemID" value="{{ item.itemid }}">
 						<input type="hidden" name="page" value="">
 						<div class="row mb-1">
