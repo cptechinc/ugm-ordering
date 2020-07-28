@@ -21,7 +21,7 @@
 					<form class="" action="{{ page.carturl }}" method="post">
 						<input type="hidden" name="action" value="add-item">
 						<input type="hidden" name="itemID" value="{{ item.itemid }}">
-						<input type="hidden" name="page" value="">
+						<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
 						<div class="row mb-1">
 							<div class="col-6">
 								<label for="qty">Qty</label>

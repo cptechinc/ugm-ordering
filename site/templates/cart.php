@@ -6,7 +6,8 @@
 
 	if ($values->action) {
 		$cart->process_input($input);
-		$session->redirect($page->url);
+		$url = $values->page ? $values->text('page') : $page->url;
+		$session->redirect($url);
 	}
 
 	if ($session->response_cart) {
