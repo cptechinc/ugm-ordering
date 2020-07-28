@@ -10,9 +10,13 @@
 		$session->redirect($pages->get('/')->url, $http301 = false);
 	}
 
-	$page->body .= $config->twig->render('user/login/form.twig', ['page' => $page, 'siteconfig' => $siteconfig, 'response' => $session->response_login]);
-	$page->js   .= $config->twig->render('user/login/js.twig');
-	$config->scripts->append(hash_templatefile('scripts/lib/jquery-validate.js'));
+
+	if ($input->get->create) {
+		$page->body .= $config->twig->render('user/account/forms/create-account.twig', ['page' => $page, 'siteconfig' => $siteconfig, 'response' => $session->response_login]);
+	} else {
+		$page->body .= $config->twig->render('user/login/form.twig', ['page' => $page, 'siteconfig' => $siteconfig, 'response' => $session->response_login]);
+		$page->js   .= $config->twig->render('user/login/js.twig');
+	}
 
 	if ($session->response_login) {
 		$session->remove('response_login');
