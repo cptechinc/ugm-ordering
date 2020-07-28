@@ -50,4 +50,17 @@ class DplusResponse extends WireData {
 		$response->set_message($message);
 		return $response;
 	}
+
+	/**
+	 * Return Success Response with Provided Message
+	 * @param  string $message    Error Message
+	 * @return DplusResponse
+	 */
+	public static function create_success($message) {
+		$response = new DplusResponse();
+		$response->set_error(false);
+		$response->set_success(true);
+		$response->set_message($message);
+		return $response;
+	}
 }
