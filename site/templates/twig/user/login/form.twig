@@ -15,9 +15,7 @@
 
 			{% if response %}
 				{% if response.has_error() %}
-					<div class="form-group">
-						{% include 'util/dplus-response.twig' with {'response': response} %}
-					</div>
+					{% include 'util/dplus-response.twig' with {'response': response} %}
 				{% endif %}
 			{% endif %}
 
