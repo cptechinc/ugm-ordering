@@ -16,6 +16,8 @@ class ItemSearch extends WireData implements Module {
 		$this->selector = self::SELECTOR_BASE;
 		$this->q = '';
 		$this->onlystocked = true;
+		$this->sortby = 'itemid';
+		$this->sortrule = 'asc';
 	}
 
 	/**
@@ -26,12 +28,23 @@ class ItemSearch extends WireData implements Module {
 		$this->q = $q;
 	}
 
+	public function set_sort($sortby, $sortrule) {
+		$sortrule = strtolower($sortrule);
+		$this->sortby  = $sortby;
+		$this->sortrule = in_array($sortrule, array('asc', 'desc')) ? $sortrule : 'asc';
+	}
+
 	/**
 	 * Set if Searching only Items that have available stock
 	 * @param bool $onlystocked
 	 */
 	public function set_onlystocked($onlystocked = true) {
 		$this->onlystocked = true;
+	}
+
+	public function pw_sortrule() {
+		$sortrule = strtolower($this->sortrule) == 'desc' ? '-' : '';
+		return $this->sortby . $sortrule;
 	}
 
 	/**
@@ -66,6 +79,7 @@ class ItemSearch extends WireData implements Module {
 		$start = $pagenbr > 1 ? $pagenbr * $limit : 0;
 		$selector = $this->get_q_selector();
 		$selector .= ", limit=$limit, start=$start";
+		$selector .= ", sort=" . $this->pw_sortrule();
 		$this->selector = $selector;
 		$items = $this->wire('pages')->find($selector);
 		return $this->onlystocked ? $this->find_stocked($items) : $items;
