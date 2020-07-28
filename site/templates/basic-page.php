@@ -9,6 +9,7 @@
 			<?= $config->twig->render('nav/breadcrumbs.twig', ['page' => $page]); ?>
 		</div>
 	<?php endif; ?>
+
 	<div class='container page'>
 		<?= $page->body; ?>
 	</div>
