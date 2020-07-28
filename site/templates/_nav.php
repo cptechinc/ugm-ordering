@@ -23,8 +23,9 @@
 						<?= $user->user; ?>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="#">My Orders</a>
-						<a class="dropdown-item" href="#">My Invoices</a>
+						<a class="dropdown-item" href="<?= $pages->get('template=orders')->url; ?>">Orders</a>
+						<a class="dropdown-item" href="<?= $pages->get('template=invoices')->url; ?>">Invoices</a>
+						<a class="dropdown-item" href="<?= $pages->get('template=account')->url; ?>">Account</a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item bg-danger text-white" href="<?= $pages->get('template=login')->url; ?>?action=logout">
 							<i class="fa fa-sign-out" aria-hidden="true"></i> Logout
