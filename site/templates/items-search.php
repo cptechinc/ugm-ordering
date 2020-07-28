@@ -10,7 +10,6 @@
 	$items = $search->find($input->pageNum);
 	$itemIDs = $items->explode('itemid');
 	$dpluspricing->request_multi($itemIDs);
-
 	$page->carturl = $pages->get('template=cart')->url;
 
 	if ($config->ajax) {
