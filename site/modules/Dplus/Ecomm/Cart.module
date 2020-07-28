@@ -117,9 +117,17 @@ class Cart extends WireData implements Module {
 
 		if ($validate_item->validate($itemID)) {
 			$this->request_item_add($itemID, $qty);
+
+			if ($this->exists($itemID)) {
+				$response = DplusResponse::create_success("$itemID was added to the cart");
+				$this->wire('session')->response_cartadd = $itemID;
+			} else {
+				$response = DplusResponse::create_error("$itemID was not added to the cart");
+			}
 		} else {
-			$this->wire('session')->response_cart = DplusResponse::create_error("Item $itemID not found");
+			$response = DplusResponse::create_error("Item $itemID not found");
 		}
+		$this->wire('session')->response_cart = $response;
 	}
 
 	/**
