@@ -36,6 +36,15 @@ class DplusLogin extends WireData implements Module {
 				case 'login':
 					$this->login_input($input, $user);
 					break;
+				case 'update-password':
+					$this->update_password($input, $user);
+					break;
+				case 'setup-recovery':
+					$this->setup_recovery($input, $user);
+					break;
+				case 'register-account':
+					$this->register_account($input);
+					break;
 			}
 		} else {
 			$this->wire('session')->response_login = DplusResponse::create_error("No Login Action provided");
@@ -69,6 +78,74 @@ class DplusLogin extends WireData implements Module {
 		$this->wire('session')->response_login = $response;
 	}
 
+	/**
+	 * Processes Input For Login Request
+	 * @param  WireInput $input
+	 * @param  User      $user
+	 * @return void
+	 */
+	public function update_password(WireInput $input, User $user) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$response = new DplusResponse();
+		
+		if ($user->isLoggedInDplus()) {
+			$email = $values->text('email');
+			$password = $values->text('password');
+			$new = $values->text('new');
+			$this->request_password_change($email, $password, $new);
+			$login = $this->get_loginrecord();
+
+			if ($login->updated_password()) {
+				$response->set_success(true);
+				$response->set_message("Password has been updated");
+			} else {
+				$response->set_error(true);
+				$response->set_message("Unable to update password");
+			}
+		} else {
+			$response->set_error(true);
+			$response->set_message("User Is not Logged In");
+		}
+		$this->wire('session')->response_login = $response;
+	}
+
+	/**
+	 * Processes Input For Login Request
+	 * @param  WireInput $input
+	 * @param  User      $user
+	 * @return void
+	 */
+	public function setup_recovery(WireInput $input, User $user) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$response = new DplusResponse();
+
+
+		if ($user->isLoggedInDplus()) {
+			$email = $values->text('email');
+			$password = $values->text('password');
+			$new = $values->text('new');
+			$maiden = $values->text('maiden');
+			$city   = $values->text('city');
+
+			$this->request_setup_recovery($email, $password, $new, $maiden, $city);
+			$login = $this->get_loginrecord();
+
+			if ($login->updated_password()) {
+				$response->set_success(true);
+				$response->set_message("Password has been updated");
+			} else {
+				$response->set_error(true);
+				$response->set_message("Unable to update password");
+			}
+		} else {
+			$response->set_error(true);
+			$response->set_message("User Is not Logged In");
+		}
+		$this->wire('session')->response_login = $response;
+	}
+
 /* =============================================================
 	Dplus Cobol Request Functions
 ============================================================= */
@@ -85,6 +162,41 @@ class DplusLogin extends WireData implements Module {
 		$requestor->write_dplusfile($data, session_id());
 		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
 	}
+
+	/**
+	 * Send Login Request
+	 * @param  string $email    User Email
+	 * @param  string $password Password
+	 * @param  string $new      New Password
+	 * @return void
+	 */
+	protected function request_password_change($email, $password, $new) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", 'CHANGE PASS', "EMAIL=$email", "PASS=$password", "NPASS=$new");
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Login Request
+	 * @param  string $email    User Email
+	 * @param  string $password Password
+	 * @param  string $new      New Password
+	 * @param  string $maiden   Mother's Maiden Name
+	 * @param  string $city     City Born in
+	 * @return void
+	 */
+	protected function request_setup_recovery($email, $password, $new, $maiden, $city) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$data = array("DBNAME=$dplusdb", 'FIRST CHANGE PASS', "EMAIL=$email", "PASS=$password", "NPASS=$new");
+		$data[] = "MMN=$maiden";
+		$data[] = "CBI=$city";
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
 
 	/**
 	 * Send Logout Request
@@ -123,6 +235,14 @@ class DplusLogin extends WireData implements Module {
 		$user->custid   = $loginrecord->custid;
 		$user->shiptoid = $loginrecord->shiptoid;
 		$user->customer = $this->get_user_customer($user);
+
+		$user_pw = $this->wire('users')->get("email=$user->email");
+
+		if ($user_pw->id) {
+			if ($user_pw->hasRole('items-admin')) {
+				$user->addRole('items-admin');
+			}
+		}
 	}
 
 	/**
@@ -157,6 +277,12 @@ class DplusLogin extends WireData implements Module {
 			$user = $event->object;
 			$loginrecord = $this->get_loginrecord();
 			$event->return = $loginrecord->is_loggedin();
+		});
+
+		$this->addHook('User::needs_setup_recovery', function($event) {
+			$user = $event->object;
+			$loginrecord = $this->get_loginrecord();
+			$event->return = $loginrecord->needs_setup_recovery();
 		});
 
 		$this->addHook('User::setup', function($event) {
