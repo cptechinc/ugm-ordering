@@ -35,6 +35,13 @@ $(function() {
 		}
 	});
 
+	$("body").on('click', 'a[data-notify=close]', function(e) {
+		var button = $(this);
+		var notify = button.closest('div[data-notify=container]').close();
+	});
+
+
+
 	$('form[submit-empty="false"]').submit(function () {
 		var empty_fields = $(this).find(':input:not(button)').filter(function () {
 			return $(this).val() === '';
@@ -61,31 +68,32 @@ $(function() {
 		}
 	});
 
-	// $.notifyDefaults({
-	// 	type: 'success',
-	// 	allow_dismiss: true,
-	// 	template:
-	// 		'<div data-notify="container" class="col-xs-11 col-sm-3" role="alert">' +
-	// 			'<div class="card">' +
-	// 				'<div class="container">' +
-	// 					'<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-	// 					'<div class="row">' +
-	// 						'<div class="col-2 d-flex justify-content-center align-items-center bg-{0} text-white">' +
-	// 							'<span data-notify="icon"></span>' +
-	// 						'</div>' +
-	// 						'<div class="col-10 alert-{0} pt-1 pb-1">' +
-	// 							'<h5 data-notify="title">{1}</h5>' +
-	// 							'<div class="notify-message">{2}</div>' +
-	// 							'<div class="progress" data-notify="progressbar">' +
-	// 								'<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-	// 							'</div>' +
-	// 							'<a href="{3}" target="{4}" data-notify="url"></a>' +
-	// 						'</div>' +
-	// 					'</div>' +
-	// 				'</div>' +
-	// 			'</div>' +
-	// 		'</div>'
-	// });
+	$.notifyDefaults({
+		type: 'success',
+		allow_dismiss: true,
+		template:
+			'<div data-notify="container" class="col-xs-11 col-sm-3" role="alert">' +
+				'<div class="toast show">' +
+					'<div class="toast-header bg-{0} text-white">' +
+						'<span data-notify="icon"></span> &nbsp; &nbsp; ' +
+						'<strong class="mr-auto" data-notify="title">{1}</strong>' +
+						'<button type="button" class=" close text-white" type="button" aria-label="Close" data-notify="dismiss">' +
+							'<strong><span aria-hidden="true">&times;</span></strong>' +
+						'</button>' +
+					'</div>' +
+					'<div class="toast-body">' +
+						'<div class="notify-message mb-2">{2}</div>' +
+						'<a href="{3}" target="{4}" data-notify="url" class="btn btn-info text-white">' +
+							'<i class="fa fa-shopping-cart" aria-hidden="true"></i> Go to Cart' +
+						'</a>' +
+
+					'</div>' +
+					'<div class="progress" data-notify="progressbar">' +
+		'<div class="progress-bar bg-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+	'</div>' +
+				'</div>' +
+			'</div>'
+	});
 
 	$('.phone-input').keyup(function() {
 		$(this).val(format_phone($(this).val()));
