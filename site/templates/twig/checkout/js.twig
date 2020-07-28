@@ -52,9 +52,9 @@ jQuery.validator.addMethod("rqstdate", function(value, element) {
 	});
 
 	function validate_requestdate(date) {
-		var weekfromnow = moment().add(7, 'days');
+		var weekfromnow = moment().add(6, 'days');
 		var momentdate = moment(date, "MM/DD/YYYY");
-		return momentdate >= weekfromnow;
+		return momentdate.format('x') > weekfromnow.format('x');
 	}
 
 	function fillout_shipto_fields(shiptoid) {
