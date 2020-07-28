@@ -55,8 +55,12 @@ if ($page->template != 'database-error') {
 		$user->setup();
 	}
 
-	if ($page->template != 'login' && !$user->isLoggedInDplus()) {
+	$templates_nosignin = array('login', 'build');
+
+	if (!in_array($page->template, $templates_nosignin) && !$user->isLoggedInDplus()) {
 		$session->redirect($pages->get('template=login')->url, $http301 = false);
+	} elseif ($page->template != 'account' && $user->needs_setup_recovery()) {
+		$session->redirect($pages->get('template=account')->url, $http301 = false);
 	}
 } else {
 	try {
@@ -82,10 +86,11 @@ $config->scripts->append(hash_templatefile('scripts/lib/popper.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/bootstrap.min.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/fuelux.js'));
 // $config->scripts->append(hash_templatefile('scripts/lib/sweetalert.js'));
-// $config->scripts->append(hash_templatefile('scripts/lib/moment.js'));
-// $config->scripts->append(hash_templatefile('scripts/lib/bootstrap-notify.js'));
+$config->scripts->append(hash_templatefile('scripts/lib/moment.js'));
+$config->scripts->append(hash_templatefile('scripts/lib/bootstrap-notify.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/uri.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/sweetalert2.js'));
+$config->scripts->append(hash_templatefile('scripts/lib/jquery-validate.js'));
 $config->scripts->append(hash_templatefile('scripts/main.js'));
 
 
@@ -115,3 +120,8 @@ $siteconfig = $pages->get('template=config');
 $html = $modules->get('HtmlWriter');
 
 $page->show_breadcrumbs = true;
+
+if ($session->response_cartadd) {
+	$page->js   .= $config->twig->render('cart/toast.js.twig', ['session' => $session, 'carturl' => $pages->get('template=cart')->url]);
+	$session->remove('response_cartadd');
+}

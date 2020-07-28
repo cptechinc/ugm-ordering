@@ -215,20 +215,20 @@
 			}
 		},
 		styleDismiss: function () {
-			this.$ele.find('[data-notify="dismiss"]').css({
-				position: 'absolute',
-				right: '10px',
-				top: '5px',
-				zIndex: this.settings.z_index + 2
-			});
+			// this.$ele.find('[data-notify="dismiss"]').css({
+			// 	position: 'absolute',
+			// 	right: '10px',
+			// 	top: '5px',
+			// 	zIndex: this.settings.z_index + 2
+			// });
 		},
 		styleURL: function () {
 			this.$ele.find('[data-notify="url"]').css({
 				backgroundImage: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)',
 				height: '100%',
-				left: 0,
-				position: 'absolute',
-				top: 0,
+				//left: 0,
+				//position: 'absolute',
+				//top: 0,
 				width: '100%',
 				zIndex: this.settings.z_index + 1
 			});
