@@ -103,8 +103,16 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @return bool
 	 */
 	public function update_item_page(ItemMasterItem $item) {
+		$m_groups = $this->wire('modules')->get('UgmOrderingPagesItemGroup');
+
+		if (!$m_groups->group_page_exists($item->itemgroup)) {
+			return false;
+		}
+
+		$parent = $m_groups->get_group_page($item->itemgroup);
 		$p = $this->get_item_page($item);
 		$p->of(false);
+		$p->parent  = $parent;
 		$p->name = $this->wire('sanitizer')->pageName($item->itemid);
 		$p->itemid = $item->itemid;
 		$p->title = $item->description;
