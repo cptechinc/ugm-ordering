@@ -1,0 +1,55 @@
+<?php namespace ProcessWire;
+
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use CustomerQuery, Customer;
+
+/**
+ * ValidateCustomer
+ *
+ * Class for Validating Customer IDs
+ *
+ * @property string $exists  Customer Exists
+ * @property string $custID  Customer ID
+ */
+class ValidateCustomer extends WireData implements Module {
+	public function __construct() {
+		$this->exists  = false;
+		$this->custID  = '';
+	}
+
+	/**
+	 * Returns if Customer ID exists in the Customer Master
+	 * @param  string $custID Customer ID
+	 * @return bool
+	 */
+	public function validate($custID) {
+		$q = CustomerQuery::create();
+		$q->filterByCustid($custID);
+
+		if ($q->count()) {
+			$this->exists = true;
+			$this->custID = $custID;
+		}
+		return $this->exists;
+	}
+
+	/* =============================================================
+		ProcessWire Module Functions
+	============================================================= */
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Validate Customer Module',
+			'version' => 101,
+			'summary' => 'Handles Customer ID Validation',
+			'singular' => true,
+			'autoload' => true,
+			'installs' => array()
+		);
+	}
+}
