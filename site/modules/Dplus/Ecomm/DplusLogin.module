@@ -1,10 +1,12 @@
 <?php namespace ProcessWire;
 
 use Purl\Url;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use LoginQuery, Login;
 
 use CustomerQuery, Customer;
+use SalesOrderQuery, SalesOrder;
 
 include_once(__DIR__.'/../DplusResponse.php');
 
@@ -79,7 +81,7 @@ class DplusLogin extends WireData implements Module {
 	}
 
 	/**
-	 * Processes Input For Login Request
+	 * Processes Input For Update Password
 	 * @param  WireInput $input
 	 * @param  User      $user
 	 * @return void
@@ -88,7 +90,7 @@ class DplusLogin extends WireData implements Module {
 		$rm = strtolower($input->requestMethod());
 		$values = $input->$rm;
 		$response = new DplusResponse();
-		
+
 		if ($user->isLoggedInDplus()) {
 			$email = $values->text('email');
 			$password = $values->text('password');
@@ -111,7 +113,7 @@ class DplusLogin extends WireData implements Module {
 	}
 
 	/**
-	 * Processes Input For Login Request
+	 * Processes Input For Setup Recovery
 	 * @param  WireInput $input
 	 * @param  User      $user
 	 * @return void
@@ -146,6 +148,28 @@ class DplusLogin extends WireData implements Module {
 		$this->wire('session')->response_login = $response;
 	}
 
+	/**
+	 * Processes Input For Register Account
+	 * @param  WireInput $input
+	 * @param  User      $user
+	 * @return void
+	 */
+	public function register_account(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$response = new DplusResponse();
+
+		if ($input->email && $input->password && $input->custID) {
+			$this->request_register_account($input);
+			$login = $this->get_loginrecord();
+		} else {
+			$response->set_error(true);
+			$response->set_message("Unable to register account");
+		}
+
+		$this->wire('session')->response_login = $response;
+	}
+
 /* =============================================================
 	Dplus Cobol Request Functions
 ============================================================= */
@@ -164,7 +188,7 @@ class DplusLogin extends WireData implements Module {
 	}
 
 	/**
-	 * Send Login Request
+	 * Send Password Change Request
 	 * @param  string $email    User Email
 	 * @param  string $password Password
 	 * @param  string $new      New Password
@@ -179,7 +203,7 @@ class DplusLogin extends WireData implements Module {
 	}
 
 	/**
-	 * Send Login Request
+	 * Send Setup Recovery Request
 	 * @param  string $email    User Email
 	 * @param  string $password Password
 	 * @param  string $new      New Password
@@ -192,6 +216,36 @@ class DplusLogin extends WireData implements Module {
 		$data = array("DBNAME=$dplusdb", 'FIRST CHANGE PASS', "EMAIL=$email", "PASS=$password", "NPASS=$new");
 		$data[] = "MMN=$maiden";
 		$data[] = "CBI=$city";
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Send Register Account Request
+	 * @param  WireInput $input    InputData
+	 * @return void
+	 */
+	protected function request_register_account(WireInput $input) {
+		$dplusdb = $this->wire('modules')->get('DplusDatabaseDpluso')->db_name;
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$ordn1 = $this->get_customer_ordernumber($values->text('custID'));
+		$ordn2 = $this->get_customer_ordernumber($values->text('custID'), $ordn1);
+		$data = array(
+			"DBNAME=$dplusdb",
+			'EXTCUST',
+			'EMAIL=' . $values->text('email'),
+			'PASS=' . $values->text('password'),
+			'CUSTID=' . $values->text('custID'),
+			"SHIPID=",
+			'MMN=' . $values->text('maiden'),
+			'CBI=' . $values->text('city'),
+			"INV1=$ordn1",
+			"INV2=$ordn2",
+			'CONTACT=' . $values->text('contact')
+		);
+
 		$requestor = $this->wire('modules')->get('DplusRequest');
 		$requestor->write_dplusfile($data, session_id());
 		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
@@ -211,7 +265,7 @@ class DplusLogin extends WireData implements Module {
 	}
 
 /* =============================================================
-	Accessory Functions
+	Supplemental Functions
 ============================================================= */
 	/**
 	 * Return Login Record for this Session
@@ -252,6 +306,17 @@ class DplusLogin extends WireData implements Module {
 	 */
 	public function get_user_customer(User $user) {
 		return CustomerQuery::create()->findOneByCustid($user->custid);
+	}
+
+	public function get_customer_ordernumber($custID, $not = '') {
+		$q = SalesOrderQuery::create();
+		$q->select(SalesOrder::get_aliasproperty('ordernumber'));
+		$q->filterByCustid($custID);
+
+		if ($not) {
+			$q->filterByOrdernumber($not, Criteria::ALT_NOT_EQUAL);
+		}
+		return $q->findOne();
 	}
 
 /* =============================================================
