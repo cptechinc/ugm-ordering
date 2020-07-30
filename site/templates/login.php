@@ -12,7 +12,9 @@
 
 
 	if ($input->get->create) {
+		$page->validateURL = $pages->get('template=validate')->httpUrl;
 		$page->body .= $config->twig->render('user/account/forms/create-account.twig', ['page' => $page, 'siteconfig' => $siteconfig, 'response' => $session->response_login]);
+		$page->js   .= $config->twig->render('user/account/forms/create-account.js.twig', ['page' => $page]);
 	} else {
 		$page->body .= $config->twig->render('user/login/form.twig', ['page' => $page, 'siteconfig' => $siteconfig, 'response' => $session->response_login]);
 		$page->js   .= $config->twig->render('user/login/js.twig');

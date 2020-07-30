@@ -1,7 +1,14 @@
+<div class="row">
+	<div class="offset-sm-2 col-sm-6">
+		<div class="text-center">
+			<img class="logo" src="{{ siteconfig.logo.url }}" alt="{{ siteconfig.title }} logo">
+		</div>
+	</div>
+</div>
 
 <h3>Create Account</h3>
-<form action="{{ page.url }}" method="post" class="allow-enterkey-submit" id="update-password-form">
-	<input type="hidden" name="action" value="create-account">
+<form action="{{ page.url }}" method="post" class="allow-enterkey-submit" id="register-account-form">
+	<input type="hidden" name="action" value="register-account">
 
 	<div class="row">
 		<div class="col-sm-6">
@@ -30,6 +37,7 @@
 			<div class="form-group">
 				<label for="custID">Customer ID</label>
 				<input type="text" class="form-control form-control-sm" name="custID" id="custID">
+				<small class="form-text text-muted customer-name"></small>
 			</div>
 		</div>
 		<div class="col-sm-6">

@@ -166,4 +166,4 @@ textarea.qnotes {
 	margin: auto
 }
 
-	.login-form img.logo { max-width: 100%; }
+	.login-form img.logo, img.logo { max-width: 100%; }

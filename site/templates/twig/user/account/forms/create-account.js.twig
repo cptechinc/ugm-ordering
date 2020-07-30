@@ -1,0 +1,88 @@
+$(function() {
+	var form = $('#register-account-form');
+	var input_password = form.find('input[name=password]');
+	var input_confirm = form.find('input[name=confirm]');
+
+	jQuery.validator.addMethod("confirm", function(value, element) {
+		return this.optional(element) || compare_passwords();
+	}, "Must Match Password");
+
+	var validator = form.validate({
+		errorClass: "is-invalid",
+		validClass: "is-valid",
+		errorPlacement: function(error, element) {
+			var jq = $(element);
+
+			if (jq.closest('.input-group').length) {
+				var parent = jq.closest('.input-group');
+				error.insertAfter(parent).addClass('invalid-feedback');
+			} else {
+				error.insertAfter(element).addClass('invalid-feedback');
+			}
+		},
+		rules: {
+			email:    {required: true},
+			password: {required: true},
+			confirm:  {confirm: true},
+			maiden:   {required: true},
+			city:     {required: true},
+			custID:   {
+				required: true,
+				remote: {
+					url: '{{ page.validateURL }}',
+					type: "get",
+					data: {
+						action: 'validate-custid'
+					}
+				}
+			},
+		},
+		messages: {
+			custID: 'Please Enter your UGMSEA customer ID'
+		},
+		submitHandler: function(form) {
+			form.submit();
+		}
+	});
+
+	$("body").on('change', 'input[name=password]', function(e) {
+		validator.element('#confirm');
+	});
+
+	$("body").on('change', 'input[name=custID]', function(e) {
+		validate_custid(function(valid) {
+			if (valid) {
+				get_customer_name(function(name) {
+					form.find('.customer-name').text(name)
+				});
+			} else {
+				form.find('.customer-name').text('');
+			}
+		});
+	});
+
+
+	function compare_passwords() {
+		return input_password.val() == input_confirm.val();
+	}
+
+	function validate_custid(callback) {
+		var url = URI('{{ page.validateURL }}');
+		url.addQuery('action', 'validate-custid');
+		url.addQuery('custID', form.find('input[name=custID]').val());
+
+		$.getJSON(url.toString(), function( valid ) {
+			callback(valid);
+		});
+	}
+
+	function get_customer_name(callback) {
+		var url = URI('{{ page.validateURL }}');
+		url.addQuery('action', 'get-customer-name');
+		url.addQuery('custID', form.find('input[name=custID]').val());
+
+		$.getJSON(url.toString(), function( name ) {
+			callback(name);
+		});
+	}
+});
