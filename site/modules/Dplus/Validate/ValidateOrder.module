@@ -52,8 +52,6 @@ class ValidateOrder extends WireData implements Module {
 		return boolval($q->count());
 	}
 
-
-
 	/**
 	 * Returns if Order # exists in the Sales History table
 	 * @param  string $ordn Order #
