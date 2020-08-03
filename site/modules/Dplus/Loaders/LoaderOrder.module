@@ -43,7 +43,7 @@ class LoaderOrder extends WireData implements Module {
 	}
 
 	public function get_invoice($ordn) {
-		return SalesinvoiceQuery::create()->findOneByOrdernumber($ordn);
+		return SalesHistoryQuery::create()->findOneByOrdernumber($ordn);
 	}
 
 	/* =============================================================
