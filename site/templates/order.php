@@ -9,7 +9,7 @@
 
 	if ($values->ordn) {
 		$ordn = SalesOrder::get_paddedordernumber($values->text('ordn'));
-
+		
 		if ($loader->exists($ordn) && $loader->validate_user($ordn, $user)) {
 			$qnotes = $modules->get('QnotesSales');
 
