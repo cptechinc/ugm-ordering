@@ -89,11 +89,10 @@ class UgmOrderingPagesOrder extends PwPages implements Module {
 			$event->return = $url->getUrl();
 		});
 
-		$this->addHook("Page(template=order)::listpage", function($event) {
-			$ordn = $event->arguments(0);
-			$validator = $this->wire('modules')->get('ValidateOrder');
-			$template = $validator->invoice($ordn) ? 'invoices' : 'orders';
-			$event->return = $this->wire('pages')->get('template=orders');
+		$this->addHookProperty("Page(template=order)::listpage", function($event) {
+			$p = $event->object;
+			$template = $p->is_invoice() ? 'invoices' : 'orders';
+			$event->return = $this->wire('pages')->get("template=$template");
 		});
 	}
 
