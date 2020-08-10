@@ -13,7 +13,7 @@
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="<?= $pages->get('template=cart')->url; ?>">
-						Cart <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+						Cart (<?= $modules->get('Cart')->count_items(); ?>) <i class="fa fa-shopping-cart" aria-hidden="true"></i>
 					</a>
 				</li>
 			</ul>
