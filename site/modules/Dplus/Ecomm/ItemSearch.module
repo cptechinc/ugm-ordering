@@ -64,9 +64,10 @@ class ItemSearch extends WireData implements Module {
 	 * @return int
 	 */
 	public function count_stocked($selector) {
-		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
+		$inventory = $this->wire('modules')->get('ItemInventory');
 		$items = $this->wire('pages')->find($selector);
-		return $this->find_stocked($items)->count();
+		$itemIDs = $items->explode('itemid');
+		return $inventory->count_itemids_onhand($itemIDs);
 	}
 
 	/**
@@ -78,11 +79,16 @@ class ItemSearch extends WireData implements Module {
 	public function find($pagenbr = 1, $limit = 10) {
 		$start = $pagenbr > 1 ? $pagenbr * $limit : 0;
 		$selector = $this->get_q_selector();
-		$selector .= ", limit=$limit, start=$start";
+		$items = $this->wire('pages')->find($selector);
+
+		$items = $this->onlystocked ? $this->find_stocked($items) : $items;
+
+		if ($limit) {
+			$selector .= ", limit=$limit, start=$start";
+		}
 		$selector .= ", sort=" . $this->pw_sortrule();
 		$this->selector = $selector;
-		$items = $this->wire('pages')->find($selector);
-		return $this->onlystocked ? $this->find_stocked($items) : $items;
+		return $items->find($selector);
 	}
 
 	/**
@@ -92,10 +98,9 @@ class ItemSearch extends WireData implements Module {
 	 * @return PageArray
 	 */
 	public function find_stocked(PageArray $items) {
-		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
+		$inventory = $this->wire('modules')->get('ItemInventory');
 		$itemIDs = $items->explode('itemid');
-		$dpluspricing->request_multi($itemIDs);
-		$itemIDs_stocked = $dpluspricing->get_pricing_itemids_stocked($itemIDs);
+		$itemIDs_stocked = $inventory->get_itemids_onhand();
 		return $items->find('itemid='.implode('|', $itemIDs_stocked));
 	}
 

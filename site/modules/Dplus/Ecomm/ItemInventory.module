@@ -1,0 +1,67 @@
+<?php namespace ProcessWire;
+
+use Propel\Runtime\ActiveQuery\Criteria;
+
+use InvLotQuery, InvLot;
+
+/**
+ * Module for Getting Approximate Inventory of Items
+ */
+class ItemInventory extends WireData implements Module {
+
+	public function get_query() {
+		return InvLotQuery::create();
+	}
+
+	public function count_itemids_onhand(array $itemIDs = null) {
+		$q = $this->get_query();
+		$q->withColumn('COUNT(DISTINCT(inititemnbr))', 'count');
+		$q->select('count');
+		$q->filterByQty(0, Criteria::GREATER_THAN);
+		if ($itemIDs) {
+			$q->filterByItemid($itemIDs);
+		}
+
+		return $q->findOne();
+	}
+
+	public function get_itemids_onhand(array $itemIDs = null) {
+		$q = $this->get_query();
+		$q->withColumn('DISTINCT(inititemnbr)', 'itemid');
+		$q->select('itemid');
+		$q->filterByQty(0, Criteria::GREATER_THAN);
+		if ($itemIDs) {
+			$q->filterByItemid($itemIDs);
+		}
+		return $q->find()->toArray();
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	public function init() {
+		$this->addHook('Page(template=item-group)::get_stocked_items', function($event) {
+			$p = $event->object;
+			$itemIDs = $p->children()->explode('itemid');
+			$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
+			$dpluspricing ->request_multi($itemIDs);
+			$itemIDs_stocked = $dpluspricing->get_pricing_itemids_stocked($itemIDs);
+			$event->return = $p->children()->find('itemid='.implode('|', $itemIDs_stocked));
+		});
+	}
+
+	/**
+	 * ProcessWire Module Info
+	 *
+	 * @return void
+	 */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Item Inventory',
+			'version' => 101,
+			'summary' => 'Handles Item Inventory',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+}

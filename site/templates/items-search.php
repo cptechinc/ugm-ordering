@@ -7,10 +7,11 @@
 	$q = $values->text('q');
 	$page->headline = $values->q ? "Searching for '$q'" : $page->title;
 	$search->set_search($q);
-	$items = $search->find($input->pageNum);
+	$items = $search->find($input->pageNum, 10);
 	$itemIDs = $items->explode('itemid');
 	$dpluspricing->request_multi($itemIDs);
 	$page->carturl = $pages->get('template=cart')->url;
+
 
 	if ($config->ajax) {
 		$page->searchurl = $page->url;
