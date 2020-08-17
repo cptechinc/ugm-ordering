@@ -33,6 +33,12 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		return ItemMasterItemQuery::create()->find();
 	}
 
+	public function get_itemids() {
+		$q = ItemMasterItemQuery::create();
+		$q->select(ItemMasterItem::get_aliasproperty('itemid'));
+		return $q->find()->toArray();
+	}
+
 	/**
 	 * Update / Create Item Pages
 	 * @return array

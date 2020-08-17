@@ -20,6 +20,24 @@ class ItemSearch extends WireData implements Module {
 		$this->sortrule = 'asc';
 	}
 
+	public function send_request_all() {
+		$session = $this->wire('session');
+
+		if ($session->invrequest) {
+			if ($session->invrequest + 300000 < strtotime('now')) {
+				$this->_send_request_all();
+			}
+		} else {
+			$this->_send_request_all();
+		}
+	}
+
+	public function _send_request_all() {
+		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
+		$dpluspricing->request_all();
+		$session->invrequest = strtotime('now');
+	}
+
 	/**
 	 * Set Search string
 	 * @param string $q
@@ -64,10 +82,10 @@ class ItemSearch extends WireData implements Module {
 	 * @return int
 	 */
 	public function count_stocked($selector) {
-		$inventory = $this->wire('modules')->get('ItemInventory');
+		$inventory = $this->wire('modules')->get('ItemSearchDplus');
 		$items = $this->wire('pages')->find($selector);
 		$itemIDs = $items->explode('itemid');
-		return $inventory->count_itemids_onhand($itemIDs);
+		return $inventory->count_pricing_itemids_stocked($itemIDs);
 	}
 
 	/**
@@ -77,7 +95,7 @@ class ItemSearch extends WireData implements Module {
 	 * @return PageArray
 	 */
 	public function find($pagenbr = 1, $limit = 10) {
-		$start = $pagenbr > 1 ? $pagenbr * $limit : 0;
+		$start = $pagenbr > 1 ? ($pagenbr * $limit) - $limit : 0;
 		$selector = $this->get_q_selector();
 		$items = $this->wire('pages')->find($selector);
 
@@ -98,9 +116,9 @@ class ItemSearch extends WireData implements Module {
 	 * @return PageArray
 	 */
 	public function find_stocked(PageArray $items) {
-		$inventory = $this->wire('modules')->get('ItemInventory');
+		$inventory = $this->wire('modules')->get('ItemSearchDplus');
 		$itemIDs = $items->explode('itemid');
-		$itemIDs_stocked = $inventory->get_itemids_onhand();
+		$itemIDs_stocked = $inventory->get_pricing_itemids_stocked($itemIDs);
 		return $items->find('itemid='.implode('|', $itemIDs_stocked));
 	}
 
@@ -132,5 +150,9 @@ class ItemSearch extends WireData implements Module {
 			'singular' => true,
 			'autoload' => true,
 		);
+	}
+
+	public function init() {
+		$this->send_request_all();
 	}
 }

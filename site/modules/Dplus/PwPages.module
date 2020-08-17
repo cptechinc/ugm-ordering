@@ -329,7 +329,7 @@ class PwPages extends WireData implements Module {
 		$this->addHook('Page::get_pagecount', function($event) {
 			$page = $event->object;
 			$count = $event->arguments(0);
-			$totalpages = ceil($count / $this->wire('session')->display);
+			$totalpages = ceil($count / $page->showonpage);
 			$event->return = $totalpages == 0 ? 1 : $totalpages;
 		});
 

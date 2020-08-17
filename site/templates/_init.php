@@ -125,3 +125,6 @@ if ($session->response_cartadd) {
 	$page->js   .= $config->twig->render('cart/toast.js.twig', ['session' => $session, 'carturl' => $pages->get('template=cart')->url]);
 	$session->remove('response_cartadd');
 }
+
+$session->display = 12;
+$page->showonpage = $session->display;

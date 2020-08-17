@@ -36,6 +36,21 @@ class ItemSearchDplus extends WireData implements Module {
 	}
 
 	/**
+	 * Return Pricing Records for these item IDs
+	 * @param  array  $itemIDs item IDs
+	 * @return Pricing[]|ObjectCollection
+	 */
+	public function count_pricing_itemids_stocked(array $itemIDs) {
+		$q = PricingQuery::create();
+		$q->filterBySessionid(session_id());
+		$q->filterByItemid($itemIDs);
+		$q->filterByQty(0, Criteria::GREATER_THAN);
+		return $q->count();
+	}
+
+
+
+	/**
 	 * Request Pricing Record for Item
 	 * @param  string $itemID Item ID
 	 * @return void
@@ -50,6 +65,19 @@ class ItemSearchDplus extends WireData implements Module {
 	 * @return void
 	 */
 	public function request_multi(array $itemIDs) {
+		$data = $this->create_search_data($itemIDs);
+		$requestor = $this->wire('modules')->get('DplusRequest');
+		$requestor->write_dplusfile($data, session_id());
+		$requestor->cgi_request($this->wire('config')->cgis['default'], session_id());
+	}
+
+	/**
+	 * Request Pricing Record for Items
+	 * @param  array  $itemIDs Item IDs
+	 * @return void
+	 */
+	public function request_all() {
+		$itemIDs = $this->wire('modules')->get('UgmOrderingPagesItem')->get_itemids();
 		$data = $this->create_search_data($itemIDs);
 		$requestor = $this->wire('modules')->get('DplusRequest');
 		$requestor->write_dplusfile($data, session_id());
