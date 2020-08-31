@@ -16,6 +16,7 @@
 	</div>
 	{% for item in items %}
 		{% set pricing = dpluspricing.get_pricing_item(item.itemid) %}
+		{% set uom_desc = item.item.uom_sale == 'LBW' ? 'EA' : item.item.uom_sale %}
 		<div class="list-group-item">
 			<div class="row">
 				<div class="col">
@@ -24,7 +25,7 @@
 					</h5>
 					<p class="mb-1 text-muted">{{ item.title }}</p>
 				</div>
-				<div class="col text-right">{{ item.item.uom_sale }}</div>
+				<div class="col text-right">{{ uom_desc }}</div>
 				<div class="col text-right">{{ pricing.qty }}</div>
 			</div>
 		</div>
