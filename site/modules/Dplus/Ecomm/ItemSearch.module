@@ -21,21 +21,12 @@ class ItemSearch extends WireData implements Module {
 	}
 
 	public function send_request_all() {
-		$session = $this->wire('session');
-
-		if ($session->invrequest) {
-			if ($session->invrequest + 300000 < strtotime('now')) {
-				$this->_send_request_all();
-			}
-		} else {
-			$this->_send_request_all();
-		}
+		$this->_send_request_all();
 	}
 
 	public function _send_request_all() {
 		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
 		$dpluspricing->request_all();
-		$session->invrequest = strtotime('now');
 	}
 
 	/**
@@ -153,6 +144,6 @@ class ItemSearch extends WireData implements Module {
 	}
 
 	public function init() {
-		$this->send_request_all();
+		//$this->send_request_all();
 	}
 }

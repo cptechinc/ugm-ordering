@@ -30,7 +30,11 @@ class ItemSearchDplus extends WireData implements Module {
 		$q = PricingQuery::create();
 		$q->select('itemid');
 		$q->filterBySessionid(session_id());
-		$q->filterByItemid($itemIDs);
+
+		if (!empty($itemIDs)) {
+			$q->filterByItemid($itemIDs);
+		}
+
 		$q->filterByQty(0, Criteria::GREATER_THAN);
 		return $q->find()->toArray();
 	}
@@ -104,9 +108,8 @@ class ItemSearchDplus extends WireData implements Module {
 	public function init() {
 		$this->addHook('Page(template=item-group)::get_stocked_items', function($event) {
 			$p = $event->object;
-			$itemIDs = $p->children()->explode('itemid');
-			$this->request_multi($itemIDs);
-			$itemIDs_stocked = $this->get_pricing_itemids_stocked($itemIDs);
+			$this->request_all();
+			$itemIDs_stocked = $this->get_pricing_itemids_stocked(array());
 			$event->return = $p->children()->find('itemid='.implode('|', $itemIDs_stocked));
 		});
 	}
