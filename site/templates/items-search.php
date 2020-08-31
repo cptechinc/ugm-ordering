@@ -1,5 +1,6 @@
 <?php
 	$search = $modules->get('ItemSearch');
+	$search->send_request_all();
 	$dpluspricing = $modules->get('ItemSearchDplus');
 	$rm = strtolower($input->requestMethod());
 	$values = $input->$rm;
