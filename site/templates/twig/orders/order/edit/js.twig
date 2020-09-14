@@ -1,5 +1,6 @@
 $(function() {
-	var shiptos = {{ editm.get_shiptos_js()|json_encode()|raw }};
+	var customer = {{ editm.get_customer_js()|json_encode()|raw }};
+	var shiptos  = {{ editm.get_shiptos_js()|json_encode()|raw }};
 	var form = $('#order-form');
 
 /* =============================================================
@@ -45,6 +46,46 @@ $(function() {
 		}
 	});
 
+/* =============================================================
+	Validation Functions
+============================================================= */
+	jQuery.validator.addMethod("ponbr", function(value, element) {
+		return  validate_require_ponbr(value);
+	}, "PO number is required");
+
+	form.validate({
+		errorClass: "is-invalid",
+		validClass: "is-valid",
+		errorPlacement: function(error, element) {
+			var jq = $(element);
+
+			if (jq.closest('.input-group').length) {
+				var parent = jq.closest('.input-group');
+				error.insertAfter(parent).addClass('invalid-feedback');
+			} else {
+				error.insertAfter(element).addClass('invalid-feedback');
+			}
+		},
+		rules: {
+			custpo: { ponbr: true },
+		},
+		messages: {
+		},
+		submitHandler: function(form) {
+			form.submit();
+		}
+	});
+
+	function validate_require_ponbr(ponbr) {
+		var required = false;
+		var input_shiptoid = form.find('input[name=shiptoid]');
+
+		if (input_shiptoid.val()) {
+			required = shiptos[input_shiptoid.val()]['require_po'];
+		}
+		required = customer.require_po;
+		return required ? false : true;
+	}
 /* =============================================================
 	Supplemental Functions
 ============================================================= */

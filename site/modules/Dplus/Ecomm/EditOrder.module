@@ -372,6 +372,15 @@ class EditOrder extends WireData implements Module {
 		return $this->wire('modules')->get('LoaderItem')->load($itemID);
 	}
 
+	public function get_customer_js() {
+		$user = $this->wire('user');
+		$customer = $user->customer;
+		return array(
+			'custid' => $customer->custid,
+			'require_po' => $customer->require_po()
+		);
+	}
+
 	/**
 	 * Return Shiptos Address information
 	 * @return array
@@ -391,6 +400,7 @@ class EditOrder extends WireData implements Module {
 				'city' => $shipto->city,
 				'state' => $shipto->state,
 				'zip' => $shipto->zip,
+				'require_po' => $shipto->require_po()
 			);
 		}
 		return $array;
