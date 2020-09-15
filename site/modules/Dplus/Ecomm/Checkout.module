@@ -180,7 +180,7 @@ class Checkout extends WireData implements Module {
 		$user = $this->wire('user');
 		$customer = $user->customer;
 		return array(
-			'custid' => $customer->custid,
+			'custid'     => $customer->custid,
 			'require_po' => $customer->require_po()
 		);
 	}

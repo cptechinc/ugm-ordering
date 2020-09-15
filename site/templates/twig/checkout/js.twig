@@ -8,6 +8,9 @@
 $(function() {
 	var customer = {{ checkoutm.get_customer_js()|json_encode()|raw }};
 	var shiptos  = {{ checkoutm.get_shiptos_js()|json_encode()|raw }};
+
+	console.log(customer);
+	console.log(shiptos);
 	var form = $('#checkout-form');
 
 	$("body").on('change', 'select[name=shiptoid]', function(e) {
@@ -19,7 +22,6 @@ $(function() {
 	$("body").on('change', 'input[name=rqstdate]', function(e) {
 		var select = $(this);
 		var date = select.val();
-		console.log(validate_requestdate(date));
 	});
 
 /* =============================================================
@@ -30,7 +32,7 @@ $(function() {
 	}, "Ship Date must be 7 days or more out from today");
 
 	jQuery.validator.addMethod("ponbr", function(value, element) {
-		return  validate_require_ponbr(value);
+		return validate_require_ponbr(value);
 	}, "PO number is required");
 
 	form.validate({
@@ -57,17 +59,29 @@ $(function() {
 		}
 	});
 
+	/**
+	 * Return if PO field is valid based on Customer / Shipto Requirements
+	 * @param  string ponbr PO number
+	 * @return bool
+	 */
 	function validate_require_ponbr(ponbr) {
 		var required = false;
-		var input_shiptoid = form.find('input[name=shiptoid]');
+		var input_shiptoid = form.find('select[name=shiptoid]');
+
+		required = customer.require_po;
 
 		if (input_shiptoid.val()) {
+			console.log(shiptos[input_shiptoid.val()]['require_po']);
 			required = shiptos[input_shiptoid.val()]['require_po'];
 		}
-		required = customer.require_po;
-		return required ? false : true;
+
+		if (required && ponbr.length == 0) {
+			return false;
+		}
+
+		return true;
 	}
-	
+
 	function validate_requestdate(date) {
 		var weekfromnow = moment().add(6, 'days');
 		var momentdate = moment(date, "MM/DD/YYYY");
