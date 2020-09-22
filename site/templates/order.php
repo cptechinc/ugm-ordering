@@ -9,7 +9,7 @@
 
 	if ($values->ordn) {
 		$ordn = SalesOrder::get_paddedordernumber($values->text('ordn'));
-		
+
 		if ($loader->exists($ordn) && $loader->validate_user($ordn, $user)) {
 			$qnotes = $modules->get('QnotesSales');
 
@@ -26,7 +26,13 @@
 			$docm = $modules->get('DocumentManagementSo');
 			$order = $loader->load($ordn);
 			$page->headline = "Order # $ordn";
-			$page->body .= $config->twig->render('orders/order/order.twig', ['page' => $page, 'order' => $order, 'docm' => $docm, 'qnotes' => $qnotes, 'db' => $db_dplusdata, 'editm' => $editm]);
+
+			if ($loader->validator->invoice($ordn)) {
+				$page->show_breadcrumbs = false;
+				$page->body .= $config->twig->render('orders/invoices/breadcrumbs.twig', ['page' => $page]);
+			}
+
+			$page->body .= $config->twig->render('orders/order/order.twig', ['page' => $page, 'order' => $order, 'docm' => $docm, 'qnotes' => $qnotes, 'editm' => $editm]);
 			$page->body .= $config->twig->render('orders/order/qnotes/modal.twig', ['page' => $page, 'ordn' => $ordn, 'qnotes' => $qnotes]);
 			$page->js   .= $config->twig->render('orders/order/qnotes/js.twig', ['page' => $page, 'ordn' => $ordn, 'qnotes' => $qnotes]);
 		} else {
