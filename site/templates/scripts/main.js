@@ -107,8 +107,12 @@ $.fn.extend({
 		parent.html('<div></div>');
 
 		var element = parent.find('div');
-		console.log('loading ' + href + " into " +  parent.returnelementdescription());
+		$('#loading').addClass('show');
+		$('<div class="modal-backdrop fade show" id="loading-fade"></div>').appendTo('body');
+
 		element.load(href, function() {
+			$('#loading').removeClass('show');
+			$('#loading-fade').remove();
 			init_datepicker();
 			callback();
 		});
@@ -192,7 +196,6 @@ function init_datepicker() {
 		});
 	});
 }
-
 
 /*==============================================================
 	STRING FUNCTIONS
