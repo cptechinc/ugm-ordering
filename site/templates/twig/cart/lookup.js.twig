@@ -12,8 +12,12 @@ $(function() {
 
 		var button = $(this);
 		var itemID = button.data('itemid');
+		var itemdiv = button.closest('.item-result');
 		form_additem.attr('data-validated', itemID);
 		input_itemid.val(itemID);
+		form_additem.find('.description1').text(itemdiv.find('.item-description').text());
+		form_additem.find('.uom_sale').text(itemdiv.find('.uom').text());
+		form_additem.find('.available').text('Available: ' +itemdiv.find('.available').text());
 		div_results.empty();
 		input_qty.focus();
 	});
@@ -22,7 +26,7 @@ $(function() {
 		e.preventDefault();
 		var href = $(this).attr('href');
 		div_results.loadin(href, function() {
-			
+
 		});
 	});
 
@@ -47,6 +51,7 @@ $(function() {
 						form.submit();
 					}
 				} else {
+					console.log('1');
 					lookup_item();
 				}
 			} else {
@@ -87,7 +92,7 @@ $(function() {
 					url.addQuery('q', input_itemid.val());
 
 					div_results.loadin(url.toString(), function() {
-						div_results.parent().toggleClass('collapse');
+						div_results.parent().removeClass('collapse');
 					});
 				}
 			});
