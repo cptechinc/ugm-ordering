@@ -14,13 +14,13 @@
 
 	if ($config->ajax) {
 		$page->searchurl = $page->url;
-		$page->body .= $config->twig->render('items/search/form.twig', ['page' => $page]);
+		$page->body .= $config->twig->render('items/search/form.twig', ['page' => $page, 'q' => $q]);
 		$page->body .= $config->twig->render('items/search/results-ajax.twig', ['page' => $page, 'q' => $q, 'items' => $items, 'dpluspricing' => $dpluspricing]);
 		$page->body .= $config->twig->render('util/paginator.twig', ['page' => $page, 'resultscount' => $search->count()]);
 		echo $page->body;
 	} else {
 		$page->searchurl = $page->url;
-		$page->body .= $config->twig->render('items/search/form.twig', ['page' => $page]);
+		$page->body .= $config->twig->render('items/search/form.twig', ['page' => $page, 'q' => $q]);
 		$page->body .= $config->twig->render('items/search/results.twig', ['page' => $page, 'q' => $q, 'items' => $items, 'dpluspricing' => $dpluspricing]);
 		$page->body .= $config->twig->render('util/paginator.twig', ['page' => $page, 'resultscount' => $search->count()]);
 		include('./basic-page.php');
