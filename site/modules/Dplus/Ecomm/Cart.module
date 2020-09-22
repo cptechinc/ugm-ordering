@@ -176,8 +176,10 @@ class Cart extends WireData implements Module {
 	 */
 	public function checkout() {
 		if ($this->count_items()) {
-			$this->request_checkout();
-
+			if (!$this->modules->get('Checkout')->has_billing()) {
+				$this->request_checkout();
+			}
+			
 			if ($this->modules->get('Checkout')->has_billing()) {
 				$url = $this->wire('pages')->get('template=checkout')->url;
 				$this->wire('session')->redirect($url, $http301 = false);
