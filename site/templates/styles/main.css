@@ -156,6 +156,15 @@ textarea.qnotes {
 	font-family: monospace;
 }
 
+.modal.loading {
+	top: auto;
+}
+
+.modal.loading.show {
+	display: block;
+	top: auto;
+}
+
 
 /*==============================================================
 	Login
