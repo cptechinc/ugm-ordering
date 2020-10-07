@@ -8,5 +8,5 @@
 {% set title = response.has_error() ? 'Error!' : 'Success!' %}
 
 <div id="dplus-alert" class="mb-3">
-	{% include 'util/alert.twig' with {'type': type,'iconclass': icon, 'title': title, 'message': response.message } %}
+	{% include 'util/alert.twig' with {'type': type, 'iconclass': icon, 'title': title, 'message': response.message } %}
 </div>
