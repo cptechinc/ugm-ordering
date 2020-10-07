@@ -40,6 +40,11 @@ class UgmOrderingPages extends PwPages implements Module {
 			'fields' => array(),
 			'paginated' => false
 		),
+		'item-permissions' => array(
+			'name'   => 'item-permissions',
+			'fields' => array('summary'),
+			'paginated' => false
+		),
 	);
 
 	const PAGES = array(
@@ -77,6 +82,13 @@ class UgmOrderingPages extends PwPages implements Module {
 			'title'    => 'Thank You for your Order',
 			'summary'  => 'Order Confirmed',
 			'parent'   => '/checkout/confirm/'
+		),
+		'item-permissions' => array(
+			'template' => 'item-permissions',
+			'name'     => 'item-permissions',
+			'title'    => 'Customer Item Permissions',
+			'summary'  => 'Restrict / Allow Items to Customers',
+			'parent'   => '/'
 		),
 	);
 
