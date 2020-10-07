@@ -19,7 +19,7 @@
 			'icon' => 'fa fa-list-alt',
 			'page' => $pages->get('template=invoices'),
 			'target' => '_self',
-		),
+		)
 	);
 
 	if ($user->hasRole('items-admin')) {
@@ -27,6 +27,11 @@
 			'icon' => 'fa fa-sitemap',
 			'page' => $pages->get('template=build'),
 			'target' => '_blank',
+		);
+		$navpages['item-permissions'] = array(
+			'icon' => 'fa fa-users',
+			'page' => $pages->get('template=item-permissions'),
+			'target' => '_self',
 		);
 	}
 
