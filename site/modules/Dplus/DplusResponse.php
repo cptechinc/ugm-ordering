@@ -29,14 +29,17 @@ class DplusResponse extends WireData {
 
 	public function set_success(bool $success) {
 		$this->success = $success;
+		return $this;
 	}
 
 	public function set_error(bool $error) {
 		$this->error = $error;
+		return $this;
 	}
 
 	public function set_message($message) {
 		$this->message = $message;
+		return $this;
 	}
 
 	/**
