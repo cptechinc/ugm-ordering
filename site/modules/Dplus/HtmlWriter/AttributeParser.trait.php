@@ -4,6 +4,8 @@
  * Functions that parse attributes for html
  */
 trait AttributeParser {
+	protected $className = 'AttributeParser';
+
 	/**
 	 * Takes a string of attributes and parses it out by a delimiter (|)
 	 * @param  string $vars string of attributes separated by |
