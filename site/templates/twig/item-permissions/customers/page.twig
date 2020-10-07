@@ -1,0 +1,14 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	permissions            module ItemPermissions
+	q                      Search String
+	count                  Number of Customers
+	customers              Customer[]|ObjectCollection
+#}
+{% include 'item-permissions/customers/heading.twig' %}
+
+{% include 'util/alert.twig' with {'type': 'info', 'iconclass': 'fa fa-info-circle', 'title': 'For Your Information', 'message': 'If a customer is not listed here, then they will have no item restrictions' } %}
+{% include 'item-permissions/customers/search.twig' %}
+{% include 'item-permissions/customers/list.twig' %}

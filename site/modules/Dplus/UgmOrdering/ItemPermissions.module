@@ -1,0 +1,366 @@
+<?php namespace ProcessWire;
+
+use Purl\Url;
+
+use CustomerQuery, Customer;
+
+/**
+ * class ItemPermissions
+ *
+ * Administers Permissions for Customer Users and what Items they can see
+ */
+class ItemPermissions extends WireData implements Module {
+	const TEMPLATE_MENU     = 'item-permissions';
+	const TEMPLATE_CUSTOMER = 'item-permission-customer';
+
+/* =============================================================
+	CRUD Read Functions
+============================================================= */
+	/**
+	 * Return all the Customers that have Restriction Pages
+	 * @return PageArray(template=item-permission-customer)
+	 */
+	public function customers_restricted() {
+		$template = self::TEMPLATE_CUSTOMER;
+		return $this->wire('pages')->find("template=$template");
+	}
+
+	/**
+	 * Return custids of the pages of resricted customers
+	 * @return array
+	 */
+	public function custids_restricted() {
+		$template = self::TEMPLATE_CUSTOMER;
+		return $this->wire('pages')->find("template=$template")->explode('custid');
+	}
+
+	/**
+	 * Return number of restricted customers
+	 * @return int
+	 */
+	public function count_customers_restricted() {
+		$template = self::TEMPLATE_CUSTOMER;
+		return $this->wire('pages')->find("template=$template")->count();
+	}
+
+	/**
+	 * Returns if CustID has restrictions
+	 * Checks if Customer Permission exists, and if there are groupcodes
+	 * that the customer is limited to
+	 * @param  string $custID Customer ID
+	 * @return bool
+	 */
+	public function is_custid_restricted($custID) {
+		if ($this->customer_permission_exists($custID)) {
+			$template = self::TEMPLATE_CUSTOMER;
+			$cust = $this->wire('pages')->get("template=$template, custid=$custID");
+			return boolval($cust->groupcodes->count());
+		}
+		return false;
+	}
+
+	/**
+	 * Return if there Customer Permissions Exists
+	 * NOTE: does not mean there are groupcodes that customer is limited to
+	 * @param  string $custID Customer ID
+	 * @return bool
+	 */
+	public function customer_permission_exists($custID) {
+		$template = self::TEMPLATE_CUSTOMER;
+		return boolval($this->wire('pages')->find("template=$template, custid=$custID")->count());
+	}
+
+	/**
+	 * Returns Customer Permission
+	 * @param  @param  string $custID Customer ID
+	 * @return Page(template=item-permission-customer)
+	 */
+	public function customer_permission($custID) {
+		$template = self::TEMPLATE_CUSTOMER;
+		return $this->wire('pages')->get("template=$template, custid=$custID");
+	}
+
+	/**
+	 * Return Customers that have a permissions record but don't have groupcode restrictions
+	 * @return PageArray
+	 */
+	public function customers_restricted_no_groupcodes() {
+		$template = self::TEMPLATE_CUSTOMER;
+		$pages = $this->wire('pages')->find("template=$template");
+		return $pages->find('groupcodes.count<1');
+	}
+
+/* =============================================================
+	CRUD Create, UPDATE, DELETE Functions
+============================================================= */
+	/**
+	 * Add Customer Permission
+	 * @param string $custID Customer ID
+	 */
+	public function add_customer($custID) {
+		if ($this->custid_exists($custID)) {
+			if (!$this->customer_permission_exists($custID)) {
+				$customer = $this->customer($custID);
+
+				$p = new Page();
+				$p->of(false);
+				$p->template = self::TEMPLATE_CUSTOMER;
+				$p->parent = $this->wire('pages')->get('template='.self::TEMPLATE_MENU);
+				$p->custid = $custID;
+				$p->title  = $customer->name;
+				return $p->save();
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Updates Customer Item Groups Permissions
+	 * @param  string    $custID Customer ID
+	 * @param  WireInput $input  Input Data
+	 * @return bool
+	 */
+	public function update_customer($custID, WireInput $input) {
+		if ($this->custid_exists($custID) && $this->customer_permission_exists($custID)) {
+			$customer = $this->customer_permission($custID);
+			$customer->of(false);
+			$customer->groupcodes->removeAll();
+			$customer->save();
+			$rm = strtolower($input->requestMethod());
+			$values = $input->$rm;
+			$codes = $values->array('groupcodes');
+
+			if (sizeof($codes)) {
+				foreach ($codes as $code) {
+					$groupcode = $customer->groupcodes->getNew();
+					$groupcode->groupcode = $code;
+					$groupcode->save();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Delete Customer Permission
+	 * NOTE: This means customer has no item restrictions
+	 * @param  string $custID Customer ID
+	 * @return bool
+	 */
+	public function delete_customer($custID) {
+		if ($this->customer_permission_exists($custID)) {
+			$customer = $this->customer_permission($custID);
+			$customer->of(false);
+			return $customer->delete();
+		}
+		return true;
+	}
+
+	/**
+	 * Delete Customers that don't have restrictions
+	 * @return void
+	 */
+	public function delete_unrestricted_customers() {
+		$customers = $this->customers_restricted_no_groupcodes();
+		foreach ($customers as $customer) {
+			$customer->delete();
+		}
+	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
+	public function process_input(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$success = false;
+
+		switch ($values->text('action')) {
+			case 'add-customer':
+				$custID = $values->text('custID');
+
+				if ($this->custid_exists($custID)) {
+					$success = $this->add_customer($custID);
+				}
+				break;
+			case 'update-customer':
+				$custID = $values->text('custID');
+				if ($this->custid_exists($custID)) {
+					$success = $this->update_customer($custID, $input);
+				}
+				break;
+			case 'delete-customer':
+				$custID = $values->text('custID');
+				$success = $this->delete_customer($custID);
+				break;
+		}
+		$this->wire('session')->response_permissions = $this->process_response($success, $input);
+	}
+
+	/**
+	 * Takes Success then provides a Response Message
+	 * @param  bool      $success Did Action Succeed
+	 * @param  WireInput $input   Input Data
+	 * @return DplusResponse
+	 */
+	public function process_response(bool $success, WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$response = new DplusResponse();
+		$custID = $values->text('custID');
+		$msg = "Customer $custID Permissions was {desc}";
+
+		switch ($values->text('action')) {
+			case 'add-customer':
+				$msg .= "added";
+				break;
+			case 'update-customer':
+				$msg .= "updated";
+				break;
+			case 'delete-customer':
+				$msg .= "deleted";
+				break;
+		}
+
+		if ($success) {
+			$replace = '';
+			$response->set_success(true);
+		} else {
+			$replace = "not ";
+			$response->set_error(true);
+		}
+
+		$response->set_message(str_replace('{desc}', $replace, $msg));
+		return $response;
+	}
+/* =============================================================
+	URL Functions
+============================================================= */
+	/**
+	 * Return URL to add customer permission
+	 * @param  string $custID string
+	 * @return string
+	 */
+	public function get_restrictions_addURL($custID = 'new') {
+		$url = new Url($this->wire('pages')->get('template=item-permissions')->url);
+
+		if ($custID != 'new') {
+			$url->query->set('action', 'add-customer');
+			$url->query->set('custID', $custID);
+		} else {
+			$url->query->set('add', $custID);
+		}
+
+		return $url->getUrl();
+	}
+
+	/**
+	 * Return URL to delete customer permissions
+	 * @param  string $custID Customer ID
+	 * @return string
+	 */
+	public function get_restrictions_deleteURL($custID = 'new') {
+		$url = new Url($this->wire('pages')->get('template=item-permissions')->url);
+		$url->query->set('action', 'delete-customer');
+		$url->query->set('custID', $custID);
+		return $url->getUrl();
+	}
+
+	/**
+	 * Return URL to customer restrictions page
+	 * @param  string $custID Customer ID
+	 * @return string
+	 */
+	public function get_restrictions_customerURL($custID) {
+		$template = self::TEMPLATE_CUSTOMER;
+		return $this->wire('pages')->get("template=$template, custid=$custID")->url;
+	}
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Item Groups
+	 * @return PageArray
+	 */
+	public function itemgroups() {
+		return $this->wire('pages')->find('template=item-group');
+	}
+
+	/**
+	 * Return All Customers from Customer Master
+	 * @return Customer[]|ObjectCollection
+	 */
+	public function customers_all() {
+		return CustomerQuery::create()->filterByActive(Customer::STATUS_ACTIVE)->find();
+	}
+
+	/**
+	 * Return if Customer ID Exists in Customer Master
+	 * @param  string $custID Customer ID
+	 * @return bool
+	 */
+	public function custid_exists($custID) {
+		return boolval(CustomerQuery::create()->filterByActive(Customer::STATUS_ACTIVE)->filterByCustid($custID)->count());
+	}
+
+	/**
+	 * Return Customer
+	 * @param  string $custID Customer ID
+	 * @return Customer
+	 */
+	public function customer($custID) {
+		return CustomerQuery::create()->filterByCustid($custID)->findOne();
+	}
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Ugm Ordering Item Permissions',
+			'version' => 101,
+			'summary' => 'Item Permissions Administration',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+
+	public function init() {
+		$template_customer = self::TEMPLATE_CUSTOMER;
+
+		$this->addHook("Page(template=$template_customer)::has_restrictions", function($event) {
+			$p = $event->object;
+			$event->return = $this->is_custid_restricted($p->custid);
+		});
+
+		$this->addHook("Page(template=$template_customer)::has_groupcode", function($event) {
+			$p = $event->object;
+			$groupcode = $event->arguments(0);
+			$event->return = $p->groupcodes->find("groupcode=$groupcode")->count();
+		});
+
+		$this->addHook("Page(template=item-permissions)::is_custid_restricted", function($event) {
+			$custID = $event->arguments(0);
+			$event->return = $this->is_custid_restricted($custID);
+		});
+
+		$this->addHook("Page(template=item-permissions)::restrictions_addURL", function($event) {
+			$custID = $event->arguments(0);
+			$event->return = $this->get_restrictions_addURL($custID);
+		});
+
+		$this->addHook("Page(template=item-permissions|$template_customer)::restrictions_deleteURL", function($event) {
+			$custID = $event->arguments(0);
+			$event->return = $this->get_restrictions_deleteURL($custID);
+		});
+
+		$this->addHook("Page(template=item-permissions)::restrictions_customerURL", function($event) {
+			$custID = $event->arguments(0);
+			$event->return = $this->get_restrictions_customerURL($custID);
+		});
+	}
+}

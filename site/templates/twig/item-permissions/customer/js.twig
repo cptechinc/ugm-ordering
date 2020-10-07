@@ -1,0 +1,77 @@
+$(function() {
+	var form = $('#customer-permissions-form');
+	var input_groupcodes = form.find('input[name="groupcodes[]"]');
+/* =============================================================
+	Unsaved Fields Alert
+============================================================= */
+	origForm = form.serialize();
+
+	$("body").on("click", "a:not(#customer-permissions-form .delete)", function(e) {
+		if (form.serialize() !== origForm) {
+			e.preventDefault();
+			var a = $(this);
+			var href = a.attr('href');
+
+			swal2.fire({
+				title: 'Do you want to save?',
+				text: 'You have unsaved changes',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: '<i class="fa fa-floppy-o" aria-hidden="true"></i> Yes',
+				cancelButtonText: 'No',
+			}).then((result) => {
+				if (result.value) {
+					form.find('button[type=submit]').click();
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					window.location.href = href;
+				}
+			});
+		}
+	});
+
+	$("body").on("click", "#customer-permissions-form a.delete", function(e) {
+		e.preventDefault();
+		var a = $(this);
+		var href = a.attr('href');
+
+		swal2.fire({
+			title: 'Are you sure?',
+			text: 'Do you want to delete customer restrictions?',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Yes',
+			cancelButtonText: 'No',
+		}).then((result) => {
+			if (result.value) {
+				window.location.href = href;
+			}
+		});
+	});
+/* =============================================================
+	Validation Functions
+============================================================= */
+
+	var validator = form.validate({
+		submitHandler: function(form) {
+			if ($(form).find('input[name="groupcodes[]"]:checked').length == 0) {
+				swal2.fire({
+					title: 'Unrestrict Customer?',
+					text: 'This will remove all customer restrictions',
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Yes',
+					cancelButtonText: 'No',
+				}).then((result) => {
+					if (result.value) {
+						var a = $(form).find('a.delete');
+						window.location.href = a.attr('href');
+					} else {
+						form.submit();
+					}
+				});
+			} else {
+				form.submit();
+			}
+		}
+	});
+});

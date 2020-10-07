@@ -1,0 +1,25 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	permissions            module ItemPermissions
+	q                      Search String
+	count                  Number of Customers
+	customers              Customer[]|ObjectCollection
+#}
+<form action="{{ page.url }}" method="GET">
+	<div class="form-group">
+		<label for="q">Search Customers</label>
+		<div class="input-group">
+			{% if page.fullURL.query.get('add') %}
+				<input type="hidden" name="add" value="new">
+			{% endif %}
+			<input type="text" class="form-control" name="q" id="q" placeholder="Search CustIDs, names" value="{{ q }}">
+			<span class="input-group-btn">
+				<button type="submit" class="btn btn-primary">
+					<span class="fa fa-search" aria-hidden="true"></span> <span class="sr-only">Search</span>
+				</button>
+			</span>
+		</div>
+	</div>
+</form>
