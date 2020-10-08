@@ -128,3 +128,7 @@ if ($session->response_cartadd) {
 
 $session->display = 12;
 $page->showonpage = $session->display;
+
+
+$rm = strtolower($input->requestMethod());
+$values = $input->$rm;

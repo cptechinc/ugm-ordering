@@ -1,9 +1,7 @@
 <?php
-	$rm = strtolower($input->requestMethod());
-	$values = $input->$rm;
+if ($user->hasRole('items-admin')) {
 	$permissions = $modules->get('ItemPermissions');
 	$permissions->delete_unrestricted_customers();
-	$html = $modules->get('HtmlWriter');
 
 	if ($values->action) {
 		$permissions->process_input($input);
@@ -45,5 +43,7 @@
 	$count = $input->get->add ? $customers->getNbResults() : $customers->count();
 	$page->body .= $config->twig->render('item-permissions/customers/page.twig', ['page' => $page, 'permissions' => $permissions, 'count' => $count, 'q' => $q, 'customers' => $customers]);
 	$page->body .= $config->twig->render('util/paginator.twig', ['page' => $page, 'resultscount' => $customers->getNbResults()]);
-
+} else {
+	$page->body .= $config->twig->render('util/alert.twig', ['type' => 'danger', 'iconclass' => 'fa fa-warning fa-2x', 'title' =>'Permission Denied', 'message' => 'You don\'t have permission for this function']);
+}
 	include('./basic-page.php');

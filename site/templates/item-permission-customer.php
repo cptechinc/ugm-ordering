@@ -1,6 +1,5 @@
 <?php
-	$rm = strtolower($input->requestMethod());
-	$values = $input->$rm;
+if ($user->hasRole('items-admin')) {
 	$permissions = $modules->get('ItemPermissions');
 
 	if ($values->action) {
@@ -15,4 +14,9 @@
 
 	$page->body .= $config->twig->render('item-permissions/customer/page.twig', ['customer' => $page, 'permissionsm' => $permissions]);
 	$page->js   .= $config->twig->render('item-permissions/customer/js.twig', ['customer' => $page, 'permissionsm' => $permissions]);
+} else {
+	$page->body .= $config->twig->render('util/alert.twig', ['type' => 'danger', 'iconclass' => 'fa fa-warning fa-2x', 'title' =>'Permission Denied', 'message' => 'You don\'t have permission for this function']);
+}
+
+
 	include('./basic-page.php');
