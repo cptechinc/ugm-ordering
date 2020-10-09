@@ -96,6 +96,25 @@ class ValidateItem extends WireData implements Module {
 		return $this->exists;
 	}
 
+	/**
+	 * Return if Item is available to User
+	 * @param  string $itemID Item ID
+	 * @param  User   $user   User
+	 * @return bool
+	 */
+	public function validate_restriction($itemID, User $user) {
+		$pages = $this->wire('pages');
+		if ($this->validate($itemID)) {
+			if ($user->has_item_restrictions()) {
+				$groups = implode('|', $user->restricted_itemgroups());
+				$ids    = implode('|', $pages->find("template=item-group,groupcode=$groups")->explode('id'));
+				return boolval($pages->find("template=item, itemid=$itemID, parent=$ids")->count());
+			}
+			return true;
+		}
+		return false;
+	}
+
 	/* =============================================================
 		ProcessWire Module Functions
 	============================================================= */

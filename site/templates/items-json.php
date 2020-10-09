@@ -17,6 +17,7 @@
 		switch ($input->get->text('action')) {
 			case 'validate-itemid':
 				$exists = $validator->validate($itemID);
+				$exists = $validator->validate_restriction($itemID, $user);
 
 				$response = array(
 					'exists' => $exists,
