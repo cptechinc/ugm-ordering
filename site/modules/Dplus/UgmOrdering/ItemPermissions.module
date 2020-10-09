@@ -90,6 +90,20 @@ class ItemPermissions extends WireData implements Module {
 		return $pages->find('groupcodes.count<1');
 	}
 
+	/**
+	 * Return Group IDs this User has access to via $this->customer_permission()
+	 * @param  User   $user User
+	 * @return array
+	 */
+	public function get_restricted_groupids_user(User $user) {
+		if ($this->is_custid_restricted($user->custid)) {
+			$p = $this->customer_permission($user->custid);
+			return $p->groupcodes->explode('groupcode');
+		} else {
+			$this->wire('pages')->find("template=item-group")->explode('groupcode');
+		}
+	}
+
 /* =============================================================
 	CRUD Create, UPDATE, DELETE Functions
 ============================================================= */
@@ -361,6 +375,16 @@ class ItemPermissions extends WireData implements Module {
 		$this->addHook("Page(template=item-permissions)::restrictions_customerURL", function($event) {
 			$custID = $event->arguments(0);
 			$event->return = $this->get_restrictions_customerURL($custID);
+		});
+
+		$this->addHook("User::has_item_restrictions", function($event) {
+			$user = $event->object;
+			$event->return = $this->is_custid_restricted($user->custid);
+		});
+
+		$this->addHook("User::restricted_itemgroups", function($event) {
+			$user = $event->object;
+			$event->return = $this->get_restricted_groupids_user($user);
 		});
 	}
 }
