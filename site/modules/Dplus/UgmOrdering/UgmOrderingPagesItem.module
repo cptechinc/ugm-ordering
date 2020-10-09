@@ -75,8 +75,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	/**
-	 * Creates Item Group Page
-	 * @param  ItemMasterItem $item Item Group
+	 * Creates Item Page
+	 * @param  ItemMasterItem $item Item
 	 * @return bool
 	 */
 	public function create_item_page(ItemMasterItem $item) {
@@ -104,8 +104,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	/**
-	 * Updates Item Group Page
-	 * @param  ItemMasterItem $item Item Group
+	 * Updates Item Page
+	 * @param  ItemMasterItem $item Item
 	 * @return bool
 	 */
 	public function update_item_page(ItemMasterItem $item) {
@@ -126,8 +126,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	/**
-	 * Sets visibility for Item Group Page
-	 * @param  ItemMasterItem|string $item   Item Group | Code
+	 * Sets visibility for Item Page
+	 * @param  ItemMasterItem|string $item   Item | Code
 	 * @param  bool   $visible
 	 * @return void
 	 */
@@ -145,8 +145,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	/**
-	 * Returns if Item Group Exists
-	 * @param  ItemMasterItem|string $item   Item Group | Code
+	 * Returns if Item Exists
+	 * @param  ItemMasterItem|string $item   Item | Code
 	 * @return bool
 	 */
 	public function item_page_exists($item) {
@@ -157,8 +157,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	/**
-	 * Returns Item Group Page
-	 * @param  ItemMasterItem|string $item   Item Group | Code
+	 * Returns Item Page
+	 * @param  ItemMasterItem|string $item   Item | Code
 	 * @return Page
 	 */
 	public function get_item_page($item) {
