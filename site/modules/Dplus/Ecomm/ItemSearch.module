@@ -2,6 +2,7 @@
 
 /**
  * Module for Searching Item Pages
+ * @property User   $user         User
  * @property string $selector     Selector String
  * @property string $q            Search Query
  * @property bool   $onlystocked  Search only items with available stock? default = true
@@ -10,14 +11,15 @@ class ItemSearch extends WireData implements Module {
 	// Processwire Selectors
 	// https://processwire.com/api/selectors/
 	const SELECTOR_TEMPLATE = 'template=item';
-	const SELECTOR_BASE = 'template=item, title|body|itemid|name';
+	const SELECTOR_SEARCH = 'title|body|itemid|name';
 
 	public function __construct() {
-		$this->selector = self::SELECTOR_BASE;
+		$this->selector = self::SELECTOR_TEMPLATE;
 		$this->q = '';
 		$this->onlystocked = true;
 		$this->sortby = 'itemid';
 		$this->sortrule = 'asc';
+		$this->restrictitems = true;
 	}
 
 	public function send_request_all() {
@@ -30,6 +32,14 @@ class ItemSearch extends WireData implements Module {
 	}
 
 	/**
+	 * Set User
+	 * @param User
+	 */
+	public function set_user($user) {
+		$this->user = $user;
+	}
+
+	/**
 	 * Set Search string
 	 * @param string $q
 	 */
@@ -37,6 +47,11 @@ class ItemSearch extends WireData implements Module {
 		$this->q = $q;
 	}
 
+	/**
+	 * Set SortBy
+	 * @param string $sortby   Field to Sort By
+	 * @param string $sortrule asc|desc
+	 */
 	public function set_sort($sortby, $sortrule) {
 		$sortrule = strtolower($sortrule);
 		$this->sortby  = $sortby;
@@ -51,6 +66,10 @@ class ItemSearch extends WireData implements Module {
 		$this->onlystocked = true;
 	}
 
+	/**
+	 * Return PW sort rule
+	 * @return string
+	 */
 	public function pw_sortrule() {
 		$sortrule = strtolower($this->sortrule) == 'desc' ? '-' : '';
 		return $this->sortby . $sortrule;
@@ -117,22 +136,34 @@ class ItemSearch extends WireData implements Module {
 	 * Return Selector for searching
 	 * @return string
 	 */
-	protected function get_q_selector() {
+	public function get_q_selector() {
 		$sanitizer = $this->wire('sanitizer');
-		$selector = $this->q ? self::SELECTOR_BASE : self::SELECTOR_TEMPLATE;
-		$selector .= $this->q ? "%=$this->q" : '';
+		$selector = self::SELECTOR_TEMPLATE;
+		$selector .= $this->restrictitems ? $this->get_restricted_items_selector() : '';
+		$selector .= $this->q ? ', ' . self::SELECTOR_SEARCH . "%=$this->q" : '';
 		return $selector;
+	}
+
+	/**
+	 * Return Selector for Restricted Items for User
+	 * @return string
+	 */
+	public function get_restricted_items_selector() {
+		$user = $this->user;
+		$pages = $this->wire('pages');
+
+		if ($user->has_item_restrictions()) {
+			$groups = implode('|', $user->restricted_itemgroups());
+			$ids    = implode('|', $pages->find("template=item-group,groupcode=$groups")->explode('id'));
+			return ",parent=$ids";
+		}
+		return '';
 	}
 
 
 /* =============================================================
 	ProcessWire Module Functions
 ============================================================= */
-	/**
-	 * ProcessWire Module Info
-	 *
-	 * @return void
-	 */
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Search Items Module',
@@ -145,5 +176,6 @@ class ItemSearch extends WireData implements Module {
 
 	public function init() {
 		//$this->send_request_all();
+		$this->user = $this->wire('user');
 	}
 }

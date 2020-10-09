@@ -7,7 +7,6 @@
 
 	$q = $values->text('q');
 	$page->headline = $values->q ? "Searching for '$q'" : $page->title;
-
 	$search->set_search($q);
 	$items = $search->find($input->pageNum, 12);
 	$page->carturl = $pages->get('template=cart')->url;
