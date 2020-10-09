@@ -99,9 +99,22 @@ class ItemPermissions extends WireData implements Module {
 		if ($this->is_custid_restricted($user->custid)) {
 			$p = $this->customer_permission($user->custid);
 			return $p->groupcodes->explode('groupcode');
-		} else {
-			$this->wire('pages')->find("template=item-group")->explode('groupcode');
 		}
+		return $this->wire('pages')->find("template=item-group")->explode('groupcode');
+	}
+
+	/**
+	 * Return If User has Permission to Item Group
+	 * @param  User    $user       User
+	 * @param  string  $groupcode  Item Group Code
+	 * @return bool
+	 */
+	public function user_has_itemgroup(User $user, $groupcode) {
+		if ($this->is_custid_restricted($user->custid)) {
+			$p = $this->customer_permission($user->custid);
+			return boolval($p->groupcodes->find("groupcode=$groupcode")->count());
+		}
+		return true;
 	}
 
 /* =============================================================
@@ -385,6 +398,12 @@ class ItemPermissions extends WireData implements Module {
 		$this->addHook("User::restricted_itemgroups", function($event) {
 			$user = $event->object;
 			$event->return = $this->get_restricted_groupids_user($user);
+		});
+
+		$this->addHook("User::has_itemgroup", function($event) {
+			$user = $event->object;
+			$groupcode = $event->arguments(0);
+			$event->return = $this->user_has_itemgroup($user, $groupcode);
 		});
 	}
 }
