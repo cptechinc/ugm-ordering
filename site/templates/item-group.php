@@ -1,5 +1,5 @@
 <?php
-	if ($user->has_itemgroup()) {
+	if ($user->has_itemgroup($page->groupcode)) {
 		$dpluspricing = $modules->get('ItemSearchDplus');
 		$page->searchurl = $pages->get('template=items-search')->url;
 		$page->carturl = $pages->get('template=cart')->url;
