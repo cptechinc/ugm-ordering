@@ -77,9 +77,9 @@ class UgmOrderingPagesItemGroup extends PwPages implements Module {
 	public function update_itemgroup_pages() {
 		$groups = $this->get_itemgroups();
 		$updated = array();
+		$this->turn_itemgroup_pages_invisible();
 
 		foreach ($groups as $group) {
-
 			if ($this->group_page_exists($group)) {
 				$updated[$group->code] = $this->update_group_page($group);
 			} else {
@@ -102,7 +102,7 @@ class UgmOrderingPagesItemGroup extends PwPages implements Module {
 		$pages = $this->wire('pages')->find("template=$template");
 
 		foreach ($pages as $p) {
-			$this->update_group_page_visibility($p->name, $visible = false);
+			$this->update_group_page_visibility($p->groupcode, $visible = false);
 		}
 	}
 
@@ -156,7 +156,7 @@ class UgmOrderingPagesItemGroup extends PwPages implements Module {
 		if ($visible) {
 			$p->status(['hidden' => false, 'unpublished' => false]);
 		} else {
-			$p->status(['hidden' => false, 'unpublished' => false]);
+			$p->addStatus(Page::statusHidden);
 		}
 		return $p->save();
 	}

@@ -70,7 +70,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$pages = $this->wire('pages')->find("template=$template");
 
 		foreach ($pages as $p) {
-			$this->update_item_page_visibility($p->name, $visible = false);
+			$this->update_item_page_visibility($p->itemid, $visible = false);
 		}
 	}
 
@@ -94,7 +94,15 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$p->name = $this->wire('sanitizer')->pageName($item->itemid);
 		$p->itemid = $item->itemid;
 		$p->title = $item->description;
-		$saved = $p->save();
+
+		try {
+			$saved = $p->save();
+		} catch (\Exception $e) {
+			$items = $this->wire('session')->items;
+			$items[] = $item->itemid;
+			$this->wire('session')->items = $items;
+			$saved = false;
+		}
 
 		if ($saved) {
 			return $this->update_item_page($item);
@@ -138,7 +146,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		if ($visible) {
 			$p->status(['hidden' => false, 'unpublished' => false]);
 		} else {
-			$p->status(['hidden' => false, 'unpublished' => false]);
+			$p->addStatus(Page::statusHidden);
 		}
 
 		return $p->save();
