@@ -1,6 +1,7 @@
 <?php namespace ProcessWire;
 
 use ItemMasterItemQuery, ItemMasterItem;
+use WarehouseInventoryQuery, WarehouseInventory;
 
 /**
  * class Dpages
@@ -33,6 +34,20 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		return ItemMasterItemQuery::create()->find();
 	}
 
+	public function get_active_items() {
+		$itemids = $this->get_active_itemids();
+		$q = ItemMasterItemQuery::create();
+		$q->filterByItemid($itemids);
+		return $q->find();
+	}
+
+	public function get_active_itemids() {
+		$q = WarehouseInventoryQuery::create();
+		$q->select(WarehouseInventory::get_aliasproperty('itemid'));
+		$q->filterByStatus(WarehouseInventory::STATUS_ACTIVE);
+		return $q->find()->toArray();
+	}
+
 	public function get_itemids() {
 		$q = ItemMasterItemQuery::create();
 		$q->select(ItemMasterItem::get_aliasproperty('itemid'));
@@ -44,7 +59,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @return array
 	 */
 	public function update_item_pages() {
-		$items = $this->get_items();
+		$this->turn_item_pages_invisible();
+		$items = $this->get_active_items();
 		$updated = array();
 
 		foreach ($items as $item) {
