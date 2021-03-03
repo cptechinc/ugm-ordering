@@ -28,7 +28,9 @@ class ItemSearch extends WireData implements Module {
 
 	public function _send_request_all() {
 		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
-		$dpluspricing->request_all();
+		if ($dpluspricing->pricing_needs_update()) {
+			$dpluspricing->request_all();
+		}
 	}
 
 	/**
