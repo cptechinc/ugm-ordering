@@ -40,14 +40,7 @@ class ItemInventory extends WireData implements Module {
 	ProcessWire Module Functions
 ============================================================= */
 	public function init() {
-		$this->addHook('Page(template=item-group)::get_stocked_items', function($event) {
-			$p = $event->object;
-			$itemIDs = $p->children()->explode('itemid');
-			$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
-			$dpluspricing ->request_multi($itemIDs);
-			$itemIDs_stocked = $dpluspricing->get_pricing_itemids_stocked($itemIDs);
-			$event->return = $p->children()->find('itemid='.implode('|', $itemIDs_stocked));
-		});
+
 	}
 
 	/**
