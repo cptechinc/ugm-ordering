@@ -125,7 +125,7 @@ class ItemSearchDplus extends WireData implements Module {
 		$this->addHook('Page(template=item-group)::get_stocked_items', function($event) {
 			$p = $event->object;
 			$itemIDs_stocked = $this->get_pricing_itemids_stocked();
-			$event->return = $p->children()->find('itemid='.implode('|', $itemIDs_stocked));
+			$event->return = $p->children()->find('itemid='.implode('|', $itemIDs_stocked).',sort=itemid');
 		});
 	}
 
