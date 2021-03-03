@@ -6,6 +6,7 @@
 	 */
 	$validator = $modules->get('ValidateItem');
 	$dpluspricing = $modules->get('ItemSearchDplus');
+	$dpluspricing->sessionID = session_id();
 	$rm = strtolower($input->requestMethod());
 	$values = $input->$rm;
 	$response   = '';
