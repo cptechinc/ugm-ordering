@@ -1,5 +1,7 @@
 <?php
 	if ($user->has_itemgroup($page->groupcode)) {
+		$search = $modules->get('ItemSearch');
+		$search->send_request_all();
 		$dpluspricing = $modules->get('ItemSearchDplus');
 		$page->searchurl = $pages->get('template=items-search')->url;
 		$page->carturl = $pages->get('template=cart')->url;
