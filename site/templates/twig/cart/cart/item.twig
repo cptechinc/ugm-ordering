@@ -6,10 +6,10 @@
 	item                   Cart
 #}
 {% set imitem = cart.get_item(item.itemid) %}
-<div class="row">
-	<div class="col-3">
+<div class="form-row">
+	<div class="col-4">
 		{{ item.itemid }} <br>
-		<small class="text-muted">{{ item.desc1 }}</small>
+		<small class="text-muted s-70">{{ item.desc1 }}</small>
 	</div>
 	<div class="col-1 text-center">
 		{{ imitem.uom_sale }}
@@ -40,13 +40,16 @@
 	<div class="col-1 text-right">
 		$ {{ item.amount|currency }}
 	</div>
-	<div class="col-2 text-center">
-		<a href="{{ page.url_item_delete(item.itemid) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
-			<i class="fa fa-trash" aria-hidden="true"></i> Delete
-		</a>
-		{% set notesclass = qnotes.notes_exist(item.itemid) ? 'btn-info text-white' : 'btn-light border border-dark' %}
-		<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal" aria-controls="notes-modal" data-itemid="{{ item.itemid }}">
-			<i class="fa fa-commenting" aria-hidden="true"></i> Notes
-		</button>
+	<div class="col-3 text-center">
+		<div class="">
+			<a href="{{ page.url_item_delete(item.itemid) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
+				<i class="fa fa-trash" aria-hidden="true"></i> Delete
+			</a>
+			&nbsp;
+			{% set notesclass = qnotes.notes_exist(item.itemid) ? 'btn-info text-white' : 'btn-light border border-dark' %}
+			<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal" aria-controls="notes-modal" data-itemid="{{ item.itemid }}">
+				<i class="fa fa-commenting" aria-hidden="true"></i> Notes
+			</button>
+		</div>
 	</div>
 </div>

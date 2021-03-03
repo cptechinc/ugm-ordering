@@ -32,12 +32,15 @@
 			<div class="collapse">
 				<textarea name="name" id="notes-header" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array('header')|join('\r') }}</textarea>
 			</div>
+			<button class="btn btn-dark btn-sm" type="button" data-toggle="collapse" data-target="#items" aria-expanded="false" aria-controls="items">
+				Show / Hide Items
+			</button>
 		</div>
 	</div>
-	<div class="list-group">
+	<div class="list-group list-group-flush collapse show" id="items">
 		<div class="list-group-item bg-light">
 			<div class="row">
-				<div class="col">
+				<div class="col-4">
 					<b>Item</b>
 				</div>
 				<div class="col">
@@ -57,9 +60,9 @@
 		{% for item in checkoutm.get_cartitems() %}
 			<div class="list-group-item">
 				<div class="row">
-					<div class="col">
+					<div class="col-4">
 						{{ item.itemid }} <br>
-						<small>{{ item.desc1 }}</small>
+						<small class="s-70">{{ item.desc1 }}</small>
 					</div>
 					<div class="col">
 						{% set imitem = cart.get_item(item.itemid) %}

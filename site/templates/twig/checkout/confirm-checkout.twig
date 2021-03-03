@@ -6,7 +6,9 @@
 #}
 {% set billing = checkoutm.get_billing() %}
 {% set customer = checkoutm.get_customer(billing.custid) %}
-{% include 'checkout/confirm/summary.twig' %}
+<div class="mb-3">
+	{% include 'checkout/confirm/summary.twig' %}
+</div>
 
 <a href="{{ page.url }}?action=confirm-checkout" class="btn btn-success">
 	<i class="fa fa-cloud-upload" aria-hidden="true"></i> Submit Order
