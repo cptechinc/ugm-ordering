@@ -140,7 +140,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		}
 
 		$parent = $m_groups->get_group_page($item->itemgroup);
-		$p = $this->get_item_page($item);
+		$p = $this->getPage($item);
 		$p->of(false);
 		$p->parent  = $parent;
 		$p->name    = $this->wire('sanitizer')->pageName($item->itemid);
@@ -156,7 +156,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @return void
 	 */
 	public function update_item_page_visibility($item, bool $visible) {
-		$p = $this->get_item_page($item);
+		$p = $this->getPage($item);
 		$p->of(false);
 
 		if ($visible) {
@@ -200,7 +200,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @param  ItemMasterItem|string $item         Item | Item ID
 	 * @return Page
 	 */
-	public function get_item_page($item) {
+	public function getPage($item) {
 		$itemID = is_object($item) ? $item->itemid : $item;
 		$p = $this->getItemidPage($itemID);
 		if (boolval($p->id) === false) {
