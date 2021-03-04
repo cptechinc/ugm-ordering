@@ -197,11 +197,19 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 
 	/**
 	 * Returns Item Page
-	 * @param  ItemMasterItem|string $item   Item | Code
+	 * @param  ItemMasterItem|string $item         Item | Item ID
 	 * @return Page
 	 */
 	public function get_item_page($item) {
-		$itemid = is_object($item) ? $item->itemid : $item;
+		$itemID = is_object($item) ? $item->itemid : $item;
+		$p = $this->getItemidPage($itemID);
+		if (boolval($p->id) === false) {
+			$itemID = $this->wire('sanitizer')->pageName($itemID);
+			return $this->getItemidPage($itemID);
+		}
+		return $p;
+	}
+
 	/**
 	 * Return Page(template=item) for Item ID
 	 * @param  string $itemID Item ID
