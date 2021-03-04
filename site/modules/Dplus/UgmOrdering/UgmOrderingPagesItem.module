@@ -170,11 +170,20 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 
 	/**
 	 * Returns if Item Exists
-	 * @param  ItemMasterItem|string $item   Item | Code
+	 * @param  ItemMasterItem|string $item         Item | Code
 	 * @return bool
 	 */
 	public function item_page_exists($item) {
-		$itemid = is_object($item) ? $item->itemid : $item;
+		$itemID = is_object($item) ? $item->itemid : $item;
+		$exists = $this->itemidPageExists($itemID);
+
+		if ($exists === false) {
+			$itemID = $this->wire('sanitizer')->pageName($itemID);
+			return $this->itemidPageExists($itemID);
+		}
+		return $exists;
+	}
+
 	/**
 	 * Return if Item ID Page Exists
 	 * @param  string $itemID Item ID
