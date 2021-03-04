@@ -64,13 +64,13 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$updated = array();
 
 		foreach ($items as $item) {
-			if ($this->item_page_exists($item)) {
+			if ($this->pageExists($item)) {
 				$updated[$item->itemid] = $this->update_item_page($item);
 			} else {
 				$updated[$item->itemid] = $this->create_item_page($item);
 			}
 
-			if ($this->item_page_exists($item)) {
+			if ($this->pageExists($item)) {
 				$this->update_item_page_visibility($item, true);
 			}
 		}
@@ -173,7 +173,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @param  ItemMasterItem|string $item         Item | Code
 	 * @return bool
 	 */
-	public function item_page_exists($item) {
+	public function pageExists($item) {
 		$itemID = is_object($item) ? $item->itemid : $item;
 		$exists = $this->itemidPageExists($itemID);
 
