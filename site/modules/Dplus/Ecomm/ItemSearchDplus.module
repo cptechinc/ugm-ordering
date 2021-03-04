@@ -95,7 +95,7 @@ class ItemSearchDplus extends WireData implements Module {
 	 * @return void
 	 */
 	public function request_all() {
-		$itemIDs = $this->wire('modules')->get('UgmOrderingPagesItem')->get_active_itemids();
+		$itemIDs = $this->wire('modules')->get('UgmOrderingPagesItem')->getActiveItemids();
 		$data = $this->create_search_data($itemIDs);
 		$requestor = $this->wire('modules')->get('DplusRequest');
 		$requestor->write_dplusfile($data, $this->sessionID);
