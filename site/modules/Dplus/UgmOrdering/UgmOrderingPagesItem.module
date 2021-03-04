@@ -30,25 +30,41 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 
 	const TEMPLATE_ITEM = 'item';
 
-	public function get_items() {
+	/**
+	 * Return all Items
+	 * @return ItemMasterItem[]
+	 */
+	public function getItems() {
 		return ItemMasterItemQuery::create()->find();
 	}
 
-	public function get_active_items() {
-		$itemIDs = $this->get_active_itemids();
+	/**
+	 * Return all Items filtered by Items that Are Active
+	 * @return ItemMasterItem[]
+	 */
+	public function getActiveItems() {
+		$itemIDs = $this->getActiveItemids();
 		$q = ItemMasterItemQuery::create();
 		$q->filterByItemid($itemIDs);
 		return $q->find();
 	}
 
-	public function get_active_itemids() {
+	/**
+	 * Return item IDs that are active
+	 * @return array
+	 */
+	public function getActiveItemids() {
 		$q = WarehouseInventoryQuery::create();
 		$q->select(WarehouseInventory::get_aliasproperty('itemid'));
 		$q->filterByStatus(WarehouseInventory::STATUS_ACTIVE);
 		return $q->find()->toArray();
 	}
 
-	public function get_itemids() {
+	/**
+	 * Return All item IDs
+	 * @return array
+	 */
+	public function getItemids() {
 		$q = ItemMasterItemQuery::create();
 		$q->select(ItemMasterItem::get_aliasproperty('itemid'));
 		return $q->find()->toArray();
@@ -60,7 +76,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 */
 	public function updatePages() {
 		$this->turn_item_pages_invisible();
-		$items = $this->get_active_items();
+		$items = $this->getActiveItems();
 		$updated = array();
 
 		foreach ($items as $item) {
