@@ -35,9 +35,9 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	public function get_active_items() {
-		$itemids = $this->get_active_itemids();
+		$itemIDs = $this->get_active_itemids();
 		$q = ItemMasterItemQuery::create();
-		$q->filterByItemid($itemids);
+		$q->filterByItemid($itemIDs);
 		return $q->find();
 	}
 
