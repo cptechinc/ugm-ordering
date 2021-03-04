@@ -58,20 +58,20 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * Update / Create Item Pages
 	 * @return array
 	 */
-	public function update_item_pages() {
+	public function updatePages() {
 		$this->turn_item_pages_invisible();
 		$items = $this->get_active_items();
 		$updated = array();
 
 		foreach ($items as $item) {
 			if ($this->pageExists($item)) {
-				$updated[$item->itemid] = $this->update_item_page($item);
+				$updated[$item->itemid] = $this->updatePage($item);
 			} else {
-				$updated[$item->itemid] = $this->create_item_page($item);
+				$updated[$item->itemid] = $this->createPage($item);
 			}
 
 			if ($this->pageExists($item)) {
-				$this->update_item_page_visibility($item, true);
+				$this->togglePageVisibility($item, true);
 			}
 		}
 		return $updated;
@@ -86,7 +86,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$pages = $this->wire('pages')->find("template=$template");
 
 		foreach ($pages as $p) {
-			$this->update_item_page_visibility($p->itemid, $visible = false);
+			$this->togglePageVisibility($p->itemid, $visible = false);
 		}
 	}
 
@@ -95,7 +95,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @param  ItemMasterItem $item Item
 	 * @return bool
 	 */
-	public function create_item_page(ItemMasterItem $item) {
+	public function createPage(ItemMasterItem $item) {
 		$m_groups = $this->wire('modules')->get('UgmOrderingPagesItemGroup');
 
 		if (!$m_groups->group_page_exists($item->itemgroup)) {
@@ -121,7 +121,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		}
 
 		if ($saved) {
-			return $this->update_item_page($item);
+			return $this->updatePage($item);
 		} else {
 			return $saved;
 		}
@@ -132,7 +132,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @param  ItemMasterItem $item Item
 	 * @return bool
 	 */
-	public function update_item_page(ItemMasterItem $item) {
+	public function updatePage(ItemMasterItem $item) {
 		$m_groups = $this->wire('modules')->get('UgmOrderingPagesItemGroup');
 
 		if (!$m_groups->group_page_exists($item->itemgroup)) {
@@ -155,7 +155,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 * @param  bool                  $visible
 	 * @return void
 	 */
-	public function update_item_page_visibility($item, bool $visible) {
+	public function togglePageVisibility($item, bool $visible) {
 		$p = $this->getPage($item);
 		$p->of(false);
 
@@ -227,7 +227,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	public function update() {
 		parent::update();
 		$this->turn_item_pages_invisible();
-		$this->update_item_pages();
+		$this->updatePages();
 	}
 
 	public function init() {
