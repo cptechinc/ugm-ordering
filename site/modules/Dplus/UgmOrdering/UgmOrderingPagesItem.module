@@ -107,9 +107,9 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$p->of(false);
 		$p->parent  = $parent;
 		$p->template = self::TEMPLATE_ITEM;
-		$p->name = $this->wire('sanitizer')->pageName($item->itemid);
+		$p->name   = $this->wire('sanitizer')->pageName($item->itemid);
 		$p->itemid = $item->itemid;
-		$p->title = $item->description;
+		$p->title  = $item->description;
 
 		try {
 			$saved = $p->save();
@@ -143,16 +143,16 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$p = $this->get_item_page($item);
 		$p->of(false);
 		$p->parent  = $parent;
-		$p->name = $this->wire('sanitizer')->pageName($item->itemid);
-		$p->itemid = $item->itemid;
-		$p->title = $item->description;
+		$p->name    = $this->wire('sanitizer')->pageName($item->itemid);
+		$p->itemid  = $item->itemid;
+		$p->title   = $item->description;
 		return $p->save();
 	}
 
 	/**
 	 * Sets visibility for Item Page
 	 * @param  ItemMasterItem|string $item   Item | Code
-	 * @param  bool   $visible
+	 * @param  bool                  $visible
 	 * @return void
 	 */
 	public function update_item_page_visibility($item, bool $visible) {
