@@ -125,7 +125,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$p->template = self::TEMPLATE_ITEM;
 		$p->name   = $this->wire('sanitizer')->pageName($item->itemid);
 		$p->itemid = $item->itemid;
-		$p->title  = $item->description;
+		$p->title   = $item->itemid;
+		$p->description1 = $item->description;
 
 		try {
 			$saved = $p->save();
@@ -161,7 +162,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$p->parent  = $parent;
 		$p->name    = $this->wire('sanitizer')->pageName($item->itemid);
 		$p->itemid  = $item->itemid;
-		$p->title   = $item->description;
+		$p->title   = $item->itemid;
+		$p->description1 = $item->description;
 		return $p->save();
 	}
 
@@ -255,7 +257,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 			if ($p->imitem) {
 				$item = $p->imitem;
 			} else {
-				$p->imitem = $this->wire('modules')->get('LoaderItem')->load($p->itemid);
+				$p->imitem = ItemMasterItemQuery::create()->filterByItemid($p->itemid)->findOneOrCreate();
 				$item = $p->imitem;
 			}
 			$event->return = $item;
