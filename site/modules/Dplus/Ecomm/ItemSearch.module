@@ -11,7 +11,7 @@ class ItemSearch extends WireData implements Module {
 	// Processwire Selectors
 	// https://processwire.com/api/selectors/
 	const SELECTOR_TEMPLATE = 'template=item';
-	const SELECTOR_SEARCH = 'title|body|itemid|name';
+	const SELECTOR_SEARCH = 'title|body|itemid|name|description1';
 
 	public function __construct() {
 		$this->selector = self::SELECTOR_TEMPLATE;
