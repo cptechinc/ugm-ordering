@@ -132,3 +132,5 @@ $page->showonpage = $session->display;
 
 $rm = strtolower($input->requestMethod());
 $values = $input->$rm;
+
+$modules->get('UgmOrderingPagesItem')->createPagesForNewItems();

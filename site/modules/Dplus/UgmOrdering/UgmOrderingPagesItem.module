@@ -1,4 +1,5 @@
 <?php namespace ProcessWire;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 use ItemMasterItemQuery, ItemMasterItem;
 use WarehouseInventoryQuery, WarehouseInventory;
@@ -61,6 +62,29 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	}
 
 	/**
+	 * Return item IDs that are active, and don't exist as a page
+	 * @return array
+	 */
+	public function getActiveItemidWithoutPages() {
+		$q = WarehouseInventoryQuery::create();
+		$q->select(WarehouseInventory::get_aliasproperty('itemid'));
+		$q->filterByStatus(WarehouseInventory::STATUS_ACTIVE);
+		$q->filterByItemid($this->wire('pages')->find('template=item')->explode('itemid'), Criteria::NOT_IN);
+		return $q->find()->toArray();
+	}
+
+	/**
+	 * Return all Items filtered by Items that Are Active
+	 * @return ItemMasterItem[]
+	 */
+	public function getActiveItemsWithoutPages() {
+		$itemIDs = $this->getActiveItemidWithoutPages();
+		$q = ItemMasterItemQuery::create();
+		$q->filterByItemid($itemIDs);
+		return $q->find();
+	}
+
+	/**
 	 * Return All item IDs
 	 * @return array
 	 */
@@ -68,6 +92,27 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$q = ItemMasterItemQuery::create();
 		$q->select(ItemMasterItem::get_aliasproperty('itemid'));
 		return $q->find()->toArray();
+	}
+
+	public function createPagesForNewItems() {
+		$items = $this->getActiveItemsWithoutPages();
+		$updated = array();
+
+		foreach ($items as $item) {
+			if ($this->pageExists($item)) {
+				$updated[$item->itemid] = $this->updatePage($item);
+			} else {
+				$updated[$item->itemid] = $this->createPage($item);
+			}
+
+			if ($this->pageExists($item)) {
+				$this->togglePageVisibility($item, true);
+			}
+		}
+		if (empty($updated) === false) {
+			$this->wire('modules')->get('ItemSearchDplus')->cleanup_pricing();
+		}
+		return $updated;
 	}
 
 	/**

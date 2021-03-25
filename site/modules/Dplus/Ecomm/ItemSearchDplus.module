@@ -9,19 +9,30 @@ use PricingQuery, Pricing;
  */
 class ItemSearchDplus extends WireData implements Module {
 
-	const UPDATE_EVERY = '5 minutes';
+	const UPDATE_EVERY = '3 minutes';
 
 	public function pricing_needs_update() {
 		$q = PricingQuery::create();
 		$q->select('time');
 		$q->filterBySessionid($this->sessionID);
 		$q->filterByDate(date('Ymd'));
-		if ($q->count() === false) {
+		if ($q->count() === 0) {
 			return true;
 		}
 		$time = $q->findOne();
 		$datetime = (date('Ymd').substr($time, 0, 4));
 		return strtotime($datetime) < strtotime('-' . self::UPDATE_EVERY);
+	}
+
+	public function cleanup_pricing() {
+		$q = PricingQuery::create();
+		$q->select('time');
+		$q->filterBySessionid($this->sessionID);
+		$q->filterByDate(date('Ymd'));
+		if ($q->count()) {
+			return $q->delete();
+		}
+		return true;
 	}
 
 

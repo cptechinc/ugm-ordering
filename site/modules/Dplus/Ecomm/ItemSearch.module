@@ -30,6 +30,7 @@ class ItemSearch extends WireData implements Module {
 		$dpluspricing = $this->wire('modules')->get('ItemSearchDplus');
 		if ($dpluspricing->pricing_needs_update()) {
 			$dpluspricing->request_all();
+			sleep(2);
 		}
 	}
 
