@@ -3,7 +3,10 @@
 		<a href="<?= $pages->get('/')->url; ?>" class="navbar-brand"  aria-label="homepage link">
 			<img src="<?= $siteconfig->logo->width(100)->url; ?>" alt="">
 		</a>
-		<div class="collapse navbar-collapse">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-menu" aria-controls="nav-menu" aria-expanded="false" aria-label="Toggle navigation">
+			<i class="fa fa-bars" aria-hidden="true"></i>
+		</button>
+		<div class="collapse navbar-collapse" id="nav-menu">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
 					<a class="nav-link" href="<?= $pages->get('/')->url; ?>">Home <span class="sr-only">(current)</span></a>
