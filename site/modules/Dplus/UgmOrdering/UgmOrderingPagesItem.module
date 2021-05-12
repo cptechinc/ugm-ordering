@@ -100,7 +100,7 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 
 		foreach ($items as $item) {
 			if ($this->pageExists($item)) {
-				$updated[$item->itemid] = $this->updatePage($item);
+				$this->updatePage($item);
 			} else {
 				$updated[$item->itemid] = $this->createPage($item);
 			}
@@ -109,7 +109,8 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 				$this->togglePageVisibility($item, true);
 			}
 		}
-		if (empty($updated) === false) {
+
+		if (empty(array_filter($updated)) === false) {
 			$this->wire('modules')->get('ItemSearchDplus')->cleanup_pricing();
 		}
 		return $updated;
