@@ -176,19 +176,23 @@ class Cart extends WireData implements Module {
 	 */
 	public function checkout() {
 		if ($this->count_items()) {
-			if (!$this->modules->get('Checkout')->has_billing()) {
+
+			if ($this->modules->get('Checkout')->has_billing() === false) {
 				$this->request_checkout();
 			}
-			
+
 			if ($this->modules->get('Checkout')->has_billing()) {
-				$url = $this->wire('pages')->get('template=checkout')->url;
-				$this->wire('session')->redirect($url, $http301 = false);
-			} else {
-				$this->wire('session')->response_cart = DplusResponse::create_error("Unable to Checkout");
+				$billing = $this->modules->get('Checkout')->get_billing();
+
+				if (empty($billing->orders) === false) {
+					$this->request_checkout();
+				}
 			}
-		} else {
-			$this->wire('session')->response_cart = DplusResponse::create_error("You don't have items in your cart");
+
+			$url = $this->wire('pages')->get('template=checkout')->url;
+			$this->wire('session')->redirect($url, $http301 = false);
 		}
+		$this->wire('session')->response_cart = DplusResponse::create_error("You don't have items in your cart");
 	}
 
 /* =============================================================
