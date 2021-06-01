@@ -1,8 +1,8 @@
 <?php namespace ProcessWire;
 
 use Purl\Url;
-use DocumentFoldersQuery, DocumentFolders;
-use DocumentsQuery, Documents;
+use DocumentFolderQuery, DocumentFolder;
+use DocumentQuery, Document;
 
 /**
  * Document Management
@@ -39,7 +39,7 @@ class DocumentManagement extends WireData implements Module {
 	}
 
 	/**
-	 * Finds a Document from the Documents table and creates a copy
+	 * Finds a Document from the Document table and creates a copy
 	 * @uses self::move_file()
 	 *
 	 * @param  string $folder      Which Folder to Filter the document to
@@ -48,12 +48,12 @@ class DocumentManagement extends WireData implements Module {
 	 * @return void
 	 */
 	public function move_document($folder, $filename, $destination = '') {
-		$documents_master = DocumentsQuery::create();
+		$documents_master = DocumentQuery::create();
 		$documents_master->filterByFolder($folder);
 		$documents_master->filterByFilename($filename);
 		$document = $documents_master->findOne();
 
-		$folder = DocumentFoldersQuery::create()->findOneByFolder($folder);
+		$folder = DocumentFolderQuery::create()->findOneByFolder($folder);
 		$this->move_file($folder->directory, $document->filename, $destination);
 	}
 
@@ -79,12 +79,12 @@ class DocumentManagement extends WireData implements Module {
 	 * @return string
 	 */
 	public function whereis_document($folder, $filename) {
-		$documents_master = DocumentsQuery::create();
+		$documents_master = DocumentQuery::create();
 		$documents_master->filterByFolder($folder);
 		$documents_master->filterByFilename($filename);
 		$document = $documents_master->findOne();
 
-		$folder = DocumentFoldersQuery::create()->findOneByFolder($folder);
+		$folder = DocumentFolderQuery::create()->findOneByFolder($folder);
 		return "$folder->directory/$filename";
 	}
 
@@ -104,7 +104,7 @@ class DocumentManagement extends WireData implements Module {
 		return array(
 			'title' => 'Dplus Document Management',
 			'version' => 101,
-			'summary' => 'Module for getting Documents / Document Info out of Dplus',
+			'summary' => 'Module for getting Document / Document Info out of Dplus',
 			'singular' => true,
 			'autoload' => true,
 			'installs' => array(
