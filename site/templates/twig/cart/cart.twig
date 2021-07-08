@@ -37,7 +37,7 @@
 				{% include 'cart/cart/item.twig' %}
 			</div>
 			<div class="list-group-item collapse">
-				<textarea name="name" id="notes-{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
+				<textarea name="name" id="notes-{{ item.itemid }}" data-itemid="{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
 			</div>
 		{% endfor %}
 		<div class="list-group-item">

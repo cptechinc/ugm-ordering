@@ -6,7 +6,7 @@ $(function() {
 		var modal = $(this);
 		var button = $(event.relatedTarget);
 		var itemid = button.data('itemid');
-		var note = $('#notes-'+itemid).val();
+		var note = $('.notes[data-itemid="'+itemid+'"]').val();
 
 		modal.find('span.itemid').text(itemid);
 		modal.find('input[name=itemID]').val(itemid);
