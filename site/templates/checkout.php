@@ -6,6 +6,12 @@
 	$values = $input->$rm;
 	$billing = $checkoutm->get_billing();
 
+	if (empty($billing)) {
+		$url = new Purl\Url($pages->get('template=cart')->url);
+		$url->query->set('action', 'checkout');
+		$session->redirect($url->getUrl(), $http301 = false);
+	}
+
 	if ($values->action) {
 		$checkoutm->process_input($input);
 		$url = $values->text('action') == 'update-billing' ? $pages->get('template=checkout-confirm')->url : $page->url;
