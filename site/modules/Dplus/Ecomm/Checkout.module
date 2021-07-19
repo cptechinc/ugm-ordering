@@ -86,8 +86,8 @@ class Checkout extends WireData implements Module {
 		$this->request_order();
 		$billing = $this->get_billing();
 
-		if (!$billing->has_error()) {
-			$this->wire('session')->redirect($this->wire('pages')->get('template=checkout-confirmed')->url);
+		if ($billing->has_error() === false) {
+			$this->wire('session')->redirect($this->wire('pages')->get('template=checkout-confirmed')->url, $http301 = false);
 		}
 	}
 
@@ -122,6 +122,20 @@ class Checkout extends WireData implements Module {
 			$response = DplusResponse::create_error("Unable to update order info");
 		}
 		$this->wire('session')->response_checkout = $response;
+	}
+
+	public function deleteOldBilling() {
+		if (empty($this->wire('session')->getFor('order', 'created'))) {
+			return false;
+		}
+		if ($this->has_billing() === false) {
+			return false;
+		}
+		$billing = $this->get_billing();
+		if (empty($billing->orders)) {
+			return false;
+		}
+		return $billing->delete();
 	}
 
 /* =============================================================

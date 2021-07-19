@@ -1,4 +1,6 @@
 <?php
+	$checkout = $modules->get('Checkout');
+	$checkout->deleteOldBilling();
 	$cart = $modules->get('Cart');
 	$qnotes = $modules->get('QnotesCart');
 	$rm = strtolower($input->requestMethod());
