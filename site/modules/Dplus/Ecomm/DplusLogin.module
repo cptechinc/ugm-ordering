@@ -1,6 +1,8 @@
 <?php namespace ProcessWire;
-
+use DateTime;
 use Purl\Url;
+
+Use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 use LoginQuery, Login;
@@ -317,6 +319,67 @@ class DplusLogin extends WireData implements Module {
 			$q->filterByOrdernumber($not, Criteria::ALT_NOT_EQUAL);
 		}
 		return $q->findOne();
+	}
+
+	/**
+	 * Remove Old Login Records
+	 * @return void
+	 */
+	public function forceLogouts() {
+		$datetime = $this->getDateTime();
+		$q = LoginQuery::create();
+		$this->filterDateTime($q, $datetime);
+
+		if ($q->count()) {
+			$q->delete();
+			$this->deleteOldBilling($datetime);
+		}
+	}
+
+	/**
+	 * Filter Query to for older Records
+	 * @param  ModelCriteria $q
+	 * @param  DateTime      $datetime
+	 * @return void
+	 */
+	private function filterDateTime(ModelCriteria $q, DateTime $datetime) {
+		$model = $q->getModelName();
+		$q->condition('todayDate', "$model.Date <= ?", $datetime->format('Ymd'));
+		$q->condition('todayTime', "$modelTime < ?", $datetime->format('His'));
+		$q->combine(['todayDate', 'todayTime'], 'and', 'today') ;
+
+		$q->condition('yesterdayDate', "$modelDate < ?", $datetime->format('Ymd'));
+		$q->condition('yesterdayTime', "$model.Time > 0");
+		$q->combine(['yesterdayDate', 'yesterdayTime'], 'and', 'yesterday') ;
+
+		$conditions = ['today', 'yesterday'];
+		$q->where($conditions, 'or');
+	}
+
+	/**
+	 * Remove Old Billing Records
+	 * @param  DateTime $datetime
+	 * @return void
+	 */
+	private function deleteOldBilling(DateTime $datetime = null) {
+		$datetime = $datetime ? $datetime : $this->getDateTime();
+		$q = $this->wire('modules')->get('Checkout')->query();
+		$this->filterDateTime($q, $datetime);
+		if ($q->count()) {
+			$q->delete();
+		}
+	}
+
+	/**
+	 * Return DateTime
+	 * @param  string $modifier modifier for Date Time e.g. -5 minutes
+	 * @return DateTime
+	 */
+	private function getDateTime($modifier = '') {
+		$modifier = $modifier ? $modifier : '-30 minutes';
+		$datetime = new DateTime();
+		$datetime->modify($modifier);
+		return $datetime;
 	}
 
 /* =============================================================

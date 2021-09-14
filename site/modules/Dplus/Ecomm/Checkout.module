@@ -21,8 +21,19 @@ class Checkout extends WireData implements Module {
 	 * @return BillingQuery
 	 */
 	public function get_query() {
-		$q = BillingQuery::create();
-		$q->filterBySessionid(session_id());
+		return $this->querySession();
+	}
+
+	public function query() {
+		return BillingQuery::create();;
+	}
+
+	public function querySession($sessionID = '') {
+		if (empty($sessionID)) {
+			$sessionID = session_id();
+		}
+		$q = $this->query();
+		$q->filterBySessionid($sessionID);
 		return $q;
 	}
 
