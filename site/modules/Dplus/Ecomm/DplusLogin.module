@@ -331,6 +331,7 @@ class DplusLogin extends WireData implements Module {
 		$this->filterDateTime($q, $datetime);
 
 		if ($q->count()) {
+			echo $q->count() . " Login Records " . PHP_EOL;
 			$q->delete();
 			$this->deleteOldBilling($datetime);
 		}
@@ -345,10 +346,10 @@ class DplusLogin extends WireData implements Module {
 	private function filterDateTime(ModelCriteria $q, DateTime $datetime) {
 		$model = $q->getModelName();
 		$q->condition('todayDate', "$model.Date <= ?", $datetime->format('Ymd'));
-		$q->condition('todayTime', "$modelTime < ?", $datetime->format('His'));
+		$q->condition('todayTime', "$model.Time < ?", $datetime->format('His'));
 		$q->combine(['todayDate', 'todayTime'], 'and', 'today') ;
 
-		$q->condition('yesterdayDate', "$modelDate < ?", $datetime->format('Ymd'));
+		$q->condition('yesterdayDate', "$model.Date < ?", $datetime->format('Ymd'));
 		$q->condition('yesterdayTime', "$model.Time > 0");
 		$q->combine(['yesterdayDate', 'yesterdayTime'], 'and', 'yesterday') ;
 
@@ -366,6 +367,7 @@ class DplusLogin extends WireData implements Module {
 		$q = $this->wire('modules')->get('Checkout')->query();
 		$this->filterDateTime($q, $datetime);
 		if ($q->count()) {
+			echo $q->count() . " Billing Records";
 			$q->delete();
 		}
 	}
@@ -376,7 +378,7 @@ class DplusLogin extends WireData implements Module {
 	 * @return DateTime
 	 */
 	private function getDateTime($modifier = '') {
-		$modifier = $modifier ? $modifier : '-30 minutes';
+		$modifier = $modifier ? $modifier : '-2 hours';
 		$datetime = new DateTime();
 		$datetime->modify($modifier);
 		return $datetime;
