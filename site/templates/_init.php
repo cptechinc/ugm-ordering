@@ -55,7 +55,7 @@ if ($page->template != 'database-error') {
 		$user->setup();
 	}
 
-	$templates_nosignin = array('login', 'build', 'validate');
+	$templates_nosignin = array('login', 'build', 'validate', 'reset');
 
 	if (!in_array($page->template, $templates_nosignin) && !$user->isLoggedInDplus()) {
 		$session->redirect($pages->get('template=login')->url, $http301 = false);
