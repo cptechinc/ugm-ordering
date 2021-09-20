@@ -333,8 +333,8 @@ class DplusLogin extends WireData implements Module {
 		if ($q->count()) {
 			echo $q->count() . " Login Records " . PHP_EOL;
 			$q->delete();
-			$this->deleteOldBilling($datetime);
 		}
+		$this->deleteOldBilling($datetime);
 	}
 
 	/**
