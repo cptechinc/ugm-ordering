@@ -115,10 +115,11 @@ class ItemSearch extends WireData implements Module {
 		$items = $this->onlystocked ? $this->find_stocked($items) : $items;
 
 		if ($limit) {
-			$selector .= ", limit=$limit, start=$start";
+			$selector = "limit=$limit, start=$start";
 		}
 		$selector .= ", sort=" . $this->pw_sortrule();
 		$this->selector = $selector;
+		$results = $items->find($selector);
 		return $items->find($selector);
 	}
 
@@ -140,10 +141,14 @@ class ItemSearch extends WireData implements Module {
 	 * @return string
 	 */
 	public function get_q_selector() {
+		$replace = ['-' => '', '–' => ''];
+		$q = str_replace('–', '', $this->q);
 		$sanitizer = $this->wire('sanitizer');
 		$selector = self::SELECTOR_TEMPLATE;
+		$searchFields = self::SELECTOR_SEARCH;
 		$selector .= $this->restrictitems ? $this->get_restricted_items_selector() : '';
-		$selector .= $this->q ? ', ' . self::SELECTOR_SEARCH . "%=$this->q" : '';
+		$selector .= $this->q ? ", ($searchFields%=$q)" : '';
+		$selector .= $this->q ? ", ($searchFields~=$q)" : '';
 		return $selector;
 	}
 
