@@ -1,0 +1,20 @@
+<?php namespace ProcessWire;
+
+include_once(__DIR__.'/vendor/autoload.php');
+
+class WarehouseManagement extends WireData implements Module {
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Warehouse Management',
+			'version' => 101,
+			'summary' => 'Autoloads Warehouse Management Classes',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+}
