@@ -130,3 +130,4 @@ $rm = strtolower($input->requestMethod());
 $values = $input->$rm;
 
 $modules->get('UgmOrderingPagesItem')->createPagesForNewItems();
+include($modules->get('Mvc')->controllersPath().'vendor/autoload.php');
