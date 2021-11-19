@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c8d649af92ec1ee14c54cf197edcc071",
+    "content-hash": "4145d71c8c0d77226efe978800a71dee",
     "packages": [
         {
             "name": "cptechinc/dplus-model",
@@ -12,16 +12,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cptechinc/dplus-model.git",
-                "reference": "0682395e60a4bd0d3edd91fdd11485d9d6d85f4b"
+                "reference": "0e73da236fe25fea521d6f8292b1ab8904b5d02d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cptechinc/dplus-model/zipball/0682395e60a4bd0d3edd91fdd11485d9d6d85f4b",
-                "reference": "0682395e60a4bd0d3edd91fdd11485d9d6d85f4b",
+                "url": "https://api.github.com/repos/cptechinc/dplus-model/zipball/0e73da236fe25fea521d6f8292b1ab8904b5d02d",
+                "reference": "0e73da236fe25fea521d6f8292b1ab8904b5d02d",
                 "shasum": ""
             },
             "require": {
-                "propel/propel": "~2.0@dev"
+                "propel/propel": "dev-master#3087361bd27f3598f3ecd70e9fd272a5c2575b88"
             },
             "default-branch": true,
             "type": "library",
@@ -43,7 +43,7 @@
                 "issues": "https://github.com/cptechinc/dplus-model/issues",
                 "source": "https://github.com/cptechinc/dplus-model/tree/master"
             },
-            "time": "2021-05-26T13:30:16+00:00"
+            "time": "2021-11-18T17:51:13+00:00"
         },
         {
             "name": "cptechinc/dpluso-model",
@@ -51,12 +51,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cptechinc/dpluso-model.git",
-                "reference": "b13a3bf963a59447cde88aa8472aaf8f951fe72d"
+                "reference": "e22b1188f94630e5474c2826b0c110638830f45b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cptechinc/dpluso-model/zipball/b13a3bf963a59447cde88aa8472aaf8f951fe72d",
-                "reference": "b13a3bf963a59447cde88aa8472aaf8f951fe72d",
+                "url": "https://api.github.com/repos/cptechinc/dpluso-model/zipball/e22b1188f94630e5474c2826b0c110638830f45b",
+                "reference": "e22b1188f94630e5474c2826b0c110638830f45b",
                 "shasum": ""
             },
             "default-branch": true,
@@ -83,7 +83,7 @@
                 "issues": "https://github.com/cptechinc/dpluso-model/issues",
                 "source": "https://github.com/cptechinc/dpluso-model/tree/master"
             },
-            "time": "2021-05-26T13:11:20+00:00"
+            "time": "2021-09-20T15:04:30+00:00"
         },
         {
             "name": "jwage/purl",
