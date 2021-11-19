@@ -10,6 +10,7 @@ site/modules/ProcessExportProfile
 site/config.php
 /vendor
 test.php
+site/modules/Pauldro/Mvc/vendor
 
 
 # Twig Cache
