@@ -1,4 +1,6 @@
 <?php namespace Dplus\Ecomm\Cart;
+// Propel ORM Library
+use Propel\Runtime\ActiveQuery\Criteria;
 // Dpluso Model
 use CartQuery as CartItemQuery, Cart as CartItem;
 // ProcessWire
@@ -28,18 +30,18 @@ class Items extends WireData {
 	Query Functions
 ============================================================= */
 	/**
-	 * Return CartQuery
-	 * @return CartQuery
+	 * Return CartItemQuery
+	 * @return CartItemQuery
 	 */
 	public function query() {
-		$q = CartQuery::create();
+		$q = CartItemQuery::create();
 		$q->filterBySessionid(session_id());
 		return $q;
 	}
 
 	/**
 	 * Return Query for CartItems
-	 * @return CartQuery
+	 * @return CartItemQuery
 	 */
 	public function queryItems() {
 		$q = $this->query();
