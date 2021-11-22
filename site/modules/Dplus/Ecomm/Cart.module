@@ -8,6 +8,7 @@ use CartQuery;
 use Cart as CartItem;
 
 include_once(__DIR__.'/../DplusResponse.php');
+include_once(__DIR__.'/vendor/autoload.php');
 
 /**
  * Handles Cart Actions

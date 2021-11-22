@@ -16,7 +16,7 @@ class Items extends WireData {
 		return self::$instance;
 	}
 
-	private function __construct() {
+	public function __construct() {
 		$this->sessionID = session_id();
 	}
 
