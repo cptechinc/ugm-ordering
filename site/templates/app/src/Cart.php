@@ -1,4 +1,4 @@
-<?php namespace Controllers\Items;
+<?php namespace Controllers;
 
 // Mvc Controllers
 use Controllers\Base;
@@ -6,6 +6,6 @@ use Controllers\Base;
 
 class Cart extends Base {
 	public static function index($data) {
-		
+
 	}
 }
