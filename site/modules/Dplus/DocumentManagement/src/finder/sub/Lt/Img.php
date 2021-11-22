@@ -18,7 +18,7 @@ use Dplus\DocManagement\Finders\Finder;
  */
 class Img extends Finder {
 	const TAG    = 'LT';
-	const FOLDER = 'LOTIMG';
+	const FOLDER = 'lotimg';
 
 /* =============================================================
 	Read Functions

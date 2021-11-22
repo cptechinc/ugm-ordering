@@ -21,6 +21,7 @@ class ComposerStaticInitdfa6e5969747eafb2b3b4d0d7cdd6f3e
     );
 
     public static $classMap = array (
+        'Dplus\\DocManagement\\Copier' => __DIR__ . '/../..' . '/src/Copier.php',
         'Dplus\\DocManagement\\Finders\\ApInvoice' => __DIR__ . '/../..' . '/src/finder/sub/Mpo/ApInvoice.php',
         'Dplus\\DocManagement\\Finders\\Ar' => __DIR__ . '/../..' . '/src/finder/sub/Ar.php',
         'Dplus\\DocManagement\\Finders\\Cu' => __DIR__ . '/../..' . '/src/finder/sub/Cu.php',
@@ -32,6 +33,8 @@ class ComposerStaticInitdfa6e5969747eafb2b3b4d0d7cdd6f3e
         'Dplus\\DocManagement\\Finders\\SalesOrder' => __DIR__ . '/../..' . '/src/finder/sub/SalesOrder.php',
         'Dplus\\DocManagement\\Folders' => __DIR__ . '/../..' . '/src/Folders.php',
         'Dplus\\DocManagement\\Mover' => __DIR__ . '/../..' . '/src/Mover.php',
+        'Dplus\\DocManagement\\Viewer' => __DIR__ . '/../..' . '/src/viewer/Viewer.php',
+        'Dplus\\DocManagement\\Viewer\\Config' => __DIR__ . '/../..' . '/src/viewer/Config.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
