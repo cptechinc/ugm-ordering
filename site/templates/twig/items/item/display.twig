@@ -1,5 +1,11 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page(template=item)
+	lots                   array [$lot => ['lot' => $lotnbr, 'qty' => $qty]]
+	docm                   Dplus\DocManagement\Finders\Lt\Img
+#}
 <p class="lead text-muted">{{ page.description1 }}</p>
-
 
 <div class="row">
 	{% for lot in lots %}
