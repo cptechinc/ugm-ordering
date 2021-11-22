@@ -10,18 +10,29 @@ class Cart extends Base {
 	Index Functions
 ============================================================= */
 	public static function index($data) {
+		$fields = ['action|text'];
+		self::sanitizeParametersShort($data, $fields);
+
+		if (empty($data->action) === false) {
+			return self::handleCRUD($data);
+		}
 		return self::cart($data);
 	}
 
 	public static function handleCRUD($data) {
-		$fields = ['action|text'];
+		$fields = ['action|text', 'page|text'];
 		self::sanitizeParametersShort($data, $fields);
 		$cart = CartCRUD::getInstance();
+		$url  = self::cartUrl();
 
 		if (empty($data->action) === false) {
 			$cart->processInput(self::pw('input'));
+
+			if (empty($data->page) === false) {
+				$url = $data->page;
+			}
 		}
-		self::pw('session')->redirect(self::cartUrl(), $http301 = false);
+		self::pw('session')->redirect($url, $http301 = false);
 	}
 
 	private static function cart($data) {

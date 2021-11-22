@@ -36,6 +36,12 @@ class Cart extends WireData {
 			case 'add-item':
 				return $this->inputAddItem($input);
 				break;
+			case 'update-item-qty':
+				$this->inputUpdateItemQty($input);
+				break;
+			case 'delete-item':
+				$this->inputDeleteItem($input);
+				break;
 		}
 	}
 
@@ -65,6 +71,48 @@ class Cart extends WireData {
 			return false;
 		}
 		$this->setResponse(Response::createError("Item $itemID not found"));
+		return false;
+	}
+
+	/**
+	 * Processes Input for Edit Item Qty Request
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function inputUpdateItemQty(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$itemID = $values->text('itemID');
+		$qty = $values->int('qty') ? $values->int('qty') : 1;
+
+		if ($this->items->exists($itemID)) {
+			$this->requestItemUpdate($itemID, $qty);
+			return true;
+		}
+		$this->setResponse(Response::createError("Item $itemID is not in cart"));
+		return false;
+	}
+
+	/**
+	 * Processes Input for Delete Item Qty Request
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function inputDeleteItem(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+		$itemID = $values->text('itemID');
+
+		if ($this->items->exists($itemID)) {
+			$this->requestItemDelete($itemID);
+
+			if ($this->items->exists($itemID) === false) {
+				$qnotes = $this->wire('modules')->get('QnotesCart');
+				$qnotes->delete_notes($itemID);
+			}
+			return true;
+		}
+		$this->setResponse(Response::createError("Item $itemID is not in cart"));
 		return false;
 	}
 
