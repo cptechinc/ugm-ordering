@@ -19,4 +19,8 @@ class Cart extends WireData {
 		$this->items = Cart\Items::getInstance();
 		$this->items->setSessionid($this->sessionID);
 	}
+
+/* =============================================================
+	CRUD Processing Functions
+============================================================= */
 }
