@@ -13,6 +13,17 @@ class Cart extends Base {
 		return self::cart($data);
 	}
 
+	public static function handleCRUD($data) {
+		$fields = ['action|text'];
+		self::sanitizeParametersShort($data, $fields);
+		$cart = CartCRUD::getInstance();
+
+		if (empty($data->action) === false) {
+			$cart->processInput(self::pw('input'));
+		}
+		self::pw('session')->redirect(self::cartUrl(), $http301 = false);
+	}
+
 	private static function cart($data) {
 		$config = self::pw('config');
 		$page   = self::pw('page');
@@ -36,5 +47,12 @@ class Cart extends Base {
 		$html .= self::pw('config')->twig->render('cart/cart.twig', ['cart' => $cart, 'qnotes' => $qnotes]);
 		$html .= self::pw('config')->twig->render('cart/notes/modal.twig', ['cart' => $cart, 'qnotes' => $qnotes]);
 		return $html;
+	}
+
+/* =============================================================
+	URLs functions
+============================================================= */
+	public static function cartUrl() {
+		return self::pw('pages')->get('template=cart')->url;
 	}
 }
