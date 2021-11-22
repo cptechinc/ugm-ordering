@@ -57,7 +57,7 @@ class Cart extends WireData {
 
 			if ($this->items->exists($itemID)) {
 				$response = Response::createSuccess("$itemID was added to the cart");
-				$this->wire('session')->response_cartadd = $itemID;
+				$this->wire('session')->setFor('cart', 'add', $itemID);
 				$this->setResponse($response);
 				return true;
 			}

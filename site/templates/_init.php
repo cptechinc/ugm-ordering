@@ -127,8 +127,8 @@ $values = $input->$rm;
 $modules->get('UgmOrderingPagesItem')->createPagesForNewItems();
 include($modules->get('Mvc')->controllersPath().'vendor/autoload.php');
 
-if ($session->response_cartadd) {
+if ($session->getFor('cart', 'add')) {
 	$cartCRUD = Dplus\Ecomm\Cart::getInstance();
 	$page->js   .= $config->twig->render('cart/toast.js.twig', ['response' => $cartCRUD->getResponse()]);
-	$session->remove('response_cartadd');
+	$session->removeFor('cart', 'add');
 }
