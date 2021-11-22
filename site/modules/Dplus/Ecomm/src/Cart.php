@@ -129,4 +129,16 @@ class Cart extends WireData {
 	public function getResponse(Response $response) {
 		$this->wire('session')->getFor('cart', 'response');
 	}
+
+/* =============================================================
+	Supplemental Functions
+============================================================= */
+	/**
+	 * Return Item Master Item
+	 * @param  string $itemID Item ID
+	 * @return ItemMasterItem
+	 */
+	public function getItem($itemID) {
+		return $this->wire('modules')->get('LoaderItem')->load($itemID);
+	}
 }
