@@ -26,7 +26,15 @@ class Cart extends Base {
 		$url  = self::cartUrl();
 
 		if (empty($data->action) === false) {
-			$cart->processInput(self::pw('input'));
+			$success = $cart->processInput(self::pw('input'));
+
+			switch ($data->action) {
+				case 'checkout':
+					if ($success) {
+						$url = self::pw('pages')->get('template=checkout')->url;
+					}
+					break;
+			}
 
 			if (empty($data->page) === false) {
 				$url = $data->page;
