@@ -37,10 +37,18 @@ class Cart extends WireData {
 				return $this->inputAddItem($input);
 				break;
 			case 'update-item-qty':
-				$this->inputUpdateItemQty($input);
+				return $this->inputUpdateItemQty($input);
 				break;
 			case 'delete-item':
-				$this->inputDeleteItem($input);
+				return $this->inputDeleteItem($input);
+				break;
+			case 'update-notes':
+			case 'delete-notes':
+				$qnotes = $this->wire('modules')->get('QnotesCart');
+				return $qnotes->process_input($input);
+				break;
+			case 'checkout':
+				return $this->checkout($input);
 				break;
 		}
 	}
@@ -113,6 +121,30 @@ class Cart extends WireData {
 			return true;
 		}
 		$this->setResponse(Response::createError("Item $itemID is not in cart"));
+		return false;
+	}
+
+	/**
+	 * Processes Checkout Request
+	 * @return void
+	 */
+	private function checkout() {
+		if ($this->items->count()) {
+			$checkoutM = $this->modules->get('Checkout');
+			if ($checkoutM->has_billing() === false) {
+				$this->requestCheckout();
+			}
+
+			if ($checkoutM->has_billing()) {
+				$billing = $checkoutM->get_billing();
+
+				if (empty($billing->orders) === false) {
+					$this->requestCheckout();
+				}
+			}
+			return true;
+		}
+		$this->setResponse(Response::createError("You don't have items in your cart"));
 		return false;
 	}
 
