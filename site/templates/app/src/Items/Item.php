@@ -13,6 +13,6 @@ class Item extends Base {
 		$whseLots->setWhseID(1);
 		$lots = $whseLots->getLotsByItemid(self::pw('page')->itemid);
 
-		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'lotm' => $lotm]);
+		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'lotm' => $whseLots]);
 	}
 }
