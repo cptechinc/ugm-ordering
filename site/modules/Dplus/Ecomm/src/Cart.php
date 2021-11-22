@@ -131,8 +131,12 @@ class Cart extends WireData {
 		$this->wire('session')->setFor('cart', 'response', $response);
 	}
 
-	public function getResponse(Response $response) {
-		$this->wire('session')->getFor('cart', 'response');
+	public function getResponse() {
+		return $this->wire('session')->getFor('cart', 'response');
+	}
+
+	public function deleteResponse() {
+		return $this->wire('session')->removeFor('cart', 'response');
 	}
 
 /* =============================================================

@@ -117,11 +117,6 @@ $html = $modules->get('HtmlWriter');
 
 $page->show_breadcrumbs = true;
 
-if ($session->response_cartadd) {
-	$page->js   .= $config->twig->render('cart/toast.js.twig', ['session' => $session, 'carturl' => $pages->get('template=cart')->url]);
-	$session->remove('response_cartadd');
-}
-
 $session->display = 12;
 $page->showonpage = $session->display;
 
@@ -131,3 +126,9 @@ $values = $input->$rm;
 
 $modules->get('UgmOrderingPagesItem')->createPagesForNewItems();
 include($modules->get('Mvc')->controllersPath().'vendor/autoload.php');
+
+if ($session->response_cartadd) {
+	$cartCRUD = Dplus\Ecomm\Cart::getInstance();
+	$page->js   .= $config->twig->render('cart/toast.js.twig', ['response' => $cartCRUD->getResponse()]);
+	$session->remove('response_cartadd');
+}
