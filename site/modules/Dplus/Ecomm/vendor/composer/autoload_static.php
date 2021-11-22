@@ -23,6 +23,7 @@ class ComposerStaticInitfe8760478d7adf9a8701b89014dabc5b
     public static $classMap = array (
         'Dplus\\Ecomm\\Cart' => __DIR__ . '/../..' . '/src/Cart.php',
         'Dplus\\Ecomm\\Cart\\Items' => __DIR__ . '/../..' . '/src/Cart/Items.php',
+        'Dplus\\Ecomm\\Response' => __DIR__ . '/../..' . '/src/Response.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
