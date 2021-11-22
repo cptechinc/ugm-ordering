@@ -10,16 +10,15 @@
 	<div class="card-header bg-secondary text-white">
 		<div class="d-flex w-100 justify-content-between">
 			Cart for {{ user.customer.name }}
-			{% set notesclass = qnotes.notes_exist('header') ? 'btn-info text-white' : 'btn-light border border-dark' %}
-
 
 			<div>
-				<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal"aria-controls="notes-modal" data-itemid="header">
+				{% set notesclass = qnotes.notes_exist('header') ? 'btn-info text-white' : 'btn-light border border-dark' %}
+				<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal" aria-controls="notes-modal" data-itemid="header">
 					<i class="fa fa-commenting" aria-hidden="true"></i> Header Notes
 				</button>
 
 				<div class="collapse">
-					<textarea name="name" id="notes-header" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array('header')|join('\r') }}</textarea>
+					<textarea name="name" id="notes-header" cols="{{ qnotes.get_column_count() }}" data-itemid="header" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array('header')|join('\r') }}</textarea>
 				</div>
 			</div>
 			<button class="btn btn-dark btn-sm" type="button" data-toggle="collapse" data-target="#items" aria-expanded="false" aria-controls="items">
