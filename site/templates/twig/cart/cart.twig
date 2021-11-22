@@ -32,7 +32,7 @@
 			{% include 'cart/cart/headings.twig' %}
 		</div>
 
-		{% for item in cart.items() %}
+		{% for item in cart.items.items() %}
 			<div class="list-group-item">
 				{% include 'cart/cart/item.twig' %}
 			</div>
