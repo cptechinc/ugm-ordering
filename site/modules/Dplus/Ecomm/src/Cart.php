@@ -23,13 +23,18 @@ class Cart extends WireData {
 /* =============================================================
 	CRUD Processing Functions
 ============================================================= */
+	/**
+	 * Process Input Data, process cart action
+	 * @param  WireInput $input Input Data
+	 * @return bool
+	 */
 	public function processInput(WireInput $input) {
 		$rm = strtolower($input->requestMethod());
 		$values = $input->$rm;
 
 		switch ($values->text('action')) {
 			case 'add-item':
-				$this->inputAddItem($input);
+				return $this->inputAddItem($input);
 				break;
 		}
 	}
@@ -37,7 +42,7 @@ class Cart extends WireData {
 	/**
 	 * Processes Input for Add To Cart Request
 	 * @param  WireInput $input
-	 * @return void
+	 * @return bool
 	 */
 	private function inputAddItem(WireInput $input) {
 		$rm = strtolower($input->requestMethod());
