@@ -245,7 +245,8 @@ class Cart extends WireData {
 	 * @return void
 	 */
 	public function requestLotAdd($itemID, $lot, int $qty) {
-		$data = ["ADDLOTTOCART", "ITEMID=$itemID", "LOTSER=$lot", "QTY=$qty"];
+		$itemidQty = $this->items->qtyItemid($itemID);
+		$data = ["ADDLOTTOCART", "ITEMID=$itemID", "LOTSER=$lot", "QTY=$qty", "CARTITEMQTY=$itemidQty"];
 		$this->sendRequest($data);
 	}
 

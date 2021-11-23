@@ -83,4 +83,16 @@ class Items extends WireData {
 		$q->filterByItemid($itemID);
 		return boolval($q->count());
 	}
+
+	/**
+	 * Return Item ID qty in the cart
+	 * @param  string $itemID Item ID
+	 * @return int
+	 */
+	public function qtyItemid($itemID) {
+		$q = $this->queryItems();
+		$q->filterByItemid($itemID);
+		$q->select('qty');
+		return intval($q->findOne());
+	}
 }
