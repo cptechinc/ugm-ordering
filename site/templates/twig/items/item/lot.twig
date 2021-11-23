@@ -19,10 +19,11 @@
 	<div class="card-body">
 		<h5>Lot # {{ lot.lot }}</h5>
 
-		<form class="" action="" method="POST">
+		<form action="{{ pages.get('template=cart').url }}" method="POST">
 			<input type="hidden" name="action" value="add-lot">
 			<input type="hidden" name="itemID" value="{{ page.itemid }}">
 			<input type="hidden" name="lot" value="{{ lot.lot }}">
+			<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
 
 			<div class="row mb-1">
 				<div class="col-6">
