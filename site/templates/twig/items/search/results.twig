@@ -7,7 +7,7 @@
 #}
 
 {% if items.count() %}
-	{% include 'items/list.twig' with {'page': page, 'items': items} %}
+	{% include 'items/list.twig' with {'items': items} %}
 {% else %}
 	<div class="text-center">
 		<h4>no results found</h4>
