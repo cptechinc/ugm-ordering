@@ -87,6 +87,12 @@ class Lookup extends WireData {
 		return $q->find()->toArray();
 	}
 
+	/**
+	 * Return if Lotserial matches itemid and has qty
+	 * @param  string $lotserial  Lotserial
+	 * @param  string $itemID     Item ID
+	 * @return bool
+	 */
 	public function existsByItemid($lotserial, $itemID) {
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
