@@ -9,4 +9,6 @@ return array(
     'Controllers\\Base' => $baseDir . '/src/Base.php',
     'Controllers\\Cart' => $baseDir . '/src/Cart.php',
     'Controllers\\Items\\Item' => $baseDir . '/src/Items/Item.php',
+    'Controllers\\Items\\ItemGroup' => $baseDir . '/src/Items/ItemGroup.php',
+    'Controllers\\Items\\Search' => $baseDir . '/src/Items/Search.php',
 );

@@ -24,6 +24,8 @@ class ComposerStaticInitf0dd3ec9868b7a4635653d01f1d0fc0b
         'Controllers\\Base' => __DIR__ . '/../..' . '/src/Base.php',
         'Controllers\\Cart' => __DIR__ . '/../..' . '/src/Cart.php',
         'Controllers\\Items\\Item' => __DIR__ . '/../..' . '/src/Items/Item.php',
+        'Controllers\\Items\\ItemGroup' => __DIR__ . '/../..' . '/src/Items/ItemGroup.php',
+        'Controllers\\Items\\Search' => __DIR__ . '/../..' . '/src/Items/Search.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
