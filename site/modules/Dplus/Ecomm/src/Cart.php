@@ -1,6 +1,8 @@
 <?php namespace Dplus\Ecomm;
 // ProcessWire
 use ProcessWire\WireData, ProcessWire\WireInput;
+// Dplus Warehouse Management
+use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 
 
 class Cart extends WireData {
@@ -16,8 +18,6 @@ class Cart extends WireData {
 
 	public function __construct() {
 		$this->sessionID = session_id();
-		$this->items = Cart\Items::getInstance();
-		$this->items->setSessionid($this->sessionID);
 		$this->items = Cart\Items::getInstance($this->sessionID);
 		$this->lots  = Cart\Lots::getInstance($this->sessionID);
 	}
@@ -51,6 +51,12 @@ class Cart extends WireData {
 				break;
 			case 'checkout':
 				return $this->checkout($input);
+				break;
+			case 'add-lot':
+				break;
+			case 'update-lot-qty':
+				break;
+			case 'delete-lot':
 				break;
 		}
 	}
@@ -150,6 +156,44 @@ class Cart extends WireData {
 		return false;
 	}
 
+	/**
+	 * Processes Input for Add To Cart Request
+	 * @param  WireInput $input
+	 * @return bool
+	 */
+	private function inputAddLot(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values = $input->$rm;
+
+		$validateItem = $this->wire('modules')->get('ValidateItem');
+		$itemID = $values->text('itemID');
+		$lot    = $values->text('lot');
+		$qty    = $values->int('qty') ? $values->int('qty') : 1;
+
+		if ($validateItem->validate($itemID) === false) {
+			$this->setResponse(Response::createError("Item $itemID not found"));
+			return false;
+		}
+
+		$whseLots = $this->getWhseLotsM();
+		if ($whseLots->existsByItemid($lot, $itemID) === false) {
+			$this->setResponse(Response::createError("Item $itemID Lot $lot not found"));
+			return false;
+		}
+
+		$this->requestLotAdd($itemID, $lot, $qty);
+
+		if ($this->lots->exists($lot)) {
+			$response = Response::createSuccess("$itemID was added to the cart");
+			$this->wire('session')->setFor('cart', 'add', $itemID);
+			$this->setResponse($response);
+			return true;
+		}
+
+		$this->setResponse(Response::createError("$itemID was not added to the cart"));
+		return false;
+	}
+
 /* =============================================================
 	Dplus Cobol Request Functions
 ============================================================= */
@@ -194,6 +238,18 @@ class Cart extends WireData {
 	}
 
 	/**
+	 * Send Add LOT Request
+	 * @param  string $itemID Item ID
+	 * @param  string $ilot   Lot Serial #
+	 * @param  int    $qty    Qty
+	 * @return void
+	 */
+	public function requestLotAdd($itemID, $lot, int $qty) {
+		$data = ["ADDLOTTOCART", "ITEMID=$itemID", "LOTSER=$lot", "QTY=$qty"];
+		$this->sendRequest($data);
+	}
+
+	/**
 	 * Write Session File and Make CGI Request
 	 * @param  array  $data
 	 * @return void
@@ -231,5 +287,15 @@ class Cart extends WireData {
 	 */
 	public function getItem($itemID) {
 		return $this->wire('modules')->get('LoaderItem')->load($itemID);
+	}
+
+	/**
+	 * Return Whse Lots Lookup
+	 * @return WhseLots
+	 */
+	public function getWhseLotsM() {
+		$m = WhseLots::getInstance();
+		$m->setWhseID(1);
+		return $m;
 	}
 }
