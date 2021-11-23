@@ -3,7 +3,7 @@
 	-------------------------------------------------
 	page                   ProcessWire\Page
 #}
-<form action="{{ page.searchurl }}" method="GET">
+<form action="{{ pages.get('template=items-search').url }}" method="GET">
 	<div class="form-group">
 		<label for="q">Search Items</label>
 		<div class="input-group">
