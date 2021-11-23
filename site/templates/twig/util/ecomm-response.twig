@@ -1,0 +1,12 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	response               DplusResponse
+#}
+{% set type  = response.hasError() ? 'danger' : 'success' %}
+{% set icon  = response.hasError() ? 'fa fa-warning fa-2x' : 'fa fa-floppy-o fa-2x' %}
+{% set title = response.hasError() ? 'Error!' : 'Success!' %}
+
+<div id="dplus-alert" class="mb-3">
+	{% include 'util/alert.twig' with {'type': type, 'iconclass': icon, 'title': title, 'message': response.message } %}
+</div>

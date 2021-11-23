@@ -79,7 +79,7 @@ class Cart extends Base {
 		$html = '';
 
 		if ($response) {
-			$html .= $config->twig->render('util/dplus-response.twig', ['response' => $response]);
+			$html .= self::pw('config')->twig->render('util/ecomm-response.twig', ['response' => $response]);
 			$cart->deleteResponse();
 		}
 		return $html;
@@ -90,7 +90,7 @@ class Cart extends Base {
 		$html = '';
 
 		if ($session->response_qnote) {
-			$html .= $config->twig->render('util/dplus-response.twig', ['response' => $session->response_qnote]);
+			$html .= self::pw('config')->render('util/ecomm-response.twig', ['response' => $session->response_qnote]);
 			$session->remove('response_qnote');
 		}
 		return $html;
