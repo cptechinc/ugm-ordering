@@ -19,12 +19,11 @@ class ItemGroup extends Base {
 	}
 
 	private static function itemgroup($data) {
-		$dpluspricing = self::pw('modules')->get('ItemSearchDplus');
 		$items = self::getInstockItems();
 
 		$html  = '';
 		$html .= self::pw('config')->twig->render('items/search/form.twig');
-		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'dpluspricing' => $dpluspricing]);
+		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'inventory' => self::getWhseLots()]);
 		return $html;
 	}
 
@@ -38,13 +37,13 @@ class ItemGroup extends Base {
 	}
 
 	private static function getInstockItemids() {
-		$whseLots = WhseLots::getInstance();
+		$whseLots = self::getWhseLots();
 		return $whseLots->getItemidsWithQty(self::pw('page')->children('template=item')->explode('itemid'));
 	}
 
 	private static function getInstockItems() {
-		$whseLots = WhseLots::getInstance();
-		$itemIDs = self::getInstockItemids();
+		$whseLots = self::getWhseLots();
+		$itemIDs  = self::getInstockItemids();
 		return self::pw('page')->children("template=item,itemid=".implode('|', $itemIDs) . ',sort=itemid');
 	}
 
@@ -54,5 +53,11 @@ class ItemGroup extends Base {
 	public static function initHooks() {
 		$m = self::pw('modules')->get('UgmOrderingPages');
 
+	}
+
+	public static function getWhseLots() {
+		$whseLots = WhseLots::getInstance();
+		$whseLots->setWhseID(1);
+		return $whseLots;
 	}
 }
