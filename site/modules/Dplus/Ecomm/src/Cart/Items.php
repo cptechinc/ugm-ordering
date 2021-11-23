@@ -10,9 +10,12 @@ use ProcessWire\WireData;
 class Items extends WireData {
 	private static $instance;
 
-	public static function getInstance() {
+	public static function getInstance($sessionID = '') {
 		if (empty(self::$instance)) {
 			$instance = new self();
+			if ($sessionID != '') {
+				$instance->setSessionID($sessionID);
+			}
 			self::$instance = $instance;
 		}
 		return self::$instance;
@@ -54,7 +57,7 @@ class Items extends WireData {
 ============================================================= */
 	/**
 	 * Return Items
-	 * @return Cart[]|ObjectCollection
+	 * @return CartItem[]|ObjectCollection
 	 */
 	public function items() {
 		$q = $this->queryItems();
