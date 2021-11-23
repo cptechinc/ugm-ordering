@@ -1,16 +1,14 @@
 <?php
-	if ($user->has_itemgroup($page->groupcode)) {
-		$search = $modules->get('ItemSearch');
-		$search->send_request_all();
-		$dpluspricing = $modules->get('ItemSearchDplus');
-		$page->searchurl = $pages->get('template=items-search')->url;
-		$page->carturl = $pages->get('template=cart')->url;
-		$items = $page->get_stocked_items();
+	use Controllers\Items;
 
-		$page->body .= $config->twig->render('items/search/form.twig', ['page' => $page]);
-		$page->body .= $config->twig->render('items/list.twig', ['page' => $page, 'items' => $items, 'dpluspricing' => $dpluspricing]);
+	$routes = [
+		['GET',  '', Items\ItemGroup::class, 'index'],
+	];
 
-		include('./basic-page.php');
-	} else {
-		throw new Wire404Exception();
-	}
+	$router = new Mvc\Router();
+	$router->setRoutes($routes);
+	$router->setRoutePrefix($page->url);
+	$page->body = $router->route();
+	$page->show_breadcrumbs = false;
+
+	include __DIR__ . "/basic-page.php";
