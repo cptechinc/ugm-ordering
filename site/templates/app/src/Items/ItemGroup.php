@@ -6,7 +6,9 @@ use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Mvc Controllers
 use Controllers\Base;
 
-
+/**
+ * Controller for the template item-group
+ */
 class ItemGroup extends Base {
 
 	public static function index($data) {
@@ -18,11 +20,7 @@ class ItemGroup extends Base {
 
 	private static function itemgroup($data) {
 		$dpluspricing = self::pw('modules')->get('ItemSearchDplus');
-		$page = self::pw('page');
-		$page->searchurl = self::pw('pages')->get('template=items-search')->url;
-		$page->carturl   = self::pw('pages')->get('template=cart')->url;
-		$items = self::search();
-		echo json_encode($items->explode('itemid'));
+		$items = self::getInstockItems();
 
 		$html  = '';
 		$html .= self::pw('config')->twig->render('items/search/form.twig');
@@ -30,10 +28,24 @@ class ItemGroup extends Base {
 		return $html;
 	}
 
+/* =============================================================
+	Item Filtering
+============================================================= */
 	private static function search() {
 		$search = self::pw('modules')->get('ItemSearch');
 		$search->send_request_all();
 		return self::pw('page')->get_stocked_items();
+	}
+
+	private static function getInstockItemids() {
+		$whseLots = WhseLots::getInstance();
+		return $whseLots->getItemidsWithQty(self::pw('page')->children('template=item')->explode('itemid'));
+	}
+
+	private static function getInstockItems() {
+		$whseLots = WhseLots::getInstance();
+		$itemIDs = self::getInstockItemids();
+		return self::pw('page')->children("template=item,itemid=".implode('|', $itemIDs) . ',sort=itemid');
 	}
 
 /* =============================================================
