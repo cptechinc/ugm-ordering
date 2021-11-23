@@ -3,7 +3,7 @@
 	-------------------------------------------------
 	page                   ProcessWire\Page
 	items                  Page(template=item)[]
-	dpluspricing           ItemSearchDplus
+	inventory              Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin
 #}
 <div class="row">
 	{% for item in items %}
@@ -25,13 +25,13 @@
 						<input type="hidden" name="action" value="add-item">
 						<input type="hidden" name="itemID" value="{{ item.itemid }}">
 						<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
-						
+
 						<div class="row mb-1">
 							<div class="col-6">
 								<label for="qty">Qty</label>
 							</div>
 							<div class="col-6 text-right">
-								Available: {{ pricing.qty }}
+								Available: {{ inventory.getQtyByItemid(item.itemid) }}
 							</div>
 						</div>
 						<div class="row">
