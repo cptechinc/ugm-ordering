@@ -18,6 +18,8 @@ class Cart extends WireData {
 		$this->sessionID = session_id();
 		$this->items = Cart\Items::getInstance();
 		$this->items->setSessionid($this->sessionID);
+		$this->items = Cart\Items::getInstance($this->sessionID);
+		$this->lots  = Cart\Lots::getInstance($this->sessionID);
 	}
 
 /* =============================================================
