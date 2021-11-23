@@ -14,6 +14,14 @@ class Lookup extends WireData {
 	private static $instance;
 	private $whseID;
 
+	public static function getInstance() {
+		if (empty(self::$instance)) {
+			$instance = new self();
+			self::$instance = $instance;
+		}
+		return self::$instance;
+	}
+
 /* =============================================================
 	Setter Functions
 ============================================================= */
@@ -99,5 +107,18 @@ class Lookup extends WireData {
 		$q->filterByLotserial($lotserial);
 		$q->filterByQty(1, Criteria::GREATER_EQUAL);
 		return boolval($q->count());
+	}
+
+	/**
+	 * [getItemidsWithQty description]
+	 * @param  array  $itemID               [description]
+	 * @return [type]         [description]
+	 */
+	public function getItemidsWithQty($itemID = []) {
+		$q = $this->queryWhseBins();
+		$q->filterByItemid($itemID);
+		$q->filterByQty(1, Criteria::GREATER_EQUAL);
+		$q->select(WhseLotserial::aliasproperty('itemid'));
+		return $q->find()->toArray();
 	}
 }
