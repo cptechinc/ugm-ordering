@@ -1,4 +1,6 @@
 <?php namespace Dplus\Wm\Inventory\Lots;
+// Propel ORM Library
+use Propel\Runtime\ActiveQuery\Criteria;
 // Dplus Models
 use WhseLotserialQuery, WhseLotserial;
 // ProcessWire
@@ -83,5 +85,13 @@ class Lookup extends WireData {
 		$q->select(['lot', 'qty']);
 		$q->groupBy('lot');
 		return $q->find()->toArray();
+	}
+
+	public function existsByItemid($lotserial, $itemID) {
+		$q = $this->queryWhseBins();
+		$q->filterByItemid($itemID);
+		$q->filterByLotserial($lotserial);
+		$q->filterByQty(1, Criteria::GREATER_EQUAL);
+		return boolval($q->count());
 	}
 }
