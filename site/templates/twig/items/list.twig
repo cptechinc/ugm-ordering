@@ -21,10 +21,11 @@
 					</p>
 					<p class="card-text">UoM : {{ uom_desc }}</p>
 
-					<form class="" action="{{ page.carturl }}" method="post">
+					<form action="{{ pages.get('template=cart').url }}" method="POST">
 						<input type="hidden" name="action" value="add-item">
 						<input type="hidden" name="itemID" value="{{ item.itemid }}">
 						<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
+						
 						<div class="row mb-1">
 							<div class="col-6">
 								<label for="qty">Qty</label>
