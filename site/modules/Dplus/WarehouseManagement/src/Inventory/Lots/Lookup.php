@@ -135,4 +135,16 @@ class Lookup extends WireData {
 		$q->select('qty');
 		return intval($q->findOne());
 	}
+
+	/**
+	 * Count Item IDs that are in stock
+	 * @param  string|array $itemID  Item ID
+	 * @return int
+	 */
+	public function countInstockByItemid($itemID) {
+		$q = $this->queryWhseBins();
+		$q->filterByItemid($itemID);
+		$q->filterByQty(1, Criteria::GREATER_EQUAL);
+		return $q->count();
+	}
 }
