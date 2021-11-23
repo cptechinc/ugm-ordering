@@ -17,18 +17,23 @@ class ItemGroup extends Base {
 	}
 
 	private static function itemgroup($data) {
-		$search = self::pw('modules')->get('ItemSearch');
-		$search->send_request_all();
 		$dpluspricing = self::pw('modules')->get('ItemSearchDplus');
 		$page = self::pw('page');
 		$page->searchurl = self::pw('pages')->get('template=items-search')->url;
 		$page->carturl   = self::pw('pages')->get('template=cart')->url;
-		$items = $page->get_stocked_items();
+		$items = self::search();
+		echo json_encode($items->explode('itemid'));
 
 		$html  = '';
 		$html .= self::pw('config')->twig->render('items/search/form.twig');
 		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'dpluspricing' => $dpluspricing]);
 		return $html;
+	}
+
+	private static function search() {
+		$search = self::pw('modules')->get('ItemSearch');
+		$search->send_request_all();
+		return self::pw('page')->get_stocked_items();
 	}
 
 /* =============================================================
