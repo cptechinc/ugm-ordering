@@ -88,7 +88,7 @@ class Lookup extends WireData {
 		$colLot = WhseLotserial::aliasproperty('lotserial');
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
-		$q->addAsColumn('qty', "SUM(DISTINCT($colQty))");
+		$q->addAsColumn('qty', "SUM($colQty)");
 		$q->withColumn($colLot, 'lot');
 		$q->select(['lot', 'qty']);
 		$q->groupBy('lot');
@@ -120,5 +120,19 @@ class Lookup extends WireData {
 		$q->filterByQty(1, Criteria::GREATER_EQUAL);
 		$q->select(WhseLotserial::aliasproperty('itemid'));
 		return $q->find()->toArray();
+	}
+
+	/**
+	 * Return Qty for Item ID
+	 * @param  string $itemID Item ID
+	 * @return int
+	 */
+	public function getQtyByItemid($itemID) {
+		$colQty = WhseLotserial::aliasproperty('qty');
+		$q = $this->queryWhseBins();
+		$q->filterByItemid($itemID);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return intval($q->findOne());
 	}
 }
