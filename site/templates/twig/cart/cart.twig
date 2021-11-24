@@ -33,6 +33,7 @@
 		</div>
 
 		{% for item in cart.items.items() %}
+			{% set imitem = cart.getItem(item.itemid) %}
 			<div class="list-group-item cart-item">
 				{% include 'cart/cart/item.twig' %}
 
@@ -40,7 +41,7 @@
 					<textarea name="name" id="notes-{{ item.itemid }}" data-itemid="{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
 				</div>
 			</div>
-			{% if cart.lots.lineHasLots(item.recordno) %}
+			{% if imitem.is_itemtype_lotted(imitem.itemtype) %}
 				<div class="list-group list-group-flush collapse" id="{{ item.recordno|attrJS }}-lots">
 					{% include 'cart/cart/item-lots.twig' %}
 				</div>

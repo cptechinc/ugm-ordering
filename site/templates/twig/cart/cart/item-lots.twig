@@ -1,5 +1,25 @@
 <div class="list-group-item bg-light">
-	<b>{{ item.itemid }} Allocated Lots</b>
+	<div class="row">
+		<div class="col-sm-4">
+			<b>{{ item.itemid }} Allocated Lots</b>
+		</div>
+		<div class="col-sm-2 text-center">
+			{% include 'util/bootstrap/html/button.twig' with {
+					'button': {
+						'size': 'sm',
+						'colorclass': 'btn-secondary',
+						'text': 'fa fa-search'|icon,
+						'attributes': {
+							'title': 'Search Lots',
+							'data-toggle': 'modal',
+							'data-target': '#ajax-modal',
+							'data-lookupurl': pages.get('template=item,itemid=' ~ item.itemid).url
+						}
+					}
+				}
+			%}
+		</div>
+	</div>
 </div>
 <div class="list-group-item">
 	<div class="row">
