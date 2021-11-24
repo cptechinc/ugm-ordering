@@ -35,10 +35,18 @@
 		{% for item in cart.items.items() %}
 			<div class="list-group-item">
 				{% include 'cart/cart/item.twig' %}
+
+
+				<div class="collapse">
+					<textarea name="name" id="notes-{{ item.itemid }}" data-itemid="{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
+				</div>
 			</div>
-			<div class="list-group-item collapse">
-				<textarea name="name" id="notes-{{ item.itemid }}" data-itemid="{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
-			</div>
+			{% if cart.lots.lineHasLots(item.recordno) %}
+				<div class="list-group list-group-flush collapse" id="{{ item.recordno|attrJS }}-lots">
+					{% include 'cart/cart/item-lots.twig' %}
+				</div>
+			{% endif %}
+
 		{% endfor %}
 		<div class="list-group-item">
 			{% include 'cart/lookup-form.twig' %}

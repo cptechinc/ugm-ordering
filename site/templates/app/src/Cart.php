@@ -1,4 +1,6 @@
 <?php namespace Controllers;
+// Purl URI Manipulation Library
+use Purl\Url as Purl;
 // Dplus Ecomm
 use Dplus\Ecomm\Cart as CartCRUD;
 // Mvc Controllers
@@ -51,6 +53,7 @@ class Cart extends Base {
 		$checkout = self::pw('modules')->get('Checkout');
 		$checkout->deleteOldBilling();
 
+		self::initHooks();
 		$page->js .= $config->twig->render('cart/js.twig');
 		$page->js .= $config->twig->render('cart/lookup.js.twig');
 		$page->js .= $config->twig->render('cart/notes/js.twig');
@@ -101,5 +104,46 @@ class Cart extends Base {
 ============================================================= */
 	public static function cartUrl() {
 		return self::pw('pages')->get('template=cart')->url;
+	}
+
+	public static function cartDeleteItemUrl($itemID) {
+		$url = new Purl(self::cartUrl());
+		$url->query->set('action', 'delete-item');
+		$url->query->set('itemID', $itemID);
+		return $url->getUrl();
+	}
+
+	public static function cartDeleteLotUrl($linenbr, $lot) {
+		$url = new Purl(self::cartUrl());
+		$url->query->set('action', 'delete-lot');
+		$url->query->set('linenbr', $linenbr);
+		$url->query->set('lot', $lot);
+		return $url->getUrl();
+	}
+
+/* =============================================================
+	Hooks
+============================================================= */
+	public static function initHooks() {
+		$m = self::pw('modules')->get('UgmOrderingPages');
+
+		$m->addHook('Page(template=cart)::searchItemsUrl', function($event) {
+			$event->return = self::pw('pages')->get('template=items-search')->url;
+		});
+
+		$m->addHook('Page(template=cart)::itemDeleteUrl', function($event) {
+			$itemID = $event->arguments(0);
+			$event->return = self::cartDeleteItemUrl($itemID);
+		});
+
+		$m->addHook('Page(template=cart)::lotDeleteUrl', function($event) {
+			$linenbr = $event->arguments(0);
+			$lot     = $event->arguments(1);
+			$event->return = self::cartDeleteLotUrl($linenbr, $lot);
+		});
+
+		$m->addHook('Page(template=cart)::itemsJsonUrl', function($event) {
+			$event->return = self::pw('pages')->get('template=items-json')->url;
+		});
 	}
 }

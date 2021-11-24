@@ -281,22 +281,4 @@ class Cart extends WireData implements Module {
 			'autoload' => true,
 		);
 	}
-
-	public function init() {
-		$this->addHookProperty('Page(template=cart)::url_itemjson', function($event) {
-			$event->return = $this->wire('pages')->get('template=items-json')->url;
-		});
-
-		$this->addHookProperty('Page(template=cart)::url_search', function($event) {
-			$event->return = $this->wire('pages')->get('template=items-search')->url;
-		});
-
-		$this->addHook('Page(template=cart)::url_item_delete', function($event) {
-			$itemID = $event->arguments(0);
-			$url = new Url($this->wire('pages')->get('template=cart')->url);
-			$url->query->set('action', 'delete-item');
-			$url->query->set('itemID', $itemID);
-			$event->return = $url->getUrl();
-		});
-	}
 }

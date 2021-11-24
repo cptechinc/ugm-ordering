@@ -38,7 +38,7 @@ class Lots extends WireData {
 	 */
 	public function query() {
 		$q = CartLotQuery::create();
-		$q->filterBySessionid(session_id());
+		$q->filterBySessionid($this->sessionID);
 		return $q;
 	}
 
@@ -65,6 +65,12 @@ class Lots extends WireData {
 		$q = $this->query();
 		$q->filterByLinenbr($linenbr);
 		return $q->find();
+	}
+
+	public function lineHasLots($linenbr = 1) {
+		$q = $this->query();
+		$q->filterByLinenbr($linenbr);
+		return boolval($q->count());
 	}
 
 	/**

@@ -15,7 +15,7 @@
 		{{ imitem.uom_sale }}
 	</div>
 	<div class="col-2 text-right">
-		<form action="{{ page.url }}" method="post">
+		<form action="{{ page.url }}" method="POST">
 			<input type="hidden" name="action" value="update-item-qty">
 			<input type="hidden" name="itemID" value="{{ item.itemid }}">
 
@@ -34,15 +34,22 @@
 			</div>
 		</form>
 	</div>
+	<div class="col-1 text-center">
+		{% if cart.lots.lineHasLots(item.recordno) %}
+			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ item.recordno|attrJS }}-lots" aria-expanded="false" aria-controls="{{ item.recordno|attrJS }}-lots">
+				<i class="fa fa-list" aria-hidden="true"></i>
+			</button>
+		{% endif %}
+	</div>
 	<div class="col-1 text-right">
 		$ {{ item.price|currency }}
 	</div>
 	<div class="col-1 text-right">
 		$ {{ item.amount|currency }}
 	</div>
-	<div class="col-3 text-center">
-		<div class="">
-			<a href="{{ page.url_item_delete(item.itemid) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
+	<div class="col-2 text-center">
+		<div>
+			<a href="{{ page.itemDeleteUrl(item.itemid) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
 				<i class="fa fa-trash" aria-hidden="true"></i> Delete
 			</a>
 			&nbsp;

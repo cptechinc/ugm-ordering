@@ -88,7 +88,7 @@ $(function() {
 				confirmButtonText: 'Make advanced search?'
 			}).then(function (result) {
 				if (result.value) {
-					var url = URI("{{ page.url_search }}");
+					var url = URI("{{ page.searchItemsUrl() }}");
 					url.addQuery('q', input_itemid.val());
 
 					div_results.loadin(url.toString(), function() {
@@ -100,7 +100,7 @@ $(function() {
 	}
 
 	function validate_itemid(success, failure) {
-		var exists_url = URI("{{ page.url_itemjson }}");
+		var exists_url = URI("{{ page.itemsJsonUrl() }}");
 		exists_url.addQuery('action', 'validate-itemid');
 		exists_url.addQuery('itemID', input_itemid.val());
 
@@ -122,7 +122,7 @@ $(function() {
 	}
 
 	function get_item_description() {
-		var description_url = URI("{{ page.url_itemjson }}");
+		var description_url = URI("{{ page.itemsJsonUrl() }}");
 		description_url.addQuery('action', 'get-item-description');
 		description_url.addQuery('itemID', input_itemid.val());
 
