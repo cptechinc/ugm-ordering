@@ -53,6 +53,7 @@ class Cart extends WireData {
 				return $this->checkout($input);
 				break;
 			case 'add-lot':
+				return $this->inputAddLot($input);
 				break;
 			case 'update-lot-qty':
 				break;

@@ -2,7 +2,7 @@
 // Propel ORM Library
 use Propel\Runtime\ActiveQuery\Criteria;
 // Dpluso Model
-use CartQuery as CartItemQuery, Cart as CartItem;
+use CartLotQuery, CartLot;
 // ProcessWire
 use ProcessWire\WireData;
 
@@ -33,19 +33,19 @@ class Lots extends WireData {
 	Query Functions
 ============================================================= */
 	/**
-	 * Return CartItemQuery
-	 * @return CartItemQuery
+	 * Return CartLotQuery
+	 * @return CartLotQuery
 	 */
 	public function query() {
-		$q = CartItemQuery::create();
+		$q = CartLotQuery::create();
 		$q->filterBySessionid(session_id());
 		return $q;
 	}
 
 	/**
-	 * Return Query for CartItems filtered By Item ID
+	 * Return Query for CartLots filtered By Item ID
 	 * @param  string $itemID  Item ID
-	 * @return CartItemQuery
+	 * @return CartLotQuery
 	 */
 	public function queryItemid($itemID) {
 		$q = $this->query();
@@ -59,7 +59,7 @@ class Lots extends WireData {
 	/**
 	 * Return Lots For Line Number
 	 * @property int $linenbr
-	 * @return CartItem[]|ObjectCollection
+	 * @return CartLot[]|ObjectCollection
 	 */
 	public function lotsByLinenbr($linenbr = 1) {
 		$q = $this->query();
