@@ -86,6 +86,19 @@ class Lots extends WireData {
 	}
 
 	/**
+	 * Return if Lot Exists for Line
+	 * @param  string $lot     Lot Serial #
+	 * @param  int    $linenbr Line Number
+	 * @return boolval
+	 */
+	public function existsByLinenbr($lot, $linenbr) {
+		$q = $this->query();
+		$q->filterByLinenbr($linenbr);
+		$q->filterByLotserial($lot);
+		return boolval($q->count());
+	}
+
+	/**
 	 * Return if Lot Exists
 	 * @param  string $lot     Lot Serial #
 	 * @return boolval

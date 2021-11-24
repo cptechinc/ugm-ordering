@@ -58,6 +58,7 @@ class Cart extends WireData {
 			case 'update-lot-qty':
 				break;
 			case 'delete-lot':
+				return $this->inputDeleteLot($input);
 				break;
 		}
 	}
@@ -195,6 +196,23 @@ class Cart extends WireData {
 		return false;
 	}
 
+	/**
+	 * Processes Input for Delete Item Qty Request
+	 * @param  WireInput $input
+	 * @return void
+	 */
+	public function inputDeleteLot(WireInput $input) {
+		$rm = strtolower($input->requestMethod());
+		$values  = $input->$rm;
+		$linenbr = $values->int('linenbr');
+		$lot     = $values->text('lot');
+
+		if ($this->lots->existsByLinenbr($lot, $linenbr) === false) {
+			return true;
+		}
+		$this->requestLotDelete($linenbr, $lot);
+	}
+
 /* =============================================================
 	Dplus Cobol Request Functions
 ============================================================= */
@@ -241,13 +259,23 @@ class Cart extends WireData {
 	/**
 	 * Send Add LOT Request
 	 * @param  string $itemID Item ID
-	 * @param  string $ilot   Lot Serial #
+	 * @param  string $lot   Lot Serial #
 	 * @param  int    $qty    Qty
 	 * @return void
 	 */
 	public function requestLotAdd($itemID, $lot, int $qty) {
-		$itemidQty = $this->items->qtyItemid($itemID);
-		$data = ["ADDLOTTOCART", "ITEMID=$itemID", "LOTSER=$lot", "QTY=$qty", "CARTITEMQTY=$itemidQty"];
+		$data = ["ADDLOTTOCART", "ITEMID=$itemID", "LOTSER=$lot", "QTY=$qty"];
+		$this->sendRequest($data);
+	}
+
+	/**
+	 * Send Delete LOT Request
+	 * @param  int    $linenbr Line Number
+	 * @param  string $lot     Lot Serial #
+	 * @return void
+	 */
+	public function requestLotDelete($linenbr, $lot) {
+		$data = ["REMOVELOTFROMCART", "LINENBR=$linenbr", "LOTSER=$lot"];
 		$this->sendRequest($data);
 	}
 
