@@ -1,4 +1,6 @@
 <?php namespace Controllers\Items;
+// Purl Manipulation Library
+use Purl\Url as Purl;
 // Dplus Warehouse Management
 use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Document Managment
@@ -40,6 +42,16 @@ class Item extends Base {
 				}
 			}
 		}
+	}
+
+/* =============================================================
+	URL Functions
+============================================================= */
+	public static function itemLotUrl($itemID, $lotserial) {
+		$url = new Purl(self::pw('pages')->get("template=item,itemid=$itemID")->url);
+		$url->path->add('lots');
+		$url->path->add($lotserial);
+		return $url->getUrl();
 	}
 
 /* =============================================================

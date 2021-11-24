@@ -147,4 +147,15 @@ class Lookup extends WireData {
 		$q->filterByQty(1, Criteria::GREATER_EQUAL);
 		return $q->count();
 	}
+
+	/**
+	 * Return Lot
+	 * @param  string $lotserial  Lot / Serial #
+	 * @return WhseLotserial
+	 */
+	public function getLot($lotserial) {
+		$q = $this->queryWhseBins();
+		$q->filterByLotserial($lotserial);
+		return $q->findOne();
+	}
 }

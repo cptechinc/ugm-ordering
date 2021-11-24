@@ -1,7 +1,7 @@
 <div class="list-group-item bg-light">
 	<div class="row">
 		<div class="col-sm-4">
-			<b>{{ item.itemid }} Allocated Lots</b>
+			<b>{{ item.itemid }} Requested Lots</b>
 		</div>
 		<div class="col-sm-2 text-center">
 			{% include 'util/bootstrap/html/button.twig' with {
@@ -25,7 +25,7 @@
 	<div class="row">
 		<div class="col-sm-2"></div>
 		<div class="col-sm-3"><b>Lot #</b></div>
-		<div class="col-sm-2 text-right"><b>Allocated Qty</b></div>
+		<div class="col-sm-2 text-right"><b>Requested Qty</b></div>
 		<div class="col-sm-2"></div>
 		<div class="col-sm-3"></div>
 	</div>
@@ -33,7 +33,22 @@
 {% for lot in cart.lots.lotsByLinenbr(item.recordno) %}
 	<div class="list-group-item">
 		<div class="row">
-			<div class="col-sm-2"></div>
+			<div class="col-sm-2">
+				{% include 'util/bootstrap/html/button.twig' with {
+						'button': {
+							'size': 'sm',
+							'colorclass': 'btn-secondary',
+							'text': 'fa fa-file-image-o'|icon,
+							'attributes': {
+								'title': 'Lot #' ~ lot.lotserial,
+								'data-toggle': 'modal',
+								'data-target': '#ajax-modal',
+								'data-lookupurl': page.lotUrl(item.itemid, lot.lotserial)
+							}
+						}
+					}
+				%}
+			</div>
 			<div class="col-sm-3">{{ lot.lotserial }}</div>
 			<div class="col-sm-2 text-right">
 				<form action="{{ page.url }}" method="POST">

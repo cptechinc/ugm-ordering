@@ -3,6 +3,9 @@
 
 	$routes = [
 		['GET',  '', Items\Item::class, 'index'],
+		'lots' => [
+			['GET',  '{lot}/', Items\Item\Lots::class, 'index'],
+		]
 	];
 
 	$router = new Mvc\Router();

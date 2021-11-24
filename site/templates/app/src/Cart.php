@@ -5,7 +5,7 @@ use Purl\Url as Purl;
 use Dplus\Ecomm\Cart as CartCRUD;
 // Mvc Controllers
 use Controllers\Base;
-
+use Controllers\Items\Item;
 
 class Cart extends Base {
 /* =============================================================
@@ -144,6 +144,12 @@ class Cart extends Base {
 
 		$m->addHook('Page(template=cart)::itemsJsonUrl', function($event) {
 			$event->return = self::pw('pages')->get('template=items-json')->url;
+		});
+
+		$m->addHook('Page(template=cart)::lotUrl', function($event) {
+			$itemID = $event->arguments(0);
+			$lot     = $event->arguments(1);
+			$event->return = Item::itemLotUrl($itemID, $lot);
 		});
 	}
 }
