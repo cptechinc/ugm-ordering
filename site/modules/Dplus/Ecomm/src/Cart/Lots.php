@@ -73,6 +73,13 @@ class Lots extends WireData {
 		return boolval($q->count());
 	}
 
+	public function getLotQty($lot) {
+		$q = $this->query();
+		$q->filterByLotserial($lot);
+		$q->select('qty');
+		return intval($q->findOne());
+	}
+
 	/**
 	 * Return if Lot Exists for Item ID
 	 * @param  string $lot     Lot Serial #

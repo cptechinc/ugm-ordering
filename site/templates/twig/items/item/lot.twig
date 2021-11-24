@@ -23,8 +23,17 @@
 			<input type="hidden" name="action" value="add-lot">
 			<input type="hidden" name="itemID" value="{{ page.itemid }}">
 			<input type="hidden" name="lot" value="{{ lot.lot }}">
-			<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
-
+			{% if config.ajax == false %}
+				<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
+			{% endif %}
+			<div class="row mb-1">
+				<div class="col-6"></div>
+				<div class="col-6 text-right">
+					<span class="badge bg-dark text-light">
+						In Cart: {{ cart.lots.getLotQty(lot.lot) }}
+					</span>
+				</div>
+			</div>
 			<div class="row mb-1">
 				<div class="col-6">
 					<label for="qty">Qty</label>

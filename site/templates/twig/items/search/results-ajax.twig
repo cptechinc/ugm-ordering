@@ -9,25 +9,36 @@
 <div class="list-group">
 	<div class="list-group-item bg-primary">
 		<div class="row">
-			<div class="col">Item</div>
-			<div class="col text-right">UoM</div>
-			<div class="col text-right">Available</div>
+			<div class="col-sm-4">Item</div>
+			<div class="col-sm-1 text-right">UoM</div>
+			<div class="col-sm-2 text-right">Available</div>
+			<div class="col-sm-2 text-center">View Lots</div>
+			<div class="col-sm-2 text-right">Qty In Cart</div>
 		</div>
 	</div>
 	{% if items.count() %}
 		{% for item in items %}
-			{% set pricing = dpluspricing.get_pricing_item(item.itemid) %}
 			{% set uom_desc = item.item.uom_sale == 'LBW' ? 'EA' : item.item.uom_sale %}
 			<div class="list-group-item item-result">
 				<div class="row">
-					<div class="col">
+					<div class="col-sm-4">
 						<h5 class="mb-1">
-							<a href="#" class="link item-lookup-itemid" data-itemid="{{ item.itemid }}">{{ item.itemid }}</a>
+							<a href="#" class="link item-lookup-itemid item-link" data-islotted="{{ item.item.is_itemtype_lotted(item.item.itemtype) ? 'true' : 'true'}}" data-itemid="{{ item.itemid }}">{{ item.itemid }}</a>
 						</h5>
 						<p class="mb-1 text-muted item-description">{{ item.description1 }}</p>
 					</div>
-					<div class="col text-right uom">{{ uom_desc }}</div>
-					<div class="col text-right available">{{ pricing.qty }}</div>
+					<div class="col-sm-1 text-right uom">{{ uom_desc }}</div>
+					<div class="col-sm-2 text-right available">{{ inventory.getQtyByItemid(item.itemid) }}</div>
+					<div class="col-sm-2 text-center">
+						{% if item.item.is_itemtype_lotted(item.item.itemtype) %}
+							<a href="{{ item.url }}" class="btn btn-sm btn-primary paginator-link">
+								<i class="fa fa-list" aria-hidden="true"></i>
+							</a>
+						{% endif %}
+					</div>
+					<div class="col-sm-2 text-right">
+						{{ cart.items.qtyItemid(item.itemid) }}
+					</div>
 				</div>
 			</div>
 		{% endfor %}

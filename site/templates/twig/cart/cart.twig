@@ -27,15 +27,14 @@
 		</div>
 	</div>
 
-	<div class="list-group list-group-flush collapse show" id="items">
+	<div class="list-group list-group-flush collapse show cart" id="items">
 		<div class="list-group-item bg-primary">
 			{% include 'cart/cart/headings.twig' %}
 		</div>
 
 		{% for item in cart.items.items() %}
-			<div class="list-group-item">
+			<div class="list-group-item cart-item">
 				{% include 'cart/cart/item.twig' %}
-
 
 				<div class="collapse">
 					<textarea name="name" id="notes-{{ item.itemid }}" data-itemid="{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>

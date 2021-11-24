@@ -7,7 +7,6 @@
 #}
 <div class="row">
 	{% for item in items %}
-		{% set pricing = dpluspricing.get_pricing_item(item.itemid) %}
 		{% set uom_desc = item.item.uom_sale == 'LBW' ? 'EA' : item.item.uom_sale %}
 		<div class="col-12 col-sm-4 form-group">
 			<div class="card">
@@ -25,6 +24,15 @@
 						<input type="hidden" name="action" value="add-item">
 						<input type="hidden" name="itemID" value="{{ item.itemid }}">
 						<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
+
+						<div class="row mb-1">
+							<div class="col-6"></div>
+							<div class="col-6 text-right">
+								<span class="badge bg-dark text-light">
+									In Cart: {{ cart.items.qtyItemid(item.itemid) }}
+								</span>
+							</div>
+						</div>
 
 						<div class="row mb-1">
 							<div class="col-6">

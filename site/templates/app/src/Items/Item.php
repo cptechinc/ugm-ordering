@@ -5,6 +5,8 @@ use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 use Dplus\DocManagement\Finders\Lt\Img as Docm;
 use Dplus\DocManagement\Folders;
 use Dplus\DocManagement\Copier;
+// Dplus Ecomm
+use Dplus\Ecomm\Cart as CartCRUD;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -18,8 +20,9 @@ class Item extends Base {
 		$lots = $whseLots->getLotsByItemid(self::pw('page')->itemid);
 		$docm = self::getDocm();
 		self::copyImage($data, $lots);
+		$cart = CartCRUD::getInstance();
 
-		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'docm' => $docm]);
+		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'docm' => $docm, 'cart' => $cart]);
 	}
 
 	private static function copyImage($data, $lots) {
@@ -33,7 +36,7 @@ class Item extends Base {
 				$copier->useDocVwrDirectory();
 
 				if ($copier->isInDirectory($file->filename) === false) {
-					echo $copier->copyFile($folder->directory, $file->filename) ? 'true' : 'false';
+					$copier->copyFile($folder->directory, $file->filename) ? 'true' : 'false';
 				}
 			}
 		}

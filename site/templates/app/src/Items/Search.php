@@ -5,6 +5,7 @@ use ProcessWire\Exceptions;
 use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Ecomm
 use Dplus\Ecomm\Items\Search as SearchItems;
+use Dplus\Ecomm\Cart as CartCRUD;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -47,15 +48,16 @@ class Search extends Base {
 		$html = '';
 
 		$whseLots = self::getWhseLots();
+		$cart     = CartCRUD::getInstance();
 
 		$html  = '';
 		$html .= $config->twig->render('items/search/form.twig', ['q' => $data->q]);
 
 		if ($config->ajax) {
-			$html .= $config->twig->render('items/search/results-ajax.twig', ['q' => $data->q, 'items' => $items, 'inventory' => $whseLots]);
-		} 
+			$html .= $config->twig->render('items/search/results-ajax.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $whseLots]);
+		}
 		if ($config->ajax === false) {
-			$html .= $config->twig->render('items/search/results.twig', ['q' => $data->q, 'items' => $items, 'inventory' => $whseLots]);
+			$html .= $config->twig->render('items/search/results.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $whseLots]);
 		}
 		$html .= $config->twig->render('util/paginator.twig', ['resultscount' => $search->count()]);
 		return $html;

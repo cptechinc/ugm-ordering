@@ -11,4 +11,8 @@
 	$page->body = $router->route();
 	$page->show_breadcrumbs = false;
 
-	include __DIR__ . "/basic-page.php";
+	if ($config->ajax) {
+		echo $page->body;
+	} else {
+		include('./basic-page.php');
+	}

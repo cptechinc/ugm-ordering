@@ -3,6 +3,8 @@
 use ProcessWire\Exceptions;
 // Dplus Warehouse Management
 use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
+// Dplus Ecomm
+use Dplus\Ecomm\Cart as CartCRUD;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -20,10 +22,11 @@ class ItemGroup extends Base {
 
 	private static function itemgroup($data) {
 		$items = self::getInstockItems();
+		$cart = CartCRUD::getInstance();
 
 		$html  = '';
 		$html .= self::pw('config')->twig->render('items/search/form.twig');
-		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'inventory' => self::getWhseLots()]);
+		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'inventory' => self::getWhseLots(), 'cart' => $cart]);
 		return $html;
 	}
 
