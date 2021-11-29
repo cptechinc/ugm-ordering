@@ -73,6 +73,29 @@ $(function() {
 		modal.find('.modal-body').load(button.attr('href'));
 	});
 
+	$("body").on('submit', '#ajax-modal form.add-lot-form', function(e) {
+		e.preventDefault();
+		var form = $(this);
+		var ajax = new AjaxRequest('{{ page.jsonApiUrl('cart') }}');
+		ajax.setMethod('POST');
+		ajax.setData(form.formData());
+		ajax.request(function(response) {
+			console.log(response);
+			$.notify({
+				// options
+				title: response.error == false ? 'Success!' : 'Error!',
+				message: response.message,
+				icon: 'fa fa-shopping-cart',
+			},{
+			// settings
+				type: response.error == false ? 'success' : 'danger',
+				delay: 4000,
+				showProgressbar: true,
+				z_index: 1051,
+			});
+		});
+	});
+
 
 /* =============================================================
 	Validation Functions

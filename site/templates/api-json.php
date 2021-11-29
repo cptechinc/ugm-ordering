@@ -3,7 +3,7 @@
 
 	$routes  = [
 		'cart' => [
-			['GET', '', Api\Cart::class, 'handleCRUD'],
+			['POST', '', Api\Cart::class, 'handleCRUD'],
 		],
 	];
 

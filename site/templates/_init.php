@@ -91,6 +91,7 @@ $config->scripts->append(hash_templatefile('scripts/lib/bootstrap-notify.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/uri.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/sweetalert2.js'));
 $config->scripts->append(hash_templatefile('scripts/lib/jquery-validate.js'));
+$config->scripts->append(hash_templatefile('scripts/classes.js'));
 $config->scripts->append(hash_templatefile('scripts/main.js'));
 
 

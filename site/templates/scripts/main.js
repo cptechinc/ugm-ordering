@@ -185,6 +185,17 @@ $.fn.extend({
 				modal_dialog.addClass(modal_size);
 			}
 		}
+	},
+	formData: function() {
+		var form = $(this);
+		if (form[0].tagName != 'FORM') {
+			return false;
+		}
+		var values = form.serializeArray().reduce(function(obj, item) {
+			obj[item.name] = item.value;
+			return obj;
+		}, {});
+		return values;
 	}
 });
 

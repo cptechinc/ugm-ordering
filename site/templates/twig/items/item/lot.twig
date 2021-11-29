@@ -19,7 +19,7 @@
 	<div class="card-body">
 		<h5>Lot # {{ lot.lot }}</h5>
 
-		<form action="{{ pages.get('template=cart').url }}" method="POST">
+		<form action="{{ pages.get('template=cart').url }}" class="add-lot-form" method="POST">
 			<input type="hidden" name="action" value="add-lot">
 			<input type="hidden" name="itemID" value="{{ page.itemid }}">
 			<input type="hidden" name="lot" value="{{ lot.lot }}">
