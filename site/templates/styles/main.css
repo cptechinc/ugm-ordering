@@ -154,10 +154,6 @@ a.image-link {
 
 .highlight { background: #FADA5E; }
 
-textarea.qnotes {
-	font-family: monospace;
-}
-
 .modal.loading {
 	top: auto;
 }
@@ -183,8 +179,27 @@ textarea.qnotes {
 
 
 /*==============================================================
-	Bootstrap Notify Styles
+	Cart Styles
 ==============================================================*/
 	.cart .cart-item {
 		border-top: 3px solid #000;
+	}
+
+/*==============================================================
+	Form
+==============================================================*/
+	/* Chrome, Safari, Edge, Opera */
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Firefox */
+	input.form-control[type=number] {
+		-moz-appearance: textfield;
+	}
+
+	textarea.qnotes {
+		font-family: monospace;
 	}
