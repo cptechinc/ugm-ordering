@@ -9,6 +9,8 @@ use ShipviaQuery, Shipvia;
 use BillingQuery, Billing;
 use StatesQuery, States;
 
+use Dplus\Ecomm\Cart as CartCRUD;
+
 include_once(__DIR__.'/../DplusResponse.php');
 
 /**
@@ -196,9 +198,9 @@ class Checkout extends WireData implements Module {
 	 * Return Cart Items
 	 * @return Cart[]|ObjectCollection
 	 */
-	public function get_cartitems() {
-		$cart = $this->wire('modules')->get('Cart');
-		return $cart->items();
+	public function getCartItems() {
+		$cart = CartCRUD::getInstance();
+		return $cart->items->items();
 	}
 
 	public function get_customer_js() {
