@@ -21,4 +21,21 @@ $(function() {
 			}
 		});
 	});
+
+	$("body").on('click', '.delete-lot', function(e) {
+		e.preventDefault();
+		var button = $(this);
+
+		swal2.fire({
+			title: 'Remove Requested Lot?',
+			text: 'Delete ' + button.data('lot') + ' from cart?',
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonText: 'Yes'
+		}).then(function (result) {
+			if (result.value) {
+				window.location.href = button.attr('href');
+			}
+		});
+	});
 });

@@ -53,7 +53,8 @@
 			<div class="col-sm-2 text-right">
 				<form action="{{ page.url }}" method="POST">
 					<input type="hidden" name="action" value="update-lot-qty">
-					<input type="hidden" name="itemID" value="{{ item.itemid }}">
+					<input type="hidden" name="linenbr" value="{{ item.recordno }}">
+					<input type="hidden" name="lot" value="{{ lot.lotserial }}">
 
 					<div class="placard placard-qty" data-ellipsis="true" data-initialize="placard">
 						<div class="placard-popup"></div>
@@ -72,7 +73,7 @@
 			</div>
 			<div class="col-sm-2"></div>
 			<div class="col-sm-3 text-center">
-				<a href="{{ page.lotDeleteUrl(lot.linenbr, lot.lotserial) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
+				<a href="{{ page.lotDeleteUrl(lot.linenbr, lot.lotserial) }}" class="btn btn-sm btn-danger delete-lot" data-lot="{{ lot.lotserial }}">
 					<i class="fa fa-trash" aria-hidden="true"></i> Delete
 				</a>
 			</div>
