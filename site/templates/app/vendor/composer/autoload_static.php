@@ -21,6 +21,8 @@ class ComposerStaticInitf0dd3ec9868b7a4635653d01f1d0fc0b
     );
 
     public static $classMap = array (
+        'Controllers\\Api\\Base' => __DIR__ . '/../..' . '/src/Api/Base.php',
+        'Controllers\\Api\\Cart' => __DIR__ . '/../..' . '/src/Api/Cart.php',
         'Controllers\\Base' => __DIR__ . '/../..' . '/src/Base.php',
         'Controllers\\Cart' => __DIR__ . '/../..' . '/src/Cart.php',
         'Controllers\\Checkout' => __DIR__ . '/../..' . '/src/Checkout.php',
