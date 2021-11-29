@@ -5,6 +5,8 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use WhseLotserialQuery, WhseLotserial;
 // ProcessWire
 use ProcessWire\WireData;
+// Dplus Inventory
+use Dplus\Wm\Inventory\Lotm;
 
 /**
  * WhseInventory
@@ -96,6 +98,18 @@ class Lookup extends WireData {
 	}
 
 	/**
+	 * Return Lotnbrs
+	 * @param  string $itemID Item ID
+	 * @return array
+	 */
+	public function getLotnbrsByItemid($itemID) {
+		$q = $this->queryWhseBins();
+		$q->filterByItemid($itemID);
+		$q->select(WhseLotserial::aliasproperty('lotserial'));
+		return $q->find()->toArray();
+	}
+
+	/**
 	 * Return if Lotserial matches itemid and has qty
 	 * @param  string $lotserial  Lotserial
 	 * @param  string $itemID     Item ID
@@ -110,9 +124,9 @@ class Lookup extends WireData {
 	}
 
 	/**
-	 * [getItemidsWithQty description]
-	 * @param  array  $itemID               [description]
-	 * @return [type]         [description]
+	 * Return Item IDs that have Stock
+	 * @param  array  $itemID
+	 * @return array
 	 */
 	public function getItemidsWithQty($itemID = []) {
 		$q = $this->queryWhseBins();
@@ -157,5 +171,11 @@ class Lookup extends WireData {
 		$q = $this->queryWhseBins();
 		$q->filterByLotserial($lotserial);
 		return $q->findOne();
+	}
+
+	public function itemidLotsHaveImages($itemID) {
+		$lotnbrs = $this->getLotnbrsByItemid($itemID);
+		$lotm    = Lotm::getInstance();
+		return $lotm->lotsHaveImages($lotnbrs);
 	}
 }

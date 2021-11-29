@@ -21,6 +21,7 @@ class ComposerStaticInitc6078a59a0d419120f4cee0ec3742137
     );
 
     public static $classMap = array (
+        'Dplus\\Wm\\Inventory\\Lotm' => __DIR__ . '/../..' . '/src/Inventory/Lotm.php',
         'Dplus\\Wm\\Inventory\\Lots\\Lookup' => __DIR__ . '/../..' . '/src/Inventory/Lots/Lookup.php',
         'Dplus\\Wm\\Inventory\\Lots\\Lookup\\ExcludePackBin' => __DIR__ . '/../..' . '/src/Inventory/Lots/ExcludePackBin.php',
     );

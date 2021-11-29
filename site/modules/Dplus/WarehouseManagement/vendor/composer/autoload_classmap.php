@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Dplus\\Wm\\Inventory\\Lotm' => $baseDir . '/src/Inventory/Lotm.php',
     'Dplus\\Wm\\Inventory\\Lots\\Lookup' => $baseDir . '/src/Inventory/Lots/Lookup.php',
     'Dplus\\Wm\\Inventory\\Lots\\Lookup\\ExcludePackBin' => $baseDir . '/src/Inventory/Lots/ExcludePackBin.php',
 );
