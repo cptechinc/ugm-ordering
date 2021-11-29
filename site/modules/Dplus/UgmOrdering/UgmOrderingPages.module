@@ -92,6 +92,14 @@ class UgmOrderingPages extends PwPages implements Module {
 		),
 	);
 
+	public function jsonApiUrl($api) {
+		$url = $this->wire('pages')->get("template=api-json")->httpUrl;
+		if ($api) {
+			$url .= rtrim($api,'/').'/';
+		}
+		return $url;
+	}
+
 /* =============================================================
 	ProcessWire Module Functions
 ============================================================= */
@@ -127,5 +135,13 @@ class UgmOrderingPages extends PwPages implements Module {
 		}
 
 		parent::update();
+	}
+
+	public function init() {
+
+		$this->addHook("Page::jsonApiUrl", function($event) {
+			$api = $event->arguments(0);
+			$event->return = $this->jsonApiUrl($api);
+		});
 	}
 }
