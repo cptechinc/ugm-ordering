@@ -121,6 +121,12 @@ class Cart extends Base {
 		return $url->getUrl();
 	}
 
+	public static function checkoutUrl() {
+		$url = new Purl\Url($pages->get('template=cart')->url);
+		$url->query->set('action', 'checkout');
+		return $url->getUrl();
+	}
+
 /* =============================================================
 	Hooks
 ============================================================= */

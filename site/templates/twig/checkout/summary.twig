@@ -39,56 +39,26 @@
 	</div>
 	<div class="list-group list-group-flush collapse show" id="items">
 		<div class="list-group-item bg-light">
-			<div class="row">
-				<div class="col-4">
-					<b>Item</b>
-				</div>
-				<div class="col">
-					<b>UoM</b>
-				</div>
-				<div class="col">
-					<b>Qty</b>
-				</div>
-				<div class="col">
-					<b>Price</b>
-				</div>
-				<div class="col">
-					<b>Notes</b>
-				</div>
-			</div>
+			{% include 'cart/cart/headings.twig' %}
 		</div>
-		{% for item in checkoutm.get_cartitems() %}
-			<div class="list-group-item">
-				<div class="row">
-					<div class="col-4">
-						{{ item.itemid }} <br>
-						<small class="s-70">{{ item.desc1 }}</small>
-					</div>
-					<div class="col">
-						{% set imitem = cart.get_item(item.itemid) %}
-						{{ imitem.uom_sale }}
-					</div>
-					<div class="col">
-						{{ item.qty }}
-					</div>
-					<div class="col">
-						${{ item.price|currency }}
-					</div>
-					<div class="col">
-						{% set notesclass = qnotes.notes_exist(item.itemid) ? 'btn-info text-white' : 'btn-light border border-dark' %}
-						<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal"aria-controls="notes-modal" data-itemid="{{ item.itemid }}">
-							<i class="fa fa-commenting" aria-hidden="true"></i> Notes
-						</button>
-					</div>
+		{% for item in cart.items.items() %}
+			{% set imitem = cart.getItem(item.itemid) %}
+			<div class="list-group-item cart-item">
+				{% include 'checkout/cart/item.twig' %}
+
+				<div class="collapse">
+					<textarea name="name" id="notes-{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
 				</div>
 			</div>
-			<div class="list-group-item collapse">
-				<textarea name="name" id="notes-{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
-			</div>
+			{% if imitem.is_itemtype_lotted(imitem.itemtype) %}
+				<div class="list-group list-group-flush collapse" id="{{ item.recordno|attrJS }}-lots">
+					{% include 'checkout/cart/item-lots.twig' %}
+				</div>
+			{% endif %}
 		{% endfor %}
 	</div>
 	<div class="card-footer">
-		<a href="{{ page.url_cart() }}" class="btn btn-warning btn-sm">
+		<a href="{{ pages.get('template=cart').url }}" class="btn btn-warning btn-sm">
 			<i class="fa fa-shopping-cart" aria-hidden="true"></i> Edit Cart
 		</a>
 	</div>

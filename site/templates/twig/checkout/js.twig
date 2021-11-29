@@ -6,6 +6,7 @@
 	billing                Billing
 #}
 $(function() {
+	var modalAjax = $('#ajax-modal');
 	var customer = {{ checkoutm.get_customer_js()|json_encode()|raw }};
 	var shiptos  = {{ checkoutm.get_shiptos_js()|json_encode()|raw }};
 
@@ -22,6 +23,19 @@ $(function() {
 	$("body").on('change', 'input[name=rqstdate]', function(e) {
 		var select = $(this);
 		var date = select.val();
+	});
+
+/* =============================================================
+	Ajax Modal Functions
+============================================================= */
+	modalAjax.on('show.bs.modal', function (event) {
+		var button = $(event.relatedTarget); // Button that triggered the modal
+		var modal = $(this);
+
+		modal.attr('data-input', button.data('input'));
+		modal.find('.modal-title').text(button.attr('title'));
+		modal.resizeModal('xl');
+		modal.find('.modal-body').loadin(button.data('lookupurl'), function() {});
 	});
 
 /* =============================================================

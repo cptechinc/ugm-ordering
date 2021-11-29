@@ -1,0 +1,40 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	cart                   module Cart
+	item                   Cart
+#}
+<div class="form-row">
+	<div class="col-4">
+		{{ item.itemid }} <br>
+		<small class="text-muted s-70">{{ item.desc1 }}</small>
+	</div>
+	<div class="col-1 text-center">
+		{{ imitem.uom_sale }}
+	</div>
+	<div class="col-2 text-right">
+		{{ item.qty }}
+	</div>
+	<div class="col-1 text-center">
+		{% if imitem.is_itemtype_lotted(imitem.itemtype) %}
+			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ item.recordno|attrJS }}-lots" aria-expanded="false" aria-controls="{{ item.recordno|attrJS }}-lots">
+				<i class="fa fa-list" aria-hidden="true"></i>
+			</button>
+		{% endif %}
+	</div>
+	<div class="col-1 text-right">
+		$ {{ item.price|currency }}
+	</div>
+	<div class="col-1 text-right">
+		$ {{ item.amount|currency }}
+	</div>
+	<div class="col-2 text-center">
+		<div>
+			{% set notesclass = qnotes.notes_exist(item.itemid) ? 'btn-info text-white' : 'btn-light border border-dark' %}
+			<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal" aria-controls="notes-modal" data-itemid="{{ item.itemid }}">
+				<i class="fa fa-commenting" aria-hidden="true"></i> Notes
+			</button>
+		</div>
+	</div>
+</div>
