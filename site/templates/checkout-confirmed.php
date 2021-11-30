@@ -3,11 +3,12 @@
 	$rm = strtolower($input->requestMethod());
 	$values = $input->$rm;
 	$billing = $checkoutm->get_billing();
-
+	if (empty($billing)) {
+		$session->redirect($pages->get('template=cart')->url, $http301 = false);
+	}
 	if ($billing->has_error() === false && empty($billing->orders) === false) {
 		$session->setFor('order', 'created', $billing->orders);
 	}
-
 
 	if ($session->response_checkout) {
 		$page->body .= $config->twig->render('util/dplus-response.twig', ['response' => $session->response_checkout]);
