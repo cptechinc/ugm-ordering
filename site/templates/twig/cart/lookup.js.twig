@@ -76,19 +76,28 @@ $(function() {
 	$("body").on('submit', '#ajax-modal form.add-lot-form', function(e) {
 		e.preventDefault();
 		var form = $(this);
+		var data = form.formData();
 		var ajax = new AjaxRequest('{{ page.jsonApiUrl('cart') }}');
 		ajax.setMethod('POST');
-		ajax.setData(form.formData());
+		ajax.setData(data);
 		ajax.request(function(response) {
-			console.log(response);
+			if (response.error === false) {
+				var card = $('#ajax-modal').find('[data-itemid="' + data.itemID + '"]');
+				card.find('.cart-qty').text(response.qtyincart);
+				var uri = URI();
+				$('#cart').loadin(uri.toString()+'#cart', function() {
+
+				});
+			}
+
 			$.notify({
 				// options
-				title: response.error == false ? 'Success!' : 'Error!',
+				title: response.error === false ? 'Success!' : 'Error!',
 				message: response.message,
 				icon: 'fa fa-shopping-cart',
 			},{
 			// settings
-				type: response.error == false ? 'success' : 'danger',
+				type: response.error === false ? 'success' : 'danger',
 				delay: 4000,
 				showProgressbar: true,
 				z_index: 1051,

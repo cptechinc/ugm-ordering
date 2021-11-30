@@ -5,7 +5,7 @@
 	lot                    ['lot' => $lotnbr, 'qty' => $qty]
 	docm                   Dplus\DocManagement\Finders\Lt\Img
 #}
-<div class="card mb-4 shadow-sm">
+<div class="card mb-4 shadow-sm lot" data-lot="{{ lot.lot }}" data-itemid="{{ page.itemid }}">
 	{% if docm.hasImage(lot.lot) %}
 		<img src="{{ docm.getViewer().url(docm.getImageFilename(lot.lot)) }}" class="card-img-top img-fluid vh-40" alt="Lot #{{ lot.lot }} Image">
 	{% else %}
@@ -30,7 +30,7 @@
 				<div class="col-6"></div>
 				<div class="col-6 text-right">
 					<span class="badge bg-dark text-light">
-						In Cart: {{ cart.lots.getLotQty(lot.lot) }}
+						In Cart: <span class="cart-qty">{{ cart.lots.getLotQty(lot.lot) }}</span>
 					</span>
 				</div>
 			</div>
@@ -39,7 +39,7 @@
 					<label for="qty">Qty</label>
 				</div>
 				<div class="col-6 text-right">
-					Available: {{ lot.qty + 0 }}
+					Available: <span class="lot-qty">{{ lot.qty + 0 }}</span>
 				</div>
 			</div>
 			<div class="row">
