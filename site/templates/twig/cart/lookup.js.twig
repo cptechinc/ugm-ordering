@@ -81,9 +81,10 @@ $(function() {
 		ajax.setMethod('POST');
 		ajax.setData(data);
 		ajax.request(function(response) {
+			console.log(response);
 			if (response.error === false) {
-				var card = $('#ajax-modal').find('[data-itemid="' + data.itemID + '"]');
-				card.find('.cart-qty').text(response.qtyincart);
+				var card = $('#ajax-modal').find('[data-lot="' + data.lot + '"]');
+				card.find('.cart-qty').text(response.lot.qtyincart);
 				var uri = URI();
 				$('#cart').loadin(uri.toString()+'#cart', function() {
 

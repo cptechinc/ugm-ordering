@@ -18,11 +18,17 @@ class Cart extends Base {
 		$responseCart = $cart->getResponse();
 		$response['error'] = boolval($responseCart->hasError());
 		$response['message'] = $responseCart->message;
-		
+
 		switch ($data->action) {
 			case 'add-lot':
-				$response['itemid'] = $data->itemID;
-				$response['qtyincart'] = $cart->items->qtyItemid($data->itemID);
+				$response['item'] = [
+					'itemid' => $data->itemID,
+					'qtyincart' => $cart->items->qtyItemid($data->itemID)
+				];
+				$response['lot'] = [
+					'lotnbr' => $data->lot,
+					'qtyincart' => 	$cart->lots->getLotQty($data->lot)
+				];
 				break;
 		}
 		return $response;
