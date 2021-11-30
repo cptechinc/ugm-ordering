@@ -1,33 +1,15 @@
 <?php
-	$checkoutm = $modules->get('Checkout');
-	$cart   = $modules->get('Cart');
-	$qnotes = $modules->get('QnotesCart');
-	$rm = strtolower($input->requestMethod());
-	$values = $input->$rm;
-	$billing = $checkoutm->get_billing();
+	use Controllers\Checkout\Confirm as Controller;
 
-	if ($values->action) {
-		$checkoutm->process_input($input);
-		$session->redirect($page->url);
-	}
+	$routes = [
+		['GET',  '', Controller::class, 'index'],
+		['POST',  '', Controller::class, 'handleCRUD'],
+	];
 
-	// if ($session->response_checkout) {
-	// 	$page->body .= $config->twig->render('util/dplus-response.twig', ['response' => $session->response_checkout]);
-	// 	$session->remove('response_checkout');
-	// }
+	$router = new Mvc\Router();
+	$router->setRoutes($routes);
+	$router->setRoutePrefix($page->url);
+	$page->body = $router->route();
+	$page->show_breadcrumbs = false;
 
-	if ($session->response_qnote) {
-		$page->body .= $config->twig->render('util/dplus-response.twig', ['response' => $session->response_qnote]);
-		$session->remove('response_qnote');
-	}
-
-	if ($billing->has_error()) {
-		$page->body .= $config->twig->render('util/dplus-response.twig', ['response' => DplusResponse::create_error($billing->ermes)]);
-	}
-
-	$page->body .= $config->twig->render('checkout/confirm-checkout.twig', ['page' => $page, 'checkoutm' => $checkoutm, 'user' => $user, 'qnotes' => $qnotes, 'cart' => $cart]);
-	$page->body .= $config->twig->render('cart/notes/modal.twig', ['page' => $page, 'qnotes' => $qnotes]);
-	$page->js   .= $config->twig->render('cart/notes/js.twig', ['page' => $page]);
-	$config->scripts->append(hash_templatefile('scripts/lib/jquery-validate.js'));
-
-	include('./basic-page.php');
+	include __DIR__ . "/basic-page.php";
