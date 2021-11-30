@@ -1,6 +1,8 @@
 <?php namespace Controllers;
 // Purl URI Manipulation Library
 use Purl\Url as Purl;
+// Dplus Warehouse Management
+use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Ecomm
 use Dplus\Ecomm\Cart as CartCRUD;
 // Mvc Controllers
@@ -65,13 +67,15 @@ class Cart extends Base {
 	Display Functions
 ============================================================= */
 	private static function displayCart($data) {
+		$whseLots = new WhseLots();
+		$whseLots->setWhseID(1);
 		$cart   = CartCRUD::getInstance();
 		$qnotes = self::pw('modules')->get('QnotesCart');
 
 		$html = '';
 		$html .= self::displayResponseCart($data);
 		$html .= self::displayResponseQnotes($data);
-		$html .= self::pw('config')->twig->render('cart/cart.twig', ['cart' => $cart, 'qnotes' => $qnotes]);
+		$html .= self::pw('config')->twig->render('cart/cart.twig', ['cart' => $cart, 'qnotes' => $qnotes, 'inventory' => $whseLots]);
 		$html .= self::pw('config')->twig->render('cart/notes/modal.twig', ['cart' => $cart, 'qnotes' => $qnotes]);
 		return $html;
 	}

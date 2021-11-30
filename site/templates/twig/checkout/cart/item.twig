@@ -4,6 +4,7 @@
 	page                   ProcessWire\Page
 	cart                   module Cart
 	item                   Cart
+	inventory              Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin
 #}
 <div class="form-row">
 	<div class="col-4">
@@ -17,7 +18,7 @@
 		{{ item.qty }}
 	</div>
 	<div class="col-1 text-center">
-		{% if imitem.is_itemtype_lotted(imitem.itemtype) %}
+		{% if inventory.itemidLotsHaveImages(item.itemid) %}
 			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ item.recordno|attrJS }}-lots" aria-expanded="false" aria-controls="{{ item.recordno|attrJS }}-lots">
 				<i class="fa fa-list" aria-hidden="true"></i>
 			</button>

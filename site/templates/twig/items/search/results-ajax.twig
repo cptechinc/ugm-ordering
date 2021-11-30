@@ -30,7 +30,7 @@
 					<div class="col-sm-1 text-right uom">{{ uom_desc }}</div>
 					<div class="col-sm-2 text-right available">{{ inventory.getQtyByItemid(item.itemid) }}</div>
 					<div class="col-sm-2 text-center">
-						{% if item.item.is_itemtype_lotted(item.item.itemtype) %}
+						{% if inventory.itemidLotsHaveImages(item.itemid) %}
 							<a href="{{ item.url }}" class="btn btn-sm btn-primary paginator-link">
 								<i class="fa fa-list" aria-hidden="true"></i>
 							</a>
