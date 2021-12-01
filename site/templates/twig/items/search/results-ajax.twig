@@ -3,7 +3,7 @@
 	-------------------------------------------------
 	page                   ProcessWire\Page
 	items                  Page(template=item)[]|PageArray
-	dpluspricing           ItemSearchDplus
+	inventory              Dplus\Ecomm\Items\Available\Items
 #}
 
 <div class="list-group">
@@ -16,33 +16,8 @@
 			<div class="col-sm-2 text-right">Qty In Cart</div>
 		</div>
 	</div>
-	{% if items.count() %}
-		{% for item in items %}
-			{% set uom_desc = item.item.uom_sale == 'LBW' ? 'EA' : item.item.uom_sale %}
-			<div class="list-group-item item-result">
-				<div class="row">
-					<div class="col-sm-4">
-						<h5 class="mb-1">
-							<a href="#" class="link item-lookup-itemid item-link" data-islotted="{{ item.item.is_itemtype_lotted(item.item.itemtype) ? 'true' : 'true'}}" data-itemid="{{ item.itemid }}">{{ item.itemid }}</a>
-						</h5>
-						<p class="mb-1 text-muted item-description">{{ item.description1 }}</p>
-					</div>
-					<div class="col-sm-1 text-right uom">{{ uom_desc }}</div>
-					<div class="col-sm-2 text-right available">{{ inventory.getQtyByItemid(item.itemid) }}</div>
-					<div class="col-sm-2 text-center">
-						{% if inventory.itemidLotsHaveImages(item.itemid) %}
-							<a href="{{ item.url }}" class="btn btn-sm btn-primary paginator-link">
-								<i class="fa fa-list" aria-hidden="true"></i>
-							</a>
-						{% endif %}
-					</div>
-					<div class="col-sm-2 text-right">
-						{{ cart.items.qtyItemid(item.itemid) }}
-					</div>
-				</div>
-			</div>
-		{% endfor %}
-	{% else %}
+	
+	{% if items.count() == 0 %}
 		<div class="list-group-item item-result">
 			<div class="text-center">
 				<h4>no results found</h4>
@@ -50,4 +25,32 @@
 			</div>
 		</div>
 	{% endif %}
+
+	{% for item in items %}
+		{% set uom_desc = item.item.uom_sale == 'LBW' ? 'EA' : item.item.uom_sale %}
+		{% set qtyAvailable = inventory.getAvailability(item.itemid) %}
+
+		<div class="list-group-item item-result">
+			<div class="row">
+				<div class="col-sm-4">
+					<h5 class="mb-1">
+						<a href="#" class="link item-lookup-itemid item-link" data-islotted="{{ item.item.is_itemtype_lotted(item.item.itemtype) ? 'true' : 'true'}}" data-itemid="{{ item.itemid }}">{{ item.itemid }}</a>
+					</h5>
+					<p class="mb-1 text-muted item-description">{{ item.description1 }}</p>
+				</div>
+				<div class="col-sm-1 text-right uom">{{ uom_desc }}</div>
+				<div class="col-sm-2 text-right available">{{ qtyAvailable }}</div>
+				<div class="col-sm-2 text-center">
+					{% if inventory.getInventory().itemidLotsHaveImages(item.itemid) %}
+						<a href="{{ item.url }}" class="btn btn-sm btn-primary paginator-link">
+							<i class="fa fa-list" aria-hidden="true"></i>
+						</a>
+					{% endif %}
+				</div>
+				<div class="col-sm-2 text-right">
+					{{ cart.items.qtyItemid(item.itemid) }}
+				</div>
+			</div>
+		</div>
+	{% endfor %}
 </div>

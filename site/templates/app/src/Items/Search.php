@@ -6,6 +6,7 @@ use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Ecomm
 use Dplus\Ecomm\Items\Search as SearchItems;
 use Dplus\Ecomm\Cart as CartCRUD;
+use Dplus\Ecomm\Items\Available\Items as ItemInventory;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -47,17 +48,17 @@ class Search extends Base {
 		$config = self::pw('config');
 		$html = '';
 
-		$whseLots = self::getWhseLots();
+		$itemAvailability = ItemInventory::getInstance();
 		$cart     = CartCRUD::getInstance();
 
 		$html  = '';
 		$html .= $config->twig->render('items/search/form.twig', ['q' => $data->q]);
 
 		if ($config->ajax) {
-			$html .= $config->twig->render('items/search/results-ajax.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $whseLots]);
+			$html .= $config->twig->render('items/search/results-ajax.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $itemAvailability]);
 		}
 		if ($config->ajax === false) {
-			$html .= $config->twig->render('items/search/results.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $whseLots]);
+			$html .= $config->twig->render('items/search/results.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $itemAvailability]);
 		}
 		$html .= $config->twig->render('util/paginator.twig', ['resultscount' => $search->count()]);
 		return $html;

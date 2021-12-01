@@ -4,6 +4,7 @@
 	page                   ProcessWire\Page(template=item)
 	lot                    ['lot' => $lotnbr, 'qty' => $qty]
 	docm                   Dplus\DocManagement\Finders\Lt\Img
+	cart                   Dplus\Ecomm\Cart
 #}
 <div class="card mb-4 shadow-sm lot" data-lot="{{ lot.lot }}" data-itemid="{{ page.itemid }}">
 	{% if docm.hasImage(lot.lot) %}
@@ -39,15 +40,15 @@
 					<label for="qty">Qty</label>
 				</div>
 				<div class="col-6 text-right">
-					Available: <span class="lot-qty">{{ lot.qty + 0 }}</span>
+					Available: <span class="lot-qty">{{ lot.available + 0 }}</span>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-6">
-					<input class="form-control text-right" type="text" name="qty" size="4" value="1">
+					<input class="form-control text-right" type="text" name="qty" size="4" value="1" {{ lot.available > 0 ? '' : 'disabled' }}>
 				</div>
 				<div class="col-6 text-right">
-					<button class="btn btn-success" type="submit">
+					<button class="btn btn-success" type="submit" {{ lot.available > 0 ? '' : 'disabled' }}>
 						<i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
 					</button>
 				</div>
