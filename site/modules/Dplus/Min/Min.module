@@ -1,0 +1,20 @@
+<?php namespace ProcessWire;
+
+include_once(__DIR__.'/vendor/autoload.php');
+
+class Min extends WireData implements Module {
+
+/* =============================================================
+	ProcessWire Module Functions
+============================================================= */
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'Min',
+			'version' => 101,
+			'summary' => 'Autoloads Min Classes',
+			'singular' => true,
+			'autoload' => true,
+		);
+	}
+}
