@@ -5,6 +5,11 @@
 		'cart' => [
 			['POST', '', Api\Cart::class, 'handleCRUD'],
 		],
+		'items' => [
+			'item' => [
+				['GET', '', Api\Items::class, 'getItem'],
+			]
+		]
 	];
 
 	$router = new Mvc\JsonRouter();
