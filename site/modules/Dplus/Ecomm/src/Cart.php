@@ -4,6 +4,8 @@ use ProcessWire\WireData, ProcessWire\WireInput;
 // Dplus Warehouse Management
 use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 
+use Dplus\Ecomm\Items\Available\Lots as LotInventory;
+
 
 class Cart extends WireData {
 	private static $instance;
@@ -178,16 +180,25 @@ class Cart extends WireData {
 			return false;
 		}
 
-		$whseLots = $this->getWhseLotsM();
-		if ($whseLots->existsByItemid($lot, $itemID) === false) {
+		$lotAvailability = LotInventory::getInstance();
+		if ($lotAvailability->getInventory()->existsByItemid($lot, $itemID) === false) {
 			$this->setResponse(Response::createError("Item $itemID Lot $lot not found"));
+			return false;
+		}
+		$this->wire('session')->setFor('cart', 'add', $lot);
+
+		$qtyAvailable = $lotAvailability->getLotAvailability($lot);
+
+		if ($qtyAvailable < $qty) {
+			$msg = $qtyAvailable == 0 ? "Lot $lot is Out of Stock" : "Lot $lot only has $qtyAvailable left";
+			$this->setResponse(Response::createError($msg));
 			return false;
 		}
 
 		$this->requestLotAdd($itemID, $lot, $qty);
 
 		if ($this->lots->exists($lot)) {
-			$response = Response::createSuccess("$itemID was added to the cart");
+			$response = Response::createSuccess("$itemID Lot $lot was added to the cart");
 			$this->wire('session')->setFor('cart', 'add', $itemID);
 			$this->setResponse($response);
 			return true;
