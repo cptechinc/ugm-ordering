@@ -27,8 +27,8 @@ $(function() {
 		var button = $(this);
 
 		swal2.fire({
-			title: 'Remove Requested Lot?',
-			text: 'Delete ' + button.data('lot') + ' from cart?',
+			title: 'Remove Requested Lot '+button.data('lot')+'?',
+			text: 'This will not affect order quantity',
 			icon: 'question',
 			showCancelButton: true,
 			confirmButtonText: 'Yes'
