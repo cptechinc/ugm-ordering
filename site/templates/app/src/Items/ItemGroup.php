@@ -1,10 +1,9 @@
 <?php namespace Controllers\Items;
 // ProcessWire
 use ProcessWire\Exceptions;
-// Dplus Warehouse Management
-use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Ecomm
 use Dplus\Ecomm\Cart as CartCRUD;
+use Dplus\Ecomm\Items\Available\Items as ItemInventory;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -26,7 +25,7 @@ class ItemGroup extends Base {
 
 		$html  = '';
 		$html .= self::pw('config')->twig->render('items/search/form.twig');
-		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'inventory' => self::getWhseLots(), 'cart' => $cart]);
+		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'inventory' => ItemInventory::getInstance(), 'cart' => $cart]);
 		return $html;
 	}
 
@@ -56,11 +55,5 @@ class ItemGroup extends Base {
 	public static function initHooks() {
 		$m = self::pw('modules')->get('UgmOrderingPages');
 
-	}
-
-	public static function getWhseLots() {
-		$whseLots = WhseLots::getInstance();
-		$whseLots->setWhseID(1);
-		return $whseLots;
 	}
 }

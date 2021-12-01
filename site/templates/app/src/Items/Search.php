@@ -1,8 +1,6 @@
 <?php namespace Controllers\Items;
 // ProcessWire
 use ProcessWire\Exceptions;
-// Dplus Warehouse Management
-use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Ecomm
 use Dplus\Ecomm\Items\Search as SearchItems;
 use Dplus\Ecomm\Cart as CartCRUD;
