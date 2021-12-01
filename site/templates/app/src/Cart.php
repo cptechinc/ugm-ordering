@@ -57,7 +57,7 @@ class Cart extends Base {
 
 		self::initHooks();
 		$page->js .= $config->twig->render('cart/js.twig');
-		$page->js .= $config->twig->render('cart/lookup.js.twig');
+		$page->js .= $config->twig->render('cart/lookup/.js.twig');
 		$page->js .= $config->twig->render('cart/notes/js.twig');
 		$config->scripts->append(self::pw('modules')->get('FileHasher')->getHashUrl('scripts/lib/jquery-validate.js'));
 		return self::displayCart($data);
