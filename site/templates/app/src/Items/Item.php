@@ -1,14 +1,13 @@
 <?php namespace Controllers\Items;
 // Purl Manipulation Library
 use Purl\Url as Purl;
-// Dplus Warehouse Management
-use Dplus\Wm\Inventory\Lots\Lookup\ExcludePackBin as WhseLots;
 // Dplus Document Managment
 use Dplus\DocManagement\Finders\Lt\Img as Docm;
 use Dplus\DocManagement\Folders;
 use Dplus\DocManagement\Copier;
 // Dplus Ecomm
 use Dplus\Ecomm\Cart as CartCRUD;
+use Dplus\Ecomm\Items\Available\Lots as LotInventory;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -17,9 +16,8 @@ class Item extends Base {
 	private static $docm;
 
 	public static function index($data) {
-		$whseLots = new WhseLots();
-		$whseLots->setWhseID(1);
-		$lots = $whseLots->getLotsByItemid(self::pw('page')->itemid);
+		$lotInventory = LotInventory::getInstance();
+		$lots = $lotInventory->getLotsByItemid(self::pw('page')->itemid);
 		$docm = self::getDocm();
 		self::copyImage($data, $lots);
 		$cart = CartCRUD::getInstance();
