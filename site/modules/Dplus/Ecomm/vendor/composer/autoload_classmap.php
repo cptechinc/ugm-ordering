@@ -9,6 +9,7 @@ return array(
     'Dplus\\Ecomm\\Cart' => $baseDir . '/src/Cart.php',
     'Dplus\\Ecomm\\Cart\\Items' => $baseDir . '/src/Cart/Items.php',
     'Dplus\\Ecomm\\Cart\\Lots' => $baseDir . '/src/Cart/Lots.php',
+    'Dplus\\Ecomm\\Items\\Available\\Items' => $baseDir . '/src/Items/Available/Items.php',
     'Dplus\\Ecomm\\Items\\Available\\Lots' => $baseDir . '/src/Items/Available/Lots.php',
     'Dplus\\Ecomm\\Items\\Search' => $baseDir . '/src/Items/Search.php',
     'Dplus\\Ecomm\\Response' => $baseDir . '/src/Response.php',

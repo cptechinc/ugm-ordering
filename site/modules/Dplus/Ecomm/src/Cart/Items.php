@@ -37,8 +37,16 @@ class Items extends WireData {
 	 * @return CartItemQuery
 	 */
 	public function query() {
-		$q = CartItemQuery::create();
-		$q->filterBySessionid(session_id());
+		return CartItemQuery::create();
+	}
+
+	/**
+	 * Return CartItemQuery
+	 * @return CartItemQuery
+	 */
+	public function querySessionid() {
+		$q = $this->query();
+		$q->filterBySessionid($this->sessionID);
 		return $q;
 	}
 
@@ -47,7 +55,7 @@ class Items extends WireData {
 	 * @return CartItemQuery
 	 */
 	public function queryItems() {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByItemid('', Criteria::ALT_NOT_EQUAL);
 		return $q;
 	}
@@ -93,6 +101,19 @@ class Items extends WireData {
 		$q = $this->queryItems();
 		$q->filterByItemid($itemID);
 		$q->select('qty');
+		return intval($q->findOne());
+	}
+
+	/**
+	 * Return Item ID Qty for All Session IDs
+	 * @param  string $itemID Item ID
+	 * @return int
+	 */
+	public function qtyItemidAllSessionids($itemID) {
+		$q = $this->query();
+		$q->select('qty');
+		$q->filterByItemid($itemID);
+		$q->withColumn('SUM(qty)', 'qty');
 		return intval($q->findOne());
 	}
 }
