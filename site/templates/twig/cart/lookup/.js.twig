@@ -8,19 +8,19 @@ $(function() {
 /* =============================================================
 	Lookup Modal Functions
 ============================================================= */
-	$("body").on('click', '.item-lookup-itemid', function(e) {
+	$("body").on('change', '#add-item-form input[name=itemID]', function(e) {
 		e.preventDefault();
 
-		var button = $(this);
-		var itemID = button.data('itemid');
-		var itemdiv = button.closest('.item-result');
-		form_additem.attr('data-validated', itemID);
-		input_itemid.val(itemID);
-		form_additem.find('.description1').text(itemdiv.find('.item-description').text());
-		form_additem.find('.uom_sale').text(itemdiv.find('.uom').text());
-		form_additem.find('.available').text('Available: ' +itemdiv.find('.available').text());
-		div_results.empty();
-		input_qty.focus();
+		var input = $(this);
+		var ajax  = new AjaxRequest('{{ page.jsonApiUrl('items/item') }}');
+		ajax.setData({itemID: input.val()});
+		ajax.request(function(item) {
+			var row = input.closest('.lookup-item');
+			row.find('.description1').text(item.description1);
+			row.find('.description2').text(item.description2);
+			row.find('.uomsale').text(item.uom.sale);
+			row.find('.available').text(item.available);
+		});
 	});
 
 	$("body").on('click', '#lookup-results .paginator-link', function(e) {

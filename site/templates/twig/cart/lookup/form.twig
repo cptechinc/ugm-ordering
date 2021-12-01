@@ -1,9 +1,6 @@
 <form action="{{ page.url }}" method="post" id="add-item-form">
 	<input type="hidden" name="action" value="add-item">
-	{% block misc_fields %}
-
-	{% endblock %}
-
+	
 	<div class="row lookup-item">
 		<div class="col-4">
 			{% include 'util/bootstrap/form/input-group.twig' with {
