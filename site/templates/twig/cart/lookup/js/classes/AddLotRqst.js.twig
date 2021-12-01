@@ -1,0 +1,20 @@
+class AddLotRqst {
+	constructor() {
+		this.data = {};
+	}
+
+	setData(data) {
+		this.data = data;
+	}
+
+	send(callback) {
+		var ajax = new AjaxRequest('{{ page.jsonApiUrl('cart') }}');
+		ajax.setMethod('POST');
+		ajax.setData(this.data);
+		ajax.request(function(response) {
+			callback(response);
+		});
+	}
+
+
+}

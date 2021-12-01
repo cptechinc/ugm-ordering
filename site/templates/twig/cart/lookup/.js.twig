@@ -2,11 +2,6 @@
 
 $(function() {
 	var modalAjax = $('#ajax-modal');
-	var form_additem = $('#add-item-form');
-	var input_itemid = form_additem.find('input[name=itemID]');
-	var input_qty = form_additem.find('input[name=qty]');
-	var div_results = $('#lookup-results');
-
 	var formAdd = Form.getInstance();
 
 /* =============================================================
@@ -17,14 +12,6 @@ $(function() {
 
 		formAdd.updateItemFields(function(exists) {
 			formAdd.inputs.qty.focus();
-		});
-	});
-
-	$("body").on('click', '#lookup-results .paginator-link', function(e) {
-		e.preventDefault();
-		var href = $(this).attr('href');
-		div_results.loadin(href, function() {
-
 		});
 	});
 
@@ -40,7 +27,6 @@ $(function() {
 		modal.resizeModal('xl');
 		modal.find('.modal-body').loadin(button.data('lookupurl'), function() {});
 	});
-
 
 	$("body").on('click', '.item-link', function(e) {
 		e.preventDefault();
@@ -74,10 +60,9 @@ $(function() {
 		e.preventDefault();
 		var form = $(this);
 		var data = form.formData();
-		var ajax = new AjaxRequest('{{ page.jsonApiUrl('cart') }}');
-		ajax.setMethod('POST');
-		ajax.setData(data);
-		ajax.request(function(response) {
+		var rqst = new AddLotRqst();
+		rqst.setData(data);
+		rqst.send(function(response) {
 			if (response.error === false) {
 				var card = $('#ajax-modal').find('[data-lot="' + data.lot + '"]');
 				card.find('.cart-qty').text(response.lot.qtyincart);
@@ -102,11 +87,10 @@ $(function() {
 		});
 	});
 
-
 /* =============================================================
 	Validation Functions
 ============================================================= */
-	form_additem.validate({
+	formAdd.form.validate({
 		errorClass: "is-invalid",
 		validClass: "is-valid",
 		errorPlacement: function(error, element) {
@@ -129,5 +113,4 @@ $(function() {
 			form.submit();
 		}
 	});
-
 });
