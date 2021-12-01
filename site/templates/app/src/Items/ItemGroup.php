@@ -39,12 +39,11 @@ class ItemGroup extends Base {
 	}
 
 	private static function getInstockItemids() {
-		$whseLots = self::getWhseLots();
-		return $whseLots->getItemidsWithQty(self::pw('page')->children('template=item')->explode('itemid'));
+		$inventory = ItemInventory::getInstance();
+		return $inventory->getInventory()->getItemidsWithQty(self::pw('page')->children('template=item')->explode('itemid'));
 	}
 
 	private static function getInstockItems() {
-		$whseLots = self::getWhseLots();
 		$itemIDs  = self::getInstockItemids();
 		return self::pw('page')->children("template=item,itemid=".implode('|', $itemIDs) . ',sort=itemid');
 	}
