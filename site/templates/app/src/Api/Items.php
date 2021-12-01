@@ -5,6 +5,20 @@ use Dplus\Min\Itm;
 use Dplus\Ecomm\Items\Available\Items as ItemInventory;
 
 class Items extends Base {
+	public static function validateItemid($data) {
+		self::sanitizeParametersShort($data, ['itemID|text', 'jqv|bool']);
+		$itm = Itm::getInstance();
+		$exists = $itm->exists($data->itemID);
+
+		if (empty($data->jqv) === false) {
+			if (empty($data->itemID)) {
+				return 'Item ID not provided';
+			}
+			return $exists ? true : "Item $data->itemID not found";
+		}
+		return $exists;
+	}
+
 	public static function getItem($data) {
 		self::sanitizeParametersShort($data, ['itemID|text']);
 		$itm = Itm::getInstance();

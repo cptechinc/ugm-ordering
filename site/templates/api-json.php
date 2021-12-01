@@ -6,6 +6,9 @@
 			['POST', '', Api\Cart::class, 'handleCRUD'],
 		],
 		'items' => [
+			'validate' => [
+				['GET', 'itemid', Api\Items::class, 'validateItemid'],
+			],
 			'item' => [
 				['GET', '', Api\Items::class, 'getItem'],
 			]
