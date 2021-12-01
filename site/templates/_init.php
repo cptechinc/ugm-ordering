@@ -130,6 +130,6 @@ include($modules->get('Mvc')->controllersPath().'vendor/autoload.php');
 
 if ($session->getFor('cart', 'add')) {
 	$cartCRUD = Dplus\Ecomm\Cart::getInstance();
-	$page->js   .= $config->twig->render('cart/toast.js.twig', ['response' => $cartCRUD->getResponse()]);
+	$page->js .= $config->twig->render('cart/toast.js.twig', ['response' => $cartCRUD->getResponse()]);
 	$session->removeFor('cart', 'add');
 }
