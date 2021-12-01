@@ -15,7 +15,9 @@ $(function() {
 	$("body").on('change', '#add-item-form input[name=itemID]', function(e) {
 		e.preventDefault();
 
-		formAdd.updateItemFields();
+		formAdd.updateItemFields(function(exists) {
+			formAdd.inputs.qty.focus();
+		});
 	});
 
 	$("body").on('click', '#lookup-results .paginator-link', function(e) {

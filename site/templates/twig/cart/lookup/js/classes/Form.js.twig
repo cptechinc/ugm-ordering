@@ -23,7 +23,7 @@ class Form {
 		}
 	}
 
-	updateItemFields() {
+	updateItemFields(callback) {
 		var form = this;
 
 		form.inputs.qty.removeAttr('max');
@@ -35,11 +35,17 @@ class Form {
 		var ajax  = new AjaxRequest('{{ page.jsonApiUrl('items/item') }}');
 		ajax.setData({itemID: this.inputs.itemid.val()});
 		ajax.request(function(item) {
-			form.form.find('.description1').text(item.description1);
-			form.form.find('.description2').text(item.description2);
-			form.form.find('.uomsale').text(item.uom.sale);
-			form.form.find('.available').text(item.available);
-			form.inputs.qty.attr('max', item.available);
+			if (item) {
+				form.form.find('.description1').text(item.description1);
+				form.form.find('.description2').text(item.description2);
+				form.form.find('.uomsale').text(item.uom.sale);
+				form.form.find('.available').text(item.available);
+				form.inputs.qty.attr('max', item.available);
+				callback(true);
+				return true;
+			}
+			callback(false);
+			return false;
 		});
 	}
 }
