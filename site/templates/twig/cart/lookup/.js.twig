@@ -76,7 +76,6 @@ $(function() {
 		ajax.setMethod('POST');
 		ajax.setData(data);
 		ajax.request(function(response) {
-			console.log(response);
 			if (response.error === false) {
 				var card = $('#ajax-modal').find('[data-lot="' + data.lot + '"]');
 				card.find('.cart-qty').text(response.lot.qtyincart);
@@ -113,112 +112,20 @@ $(function() {
 		},
 		rules: {
 			addqty: {required: true},
+			itemID: {
+				required: true,
+				remote: {
+					url: '{{ page.jsonApiUrl('items/validate/itemid/') }}',
+					type: "get",
+					data: {
+						jqv: 'true'
+					}
+				}
+			}
 		},
 		submitHandler: function(form) {
-			if (form_additem[0].hasAttribute("data-validated")) {
-				if (form_additem.attr('data-validated') == input_itemid.val()) {
-					if (input_qty.val() == '') {
-						input_qty.addClass('is-invalid').focus();
-					} else {
-						form.submit();
-					}
-				} else {
-					console.log('1');
-					lookup_item();
-				}
-			} else {
-				lookup_item();
-			}
+			form.submit();
 		}
 	});
 
-/* =============================================================
-	AJAX Request Functions
-============================================================= */
-	function lookup_item() {
-		validate_itemid(function(response) {
-			form_additem.attr('data-validated', response.itemid);
-			input_itemid.addClass('is-valid');
-
-			if (response.itemID != input_itemid.val()) {
-				input_itemid.val(response.itemid);
-			}
-
-			get_item_description();
-
-			if (input_qty.val() == '') {
-				input_qty.focus();
-			} else {
-				form_additem.submit();
-			}
-		}, function() {
-			swal2.fire({
-				title: 'Item not found.',
-				text: '"'+input_itemid.val() +'"' + ' cannot be found.',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: 'Make advanced search?'
-			}).then(function (result) {
-				if (result.value) {
-					var url = URI("{{ page.searchItemsUrl() }}");
-					url.addQuery('q', input_itemid.val());
-
-					div_results.loadin(url.toString(), function() {
-						div_results.parent().removeClass('collapse');
-					});
-				}
-			});
-		});
-	}
-
-	function validate_itemid(success, failure) {
-		var exists_url = URI("{{ page.itemsJsonUrl() }}");
-		exists_url.addQuery('action', 'validate-itemid');
-		exists_url.addQuery('itemID', input_itemid.val());
-
-		/**
-		 * Example Response
-		 * {
-		 * 	'exists' => true,
-		 *  'itemID' => $item->itemid
-		 * }
-		 */
-		$.getJSON(exists_url.toString(), function( response ) {
-
-			if (response.exists) {
-				success(response);
-			} else {
-				failure();
-			}
-		});
-	}
-
-	function get_item_description() {
-		var description_url = URI("{{ page.itemsJsonUrl() }}");
-		description_url.addQuery('action', 'get-item-description');
-		description_url.addQuery('itemID', input_itemid.val());
-
-		$.getJSON(description_url.toString(), function( item ) {
-			if (item.exists) {
-				$('small.description1').text(item.description1);
-				$('small.description2').text(item.description2);
-				$('small.available').text('Available: ' + item.available);
-				$('.uom_sale').text(item.uom_sale);
-
-				if (item.description2.length) {
-					$('small.description2').removeClass('collapse');
-				} else {
-					$('small.description2').addClass('collapse');
-				}
-
-				if (item.available == 0) {
-					swal2.fire({
-						title: 'Item Not in Stock',
-						text: input_itemid.val() + ' is out of stock',
-						icon: 'warning'
-					});
-				}
-			}
-		});
-	}
 });
