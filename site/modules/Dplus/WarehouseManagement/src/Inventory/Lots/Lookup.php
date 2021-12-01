@@ -151,6 +151,20 @@ class Lookup extends WireData {
 	}
 
 	/**
+	 * Return Qty for Lot
+	 * @param  string $lotserial Lot / Serial Number
+	 * @return int
+	 */
+	public function getQtyByLotserial($lotserial) {
+		$colQty = WhseLotserial::aliasproperty('qty');
+		$q = $this->queryWhseBins();
+		$q->filterByLotserial($lotserial);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return intval($q->findOne());
+	}
+
+	/**
 	 * Count Item IDs that are in stock
 	 * @param  string|array $itemID  Item ID
 	 * @return int
@@ -173,6 +187,11 @@ class Lookup extends WireData {
 		return $q->findOne();
 	}
 
+	/**
+	 * Return if Any of the Lots for Item ID have images
+	 * @param  string $itemID Item ID
+	 * @return bool
+	 */
 	public function itemidLotsHaveImages($itemID) {
 		$lotnbrs = $this->getLotnbrsByItemid($itemID);
 		$lotm    = Lotm::getInstance();

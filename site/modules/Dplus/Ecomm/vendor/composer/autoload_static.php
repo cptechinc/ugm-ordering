@@ -24,6 +24,7 @@ class ComposerStaticInitfe8760478d7adf9a8701b89014dabc5b
         'Dplus\\Ecomm\\Cart' => __DIR__ . '/../..' . '/src/Cart.php',
         'Dplus\\Ecomm\\Cart\\Items' => __DIR__ . '/../..' . '/src/Cart/Items.php',
         'Dplus\\Ecomm\\Cart\\Lots' => __DIR__ . '/../..' . '/src/Cart/Lots.php',
+        'Dplus\\Ecomm\\Items\\Available\\Lots' => __DIR__ . '/../..' . '/src/Items/Available/Lots.php',
         'Dplus\\Ecomm\\Items\\Search' => __DIR__ . '/../..' . '/src/Items/Search.php',
         'Dplus\\Ecomm\\Response' => __DIR__ . '/../..' . '/src/Response.php',
     );
