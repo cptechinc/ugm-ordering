@@ -1,0 +1,45 @@
+class Form {
+	static instance = null;
+
+	static getInstance() {
+		if (this.instance === null) {
+			this.instance = new Form();
+		}
+		return this.instance;
+	}
+
+	constructor() {
+		this.id = 'add-item-form';
+		this.form = $('#' + this.id);
+		this.inputs = {
+			itemid: this.form.find('input[name=itemID]'),
+			qty:    this.form.find('input[name=qty]'),
+			submit: this.form.find('button[type=submit]')
+		},
+		this.fields = {
+			description1: this.form.find('.description1'),
+			description2: this.form.find('.description2'),
+			available:    this.form.find('.available'),
+		}
+	}
+
+	updateItemFields() {
+		var form = this;
+
+		form.inputs.qty.removeAttr('max');
+		form.form.find('.description1').text('');
+		form.form.find('.description2').text('');
+		form.form.find('.uomsale').text('');
+		form.form.find('.available').text('');
+
+		var ajax  = new AjaxRequest('{{ page.jsonApiUrl('items/item') }}');
+		ajax.setData({itemID: this.inputs.itemid.val()});
+		ajax.request(function(item) {
+			form.form.find('.description1').text(item.description1);
+			form.form.find('.description2').text(item.description2);
+			form.form.find('.uomsale').text(item.uom.sale);
+			form.form.find('.available').text(item.available);
+			form.inputs.qty.attr('max', item.available);
+		});
+	}
+}
