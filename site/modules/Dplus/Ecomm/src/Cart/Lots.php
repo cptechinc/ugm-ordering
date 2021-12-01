@@ -38,6 +38,15 @@ class Lots extends WireData {
 	 */
 	public function query() {
 		$q = CartLotQuery::create();
+		return $q;
+	}
+
+	/**
+	 * Return CartLotQuery
+	 * @return CartLotQuery
+	 */
+	public function querySessionid() {
+		$q = $this->query();
 		$q->filterBySessionid($this->sessionID);
 		return $q;
 	}
@@ -48,7 +57,7 @@ class Lots extends WireData {
 	 * @return CartLotQuery
 	 */
 	public function queryItemid($itemID) {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByItemid($itemID);
 		return $q;
 	}
@@ -62,19 +71,29 @@ class Lots extends WireData {
 	 * @return CartLot[]|ObjectCollection
 	 */
 	public function lotsByLinenbr($linenbr = 1) {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByLinenbr($linenbr);
 		return $q->find();
 	}
 
+	/**
+	 * Return if Line Has Lots
+	 * @param  int    $linenbr
+	 * @return bool
+	 */
 	public function lineHasLots($linenbr = 1) {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByLinenbr($linenbr);
 		return boolval($q->count());
 	}
 
+	/**
+	 * Return Lot Qty
+	 * @param  string $lot Lot Serial Number
+	 * @return int
+	 */
 	public function getLotQty($lot) {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByLotserial($lot);
 		$q->select('qty');
 		return intval($q->findOne());
@@ -99,7 +118,7 @@ class Lots extends WireData {
 	 * @return boolval
 	 */
 	public function existsByLinenbr($lot, $linenbr) {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByLinenbr($linenbr);
 		$q->filterByLotserial($lot);
 		return boolval($q->count());
@@ -111,8 +130,21 @@ class Lots extends WireData {
 	 * @return boolval
 	 */
 	public function exists($lot) {
-		$q = $this->query();
+		$q = $this->querySessionid();
 		$q->filterByLotserial($lot);
 		return boolval($q->count());
+	}
+
+	/**
+	 * Return Lot Qty for All Session IDs
+	 * @param  string $lot Lot Serial Number
+	 * @return int
+	 */
+	public function getLotQtyAllSessionids($lot) {
+		$q = $this->query();
+		$q->select('qty');
+		$q->filterByLotserial($lot);
+		$q->withColumn('SUM(qty)', 'qty');
+		return intval($q->findOne());
 	}
 }
