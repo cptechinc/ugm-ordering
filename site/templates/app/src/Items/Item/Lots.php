@@ -28,6 +28,7 @@ class Lots extends Base {
 		$whseLots = new WhseLots();
 		$whseLots->setWhseID(1);
 		$lot = $whseLots->getLot($data->lot);
+		$lot->available = 12;
 		self::copyImage($data, $lot);
 
 		$docm = self::getDocm();

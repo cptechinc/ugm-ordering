@@ -39,15 +39,29 @@
 					<label for="qty">Qty</label>
 				</div>
 				<div class="col-6 text-right">
-					Available: {{ lot.qty + 0 }}
+					Available: {{ lot.available + 0 }}
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-6">
-					<input class="form-control text-right" type="text" name="qty" size="4" value="1">
+					{% include 'util/bootstrap/form/input.twig' with {
+							'input': {
+								'id': '',
+								'name': 'qty',
+								'type': 'number',
+								'addclasses': ['text-right'],
+								'value': '1',
+								'attributes': {
+									'size': '4',
+									'disabled': lot.available == 0,
+									'max': lot.available + 0
+								}
+							}
+						}
+					%}
 				</div>
 				<div class="col-6 text-right">
-					<button class="btn btn-success" type="submit">
+					<button class="btn btn-success" type="submit" {{ lot.available > 0 ? '' : 'disabled' }}>
 						<i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
 					</button>
 				</div>
