@@ -24,7 +24,7 @@
 				<div class="placard-header">
 					<b>Qty</b> <span class="qty"></span>
 				</div>
-				<input class="form-control placard-field form-control-sm text-right pull-right w-50 qty-input" type="number" name="qty" value="{{ item.qty }}" data-qty="{{ item.qty }}" autocomplete="off">
+				<input class="form-control placard-field form-control-sm text-right pull-right w-50 qty-input" type="number" name="qty" value="{{ item.qty }}" data-qty="{{ item.qty }}" autocomplete="off" {{ cart.lots.lineHasLots(item.recordno) ? 'disabled' : ''}}>
 				<div class="placard-footer">
 					<a class="placard-cancel" href="#">Cancel</a>
 					<button class="btn btn-success btn-sm placard-accept" type="button">

@@ -50,7 +50,7 @@
 					<textarea name="name" id="notes-{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
 				</div>
 			</div>
-			{% if imitem.is_itemtype_lotted(imitem.itemtype) %}
+			{% if inventory.itemidLotsHaveImages(item.itemid) %}
 				<div class="list-group list-group-flush collapse" id="{{ item.recordno|attrJS }}-lots">
 					{% include 'checkout/cart/item-lots.twig' %}
 				</div>
