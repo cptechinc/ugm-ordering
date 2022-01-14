@@ -2,7 +2,7 @@
 
 use Propel\Runtime\ActiveQuery\Criteria;
 
-use InvLotQuery, InvLot;
+use InvLotMasterQuery, InvLotMaster;
 
 /**
  * Module for Getting Approximate Inventory of Items
@@ -10,7 +10,7 @@ use InvLotQuery, InvLot;
 class ItemInventory extends WireData implements Module {
 
 	public function get_query() {
-		return InvLotQuery::create();
+		return InvLotMasterQuery::create();
 	}
 
 	public function count_itemids_onhand(array $itemIDs = null) {

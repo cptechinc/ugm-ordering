@@ -2,7 +2,7 @@
 // Propel ORM Library
 use Propel\Runtime\ActiveQuery\Criteria;
 // Dplus Models
-use InvLotQuery, InvLot;
+use InvLotMasterQuery, InvLotMaster;
 // ProcessWire
 use ProcessWire\WireData;
 
@@ -31,17 +31,17 @@ class Lotm extends WireData {
 ============================================================= */
 	/**
 	 * Return Query filtered By Sessionid
-	 * @return InvLotQuery
+	 * @return InvLotMasterQuery
 	 */
 	public function query() {
-		$q = InvLotQuery::create();
+		$q = InvLotMasterQuery::create();
 		return $q;
 	}
 
 	/**
 	 * Return Query Filtered By Warehouse ID if set
 	 * @param array|string $lotnbr
-	 * @return InvLotQuery
+	 * @return InvLotMasterQuery
 	 */
 	public function queryLotnbr($lotnbr = null) {
 		$q = $this->query();
@@ -57,7 +57,7 @@ class Lotm extends WireData {
 ============================================================= */
 	public function lotsHaveImages($lotnbr = null) {
 		$q = $this->queryLotnbr($lotnbr);
-		$q->filterByHasimage(InvLot::YN_TRUE);
+		$q->filterByHasimage(InvLotMaster::YN_TRUE);
 		return boolval($q->count());
 	}
 }
