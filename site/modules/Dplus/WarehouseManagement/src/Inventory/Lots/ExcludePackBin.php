@@ -11,7 +11,7 @@ use Dplus\Wm\Inventory\Lots\Lookup as Base;
 class ExcludePackBin extends Base {
 	/**
 	 * Return Query
-	 * @return WhseLotserialQuery
+	 * @return InvWhseLotQuery
 	 */
 	public function queryWhseBins() {
 		$q = $this->queryWhse();

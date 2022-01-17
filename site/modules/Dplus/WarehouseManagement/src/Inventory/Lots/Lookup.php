@@ -2,7 +2,7 @@
 // Propel ORM Library
 use Propel\Runtime\ActiveQuery\Criteria;
 // Dplus Models
-use WhseLotserialQuery, WhseLotserial;
+use InvWhseLotQuery, InvWhseLot;
 // ProcessWire
 use ProcessWire\WireData;
 // Dplus Inventory
@@ -36,16 +36,16 @@ class Lookup extends WireData {
 ============================================================= */
 	/**
 	 * Return Query filtered By Sessionid
-	 * @return WhseLotserialQuery
+	 * @return InvWhseLotQuery
 	 */
 	public function query() {
-		$q = WhseLotserialQuery::create();
+		$q = InvWhseLotQuery::create();
 		return $q;
 	}
 
 	/**
 	 * Return Query Filtered By Warehouse ID if set
-	 * @return WhseLotserialQuery
+	 * @return InvWhseLotQuery
 	 */
 	public function queryWhse() {
 		$q = $this->query();
@@ -58,7 +58,7 @@ class Lookup extends WireData {
 
 	/**
 	 * Return Query
-	 * @return WhseLotserialQuery
+	 * @return InvWhseLotQuery
 	 */
 	public function queryWhseBins() {
 		return $this->queryWhse();
@@ -75,8 +75,8 @@ class Lookup extends WireData {
 	public function getDistinctBinsByItemid($itemID) {
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
-		$q->select(WhseLotserial::aliasproperty('bin'));
-		$q->groupBy(WhseLotserial::aliasproperty('bin'));
+		$q->select(InvWhseLot::aliasproperty('bin'));
+		$q->groupBy(InvWhseLot::aliasproperty('bin'));
 		return $q->find()->toArray();
 	}
 
@@ -86,8 +86,8 @@ class Lookup extends WireData {
 	 * @return array
 	 */
 	public function getLotsByItemid($itemID) {
-		$colQty = WhseLotserial::aliasproperty('qty');
-		$colLot = WhseLotserial::aliasproperty('lotserial');
+		$colQty = InvWhseLot::aliasproperty('qty');
+		$colLot = InvWhseLot::aliasproperty('lotserial');
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
 		$q->addAsColumn('qty', "SUM($colQty)");
@@ -105,7 +105,7 @@ class Lookup extends WireData {
 	public function getLotnbrsByItemid($itemID) {
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
-		$q->select(WhseLotserial::aliasproperty('lotserial'));
+		$q->select(InvWhseLot::aliasproperty('lotserial'));
 		return $q->find()->toArray();
 	}
 
@@ -132,7 +132,7 @@ class Lookup extends WireData {
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
 		$q->filterByQty(1, Criteria::GREATER_EQUAL);
-		$q->select(WhseLotserial::aliasproperty('itemid'));
+		$q->select(InvWhseLot::aliasproperty('itemid'));
 		return $q->find()->toArray();
 	}
 
@@ -142,7 +142,7 @@ class Lookup extends WireData {
 	 * @return int
 	 */
 	public function getQtyByItemid($itemID) {
-		$colQty = WhseLotserial::aliasproperty('qty');
+		$colQty = InvWhseLot::aliasproperty('qty');
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
 		$q->addAsColumn('qty', "SUM($colQty)");
@@ -156,7 +156,7 @@ class Lookup extends WireData {
 	 * @return int
 	 */
 	public function getQtyByLotserial($lotserial) {
-		$colQty = WhseLotserial::aliasproperty('qty');
+		$colQty = InvWhseLot::aliasproperty('qty');
 		$q = $this->queryWhseBins();
 		$q->filterByLotserial($lotserial);
 		$q->addAsColumn('qty', "SUM($colQty)");
@@ -179,7 +179,7 @@ class Lookup extends WireData {
 	/**
 	 * Return Lot
 	 * @param  string $lotserial  Lot / Serial #
-	 * @return WhseLotserial
+	 * @return InvWhseLot
 	 */
 	public function getLot($lotserial) {
 		$q = $this->queryWhseBins();
