@@ -34,6 +34,11 @@ class Cart extends WireData implements Module {
 		return $q;
 	}
 
+	public function clear() {
+		$q = $this->get_query();
+		return $q->delete();
+	}
+
 /* =============================================================
 	Get Functions
 ============================================================= */
