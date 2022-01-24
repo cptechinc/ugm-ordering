@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Controllers\\Api\\Base' => $baseDir . '/src/Api/Base.php',
     'Controllers\\Api\\Cart' => $baseDir . '/src/Api/Cart.php',
     'Controllers\\Api\\Items' => $baseDir . '/src/Api/Items.php',
@@ -13,6 +14,7 @@ return array(
     'Controllers\\Cart' => $baseDir . '/src/Cart.php',
     'Controllers\\Checkout' => $baseDir . '/src/Checkout.php',
     'Controllers\\Checkout\\Confirm' => $baseDir . '/src/Checkout/Confirm.php',
+    'Controllers\\Checkout\\Confirmed' => $baseDir . '/src/Checkout/Confirmed.php',
     'Controllers\\Items\\Item' => $baseDir . '/src/Items/Item.php',
     'Controllers\\Items\\ItemGroup' => $baseDir . '/src/Items/ItemGroup.php',
     'Controllers\\Items\\Item\\Lots' => $baseDir . '/src/Items/Item/Lots.php',

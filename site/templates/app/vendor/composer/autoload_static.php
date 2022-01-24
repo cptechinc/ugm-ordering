@@ -21,6 +21,7 @@ class ComposerStaticInitf0dd3ec9868b7a4635653d01f1d0fc0b
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Controllers\\Api\\Base' => __DIR__ . '/../..' . '/src/Api/Base.php',
         'Controllers\\Api\\Cart' => __DIR__ . '/../..' . '/src/Api/Cart.php',
         'Controllers\\Api\\Items' => __DIR__ . '/../..' . '/src/Api/Items.php',
@@ -28,6 +29,7 @@ class ComposerStaticInitf0dd3ec9868b7a4635653d01f1d0fc0b
         'Controllers\\Cart' => __DIR__ . '/../..' . '/src/Cart.php',
         'Controllers\\Checkout' => __DIR__ . '/../..' . '/src/Checkout.php',
         'Controllers\\Checkout\\Confirm' => __DIR__ . '/../..' . '/src/Checkout/Confirm.php',
+        'Controllers\\Checkout\\Confirmed' => __DIR__ . '/../..' . '/src/Checkout/Confirmed.php',
         'Controllers\\Items\\Item' => __DIR__ . '/../..' . '/src/Items/Item.php',
         'Controllers\\Items\\ItemGroup' => __DIR__ . '/../..' . '/src/Items/ItemGroup.php',
         'Controllers\\Items\\Item\\Lots' => __DIR__ . '/../..' . '/src/Items/Item/Lots.php',
