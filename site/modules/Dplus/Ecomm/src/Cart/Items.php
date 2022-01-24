@@ -6,7 +6,6 @@ use CartQuery as CartItemQuery, Cart as CartItem;
 // ProcessWire
 use ProcessWire\WireData;
 
-
 class Items extends WireData {
 	private static $instance;
 
@@ -115,5 +114,17 @@ class Items extends WireData {
 		$q->filterByItemid($itemID);
 		$q->withColumn('SUM(qty)', 'qty');
 		return intval($q->findOne());
+	}
+
+/* =============================================================
+	Delete Functions
+============================================================= */
+	/**
+	 * Clear Cart
+	 * @return bool
+	 */
+	public function clear() {
+		$q = $this->querySessionid();
+		return boolval($q->delete());
 	}
 }
