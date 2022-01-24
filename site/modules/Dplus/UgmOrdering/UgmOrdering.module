@@ -1,6 +1,5 @@
 <?php namespace ProcessWire;
 
-
 /**
  * class Dpages
  *
@@ -13,7 +12,6 @@ class UgmOrdering extends PwPages implements Module {
 	const TEMPLATES = array();
 
 	const PAGES = array();
-
 
 /* =============================================================
 	ProcessWire Module Functions
