@@ -1,7 +1,7 @@
 <?php namespace Controllers\Api;
 // Mvc Controllers
-use Mvc\Controllers\AbstractController;
+use Mvc\Controllers\Controller;
 
-class Base extends AbstractController {
-	
+class Base extends Controller {
+
 }
