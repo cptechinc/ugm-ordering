@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4145d71c8c0d77226efe978800a71dee",
+    "content-hash": "d60d1250d2efbf702084dde5fd85d330",
     "packages": [
         {
             "name": "cptechinc/dplus-model",
@@ -12,18 +12,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cptechinc/dplus-model.git",
-                "reference": "1fb9522a78141f2c9cba7ac68f391e27121d8b16"
+                "reference": "eba8e90a157c6736090d5f6079c9491175b93af7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cptechinc/dplus-model/zipball/1fb9522a78141f2c9cba7ac68f391e27121d8b16",
-                "reference": "1fb9522a78141f2c9cba7ac68f391e27121d8b16",
+                "url": "https://api.github.com/repos/cptechinc/dplus-model/zipball/eba8e90a157c6736090d5f6079c9491175b93af7",
+                "reference": "eba8e90a157c6736090d5f6079c9491175b93af7",
                 "shasum": ""
             },
             "require": {
                 "propel/propel": "dev-master#3087361bd27f3598f3ecd70e9fd272a5c2575b88"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -39,11 +38,7 @@
                 "data",
                 "dplus-model"
             ],
-            "support": {
-                "issues": "https://github.com/cptechinc/dplus-model/issues",
-                "source": "https://github.com/cptechinc/dplus-model/tree/master"
-            },
-            "time": "2022-01-14T18:21:02+00:00"
+            "time": "2022-01-24T15:04:33+00:00"
         },
         {
             "name": "cptechinc/dpluso-model",
@@ -59,7 +54,6 @@
                 "reference": "9536db816f1bcd5d57702a534ba289ef17f2eb5e",
                 "shasum": ""
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -79,10 +73,6 @@
                 "qnote",
                 "quote"
             ],
-            "support": {
-                "issues": "https://github.com/cptechinc/dpluso-model/issues",
-                "source": "https://github.com/cptechinc/dpluso-model/tree/master"
-            },
             "time": "2021-11-24T15:36:46+00:00"
         },
         {
@@ -136,44 +126,111 @@
             "time": "2020-12-16T19:24:11+00:00"
         },
         {
+            "name": "phpmailer/phpmailer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPMailer/PHPMailer.git",
+                "reference": "d4bf3504b93c38c7bfebc9c686471f48e6f84c06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/d4bf3504b93c38c7bfebc9c686471f48e6f84c06",
+                "reference": "d4bf3504b93c38c7bfebc9c686471f48e6f84c06",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-filter": "*",
+                "ext-hash": "*",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+                "doctrine/annotations": "^1.2",
+                "php-parallel-lint/php-console-highlighter": "^0.5.0",
+                "php-parallel-lint/php-parallel-lint": "^1.3.1",
+                "phpcompatibility/php-compatibility": "^9.3.5",
+                "roave/security-advisories": "dev-latest",
+                "squizlabs/php_codesniffer": "^3.6.2",
+                "yoast/phpunit-polyfills": "^1.0.0"
+            },
+            "suggest": {
+                "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
+                "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
+                "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
+                "psr/log": "For optional PSR-3 debug logging",
+                "stevenmaguire/oauth2-microsoft": "Needed for Microsoft XOAUTH2 authentication",
+                "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPMailer\\PHPMailer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Marcus Bointon",
+                    "email": "phpmailer@synchromedia.co.uk"
+                },
+                {
+                    "name": "Jim Jagielski",
+                    "email": "jimjag@gmail.com"
+                },
+                {
+                    "name": "Andy Prevost",
+                    "email": "codeworxtech@users.sourceforge.net"
+                },
+                {
+                    "name": "Brent R. Matzelle"
+                }
+            ],
+            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "time": "2021-12-26T18:26:31+00:00"
+        },
+        {
             "name": "propel/propel",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/propelorm/Propel2.git",
-                "reference": "f86b4e61eaf5dea10da70c172d82dcb040c6dad3"
+                "reference": "3087361bd27f3598f3ecd70e9fd272a5c2575b88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/propelorm/Propel2/zipball/f86b4e61eaf5dea10da70c172d82dcb040c6dad3",
-                "reference": "f86b4e61eaf5dea10da70c172d82dcb040c6dad3",
+                "url": "https://api.github.com/repos/propelorm/Propel2/zipball/3087361bd27f3598f3ecd70e9fd272a5c2575b88",
+                "reference": "3087361bd27f3598f3ecd70e9fd272a5c2575b88",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2",
-                "psr/log": "^1.0",
-                "symfony/config": "^3.4.0||^4.0.0||^5.0.0",
-                "symfony/console": "^3.4.0||^4.0.0||^5.0.0",
-                "symfony/filesystem": "^3.4.0||^4.0.0||^5.0.0",
-                "symfony/finder": "^3.4.0||^4.0.0||^5.0.0",
-                "symfony/translation": "^3.4.0||^4.0.0||^5.0.0",
-                "symfony/validator": "^3.4.0||^4.0.0||^5.0.0",
-                "symfony/yaml": "^3.4.0||^4.0.0||^5.0.0"
+                "php": ">=7.4",
+                "psr/log": "^1.0||^2.0||^3.0",
+                "symfony/config": "^4.4.0||^5.0.0||^6.0.0",
+                "symfony/console": "^4.4.0||^5.0.0||^6.0.0",
+                "symfony/filesystem": "^4.4.0||^5.0.0||^6.0.0",
+                "symfony/finder": "^4.4.0||^5.0.0||^6.0.0",
+                "symfony/translation": "^4.4.0||^5.0.0||^6.0.0",
+                "symfony/validator": "^4.4.0||^5.0.0||^6.0.0",
+                "symfony/yaml": "^4.4.0||^5.0.0||^6.0.0"
             },
             "require-dev": {
                 "ext-json": "*",
                 "ext-pdo": "*",
                 "mikey179/vfsstream": "^1.6",
-                "monolog/monolog": "^1.3",
-                "phpstan/phpstan": "^0.12.4",
-                "phpunit/phpunit": "^8.0.0||^9.0.0",
-                "psalm/phar": "4.2.1",
-                "spryker/code-sniffer": "^0.15.6"
+                "monolog/monolog": "^1.3 || ^2.3",
+                "phpstan/phpstan": "^1.2",
+                "phpunit/phpunit": "^9.5.0",
+                "psalm/phar": "^4.14",
+                "spryker/code-sniffer": "^0.17.2"
             },
             "suggest": {
                 "monolog/monolog": "The recommended logging library to use with Propel."
             },
-            "default-branch": true,
             "bin": [
                 "bin/propel"
             ],
@@ -205,11 +262,7 @@
                 "orm",
                 "persistence"
             ],
-            "support": {
-                "issues": "https://github.com/propelorm/Propel2/issues",
-                "source": "https://github.com/propelorm/Propel2/tree/master"
-            },
-            "time": "2021-05-19T21:12:00+00:00"
+            "time": "2020-09-14T08:34:34+00:00"
         },
         {
             "name": "psr/container",
@@ -276,7 +329,6 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -345,7 +397,6 @@
             "suggest": {
                 "symfony/yaml": "To use the yaml reference dumper"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -374,20 +425,6 @@
             "support": {
                 "source": "https://github.com/symfony/config/tree/5.4"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-22T19:56:03+00:00"
         },
         {
@@ -438,7 +475,6 @@
                 "symfony/lock": "",
                 "symfony/process": ""
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -473,20 +509,6 @@
             "support": {
                 "source": "https://github.com/symfony/console/tree/5.4"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-21T14:04:35+00:00"
         },
         {
@@ -506,7 +528,6 @@
             "require": {
                 "php": ">=7.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -541,20 +562,6 @@
             "support": {
                 "source": "https://github.com/symfony/deprecation-contracts/tree/v2.4.0"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-03-23T23:28:01+00:00"
         },
         {
@@ -575,7 +582,6 @@
                 "php": ">=7.2.5",
                 "symfony/polyfill-ctype": "~1.8"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -604,20 +610,6 @@
             "support": {
                 "source": "https://github.com/symfony/filesystem/tree/v5.3.0-RC1"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-04-01T10:43:52+00:00"
         },
         {
@@ -637,7 +629,6 @@
             "require": {
                 "php": ">=7.2.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -666,20 +657,6 @@
             "support": {
                 "source": "https://github.com/symfony/finder/tree/v5.3.0-RC1"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-16T13:07:46+00:00"
         },
         {
@@ -702,7 +679,6 @@
             "suggest": {
                 "ext-ctype": "For best performance"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -746,20 +722,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-ctype/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -782,7 +744,6 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -828,20 +789,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-intl-grapheme/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -864,7 +811,6 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -913,20 +859,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -949,7 +881,6 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -994,20 +925,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-mbstring/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-04-23T08:04:02+00:00"
         },
         {
@@ -1027,7 +944,6 @@
             "require": {
                 "php": ">=7.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1074,20 +990,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-php73/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -1107,7 +1009,6 @@
             "require": {
                 "php": ">=7.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1158,20 +1059,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-php80/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
@@ -1191,7 +1078,6 @@
             "require": {
                 "php": ">=7.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1238,20 +1124,6 @@
             "support": {
                 "source": "https://github.com/symfony/polyfill-php81/tree/main"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-21T13:25:03+00:00"
         },
         {
@@ -1275,7 +1147,6 @@
             "suggest": {
                 "symfony/service-implementation": ""
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1318,20 +1189,6 @@
             "support": {
                 "source": "https://github.com/symfony/service-contracts/tree/v2.4.0"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-04-01T10:43:52+00:00"
         },
         {
@@ -1362,7 +1219,6 @@
                 "symfony/translation-contracts": "^1.1|^2",
                 "symfony/var-exporter": "^4.4|^5.0|^6.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1402,20 +1258,6 @@
             "support": {
                 "source": "https://github.com/symfony/string/tree/5.4"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-21T14:04:35+00:00"
         },
         {
@@ -1466,7 +1308,6 @@
                 "symfony/config": "",
                 "symfony/yaml": ""
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -1498,20 +1339,6 @@
             "support": {
                 "source": "https://github.com/symfony/translation/tree/5.4"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-19T21:13:48+00:00"
         },
         {
@@ -1534,7 +1361,6 @@
             "suggest": {
                 "symfony/translation-implementation": ""
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1577,20 +1403,6 @@
             "support": {
                 "source": "https://github.com/symfony/translation-contracts/tree/v2.4.0"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-03-23T23:28:01+00:00"
         },
         {
@@ -1658,7 +1470,6 @@
                 "symfony/translation": "For translating validation errors.",
                 "symfony/yaml": ""
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1687,20 +1498,6 @@
             "support": {
                 "source": "https://github.com/symfony/validator/tree/5.4"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-19T17:31:22+00:00"
         },
         {
@@ -1731,7 +1528,6 @@
             "suggest": {
                 "symfony/console": "For validating YAML files using the lint command"
             },
-            "default-branch": true,
             "bin": [
                 "Resources/bin/yaml-lint"
             ],
@@ -1763,20 +1559,6 @@
             "support": {
                 "source": "https://github.com/symfony/yaml/tree/5.4"
             },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
             "time": "2021-05-24T10:36:18+00:00"
         },
         {
@@ -1800,7 +1582,7 @@
             },
             "require-dev": {
                 "psr/container": "^1.0",
-                "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
+                "symfony/phpunit-bridge": "^4.4.9|^5.0.9"
             },
             "type": "library",
             "extra": {
@@ -1846,17 +1628,7 @@
                 "issues": "https://github.com/twigphp/Twig/issues",
                 "source": "https://github.com/twigphp/Twig/tree/2.x"
             },
-            "funding": [
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2021-05-20T14:27:11+00:00"
+            "time": "2020-02-23T08:42:25+00:00"
         }
     ],
     "packages-dev": [],
@@ -1867,7 +1639,8 @@
         "twig/twig": 20,
         "propel/propel": 20,
         "cptechinc/dplus-model": 20,
-        "cptechinc/dpluso-model": 20
+        "cptechinc/dpluso-model": 20,
+        "phpmailer/phpmailer": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
@@ -1875,6 +1648,5 @@
         "php": ">=7.0.0",
         "ext-gd": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "platform-dev": []
 }

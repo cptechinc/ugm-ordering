@@ -4,20 +4,7 @@ use Whoops\Handler\JsonResponseHandler as WhoopsHandler;
 
 /**
  * Json Handler
- * Wrappper Class to hold WhoopsHandler Statically so data
- * could be added to the Handler
  */
-class Json {
-	private static $handler;
+class Json extends WhoopsHandler {
 
-	/**
-	 * Return the Handler
-	 * @return WhoopsHandler
-	 */
-	public static function handler() {
-		if (empty(self::$handler)) {
-			self::$handler = new WhoopsHandler();
-		}
-		return self::$handler;
-	}
 }

@@ -33,7 +33,8 @@
 		"twig/twig": "2.x-dev#0da153eb3b843d1117e52c882df6f40aefb954a",
 		"propel/propel": "dev-master#3087361bd27f3598f3ecd70e9fd272a5c2575b88",
 		"cptechinc/dplus-model": "dev-master",
-		"cptechinc/dpluso-model": "dev-master"
+		"cptechinc/dpluso-model": "dev-master",
+		"phpmailer/phpmailer": "dev-master"
 	},
 	"autoload": {
 		"files": [

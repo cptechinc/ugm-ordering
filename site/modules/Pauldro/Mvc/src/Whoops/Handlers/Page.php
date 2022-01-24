@@ -4,20 +4,7 @@ use Whoops\Handler\PrettyPageHandler as WhoopsHandler;
 
 /**
  * Page Handler
- * Wrappper Class to hold WhoopsHandler Statically so data
- * could be added to the Handler
  */
-class Page {
-	private static $handler;
+class Page extends WhoopsHandler {
 
-	/**
-	 * Return the Handler
-	 * @return WhoopsHandler
-	 */
-	public static function handler() {
-		if (empty(self::$handler)) {
-			self::$handler = new WhoopsHandler();
-		}
-		return self::$handler;
-	}
 }

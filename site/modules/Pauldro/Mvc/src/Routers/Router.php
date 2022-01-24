@@ -3,13 +3,17 @@
 use Exception;
 // Whoops
 use Whoops\Run as Whoops;
-use Mvc\Whoops\Handlers\Page as WhoopsHandler;
 // FastRoute Routing Library
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 // ProcessWire
+use ProcessWire\ProcessWire;
 use ProcessWire\WireData;
 use ProcessWire\Wire404Exception;
+// MVC Whoops
+use Mvc\Whoops\Handlers\Page as PageHandler;
+use Mvc\Whoops\Handlers\Production as ProductionHandler;
+use Mvc\Whoops\Handlers\EmailPage as EmailPageHandler;
 
 /**
  * Router
@@ -97,28 +101,61 @@ class Router extends WireData {
 			throw $e;
 		} catch (Exception $e) {
 			$this->error = true;
-			$response = $this->whoopsResponse($e);
+			$response = $this->handleException($e);
 		}
 		return $response;
 	}
 
 	/**
-	 * Return Whoops Response Message
-	 * @param  Exception $e Exception
-	 * @return string       HTML Whoops Response
+	 * Return Response after Handling Exception
+	 * @param  Exception $e
+	 * @return string
 	 */
-	protected function whoopsResponse(Exception $e) {
-		$handler = WhoopsHandler::handler();
-		$handler->addDataTable('Dplus', [
+	protected function handleException(Exception $e) {
+		$whoops = new Whoops();
+		$whoops->allowQuit(false);
+		$whoops->writeToOutput(false);
+
+		$whoops->pushHandler($this->getWhoopsEmailPageHandler());
+
+		if ($this->wire('config')->debug === true) {
+			$whoops->pushHandler($this->getWhoopsPageHandler());
+			return $whoops->handleException($e);
+		}
+		$whoops->handleException($e);
+		$pw = ProcessWire::getCurrentInstance();
+		return $pw->wire('config')->twig->render('util/alert.twig', ['type' => 'danger', 'iconclass' => 'fa fa-warning fa-2x', 'title' =>'Error!', 'message' => 'An Error has Occurred, support has been emailed']);
+	}
+
+	/**
+	 * @return PageHandler
+	 */
+	protected function getWhoopsPageHandler() {
+		$handler = new PageHandler();
+		$this->addAppDataTablesToHandler($handler);
+		return $handler;
+	}
+
+	/**
+	 * @return EmailPageHandler
+	 */
+	protected function getWhoopsEmailPageHandler() {
+		$handler = new EmailPageHandler();
+		$this->addAppDataTablesToHandler($handler);
+		return $handler;
+	}
+
+	/**
+	 * Add Data Tables for App
+	 * @param PageHandler $handler
+	 * @return void
+	 */
+	protected function addAppDataTablesToHandler(PageHandler $handler) {
+		$handler->addDataTable('App', [
 			'User ID'    => $this->wire('user')->loginid,
 			'Session ID' => session_id(),
 			'Path'       => $this->wire('input')->url(),
 		]);
-		$whoops = new Whoops();
-		$whoops->allowQuit(false);
-		$whoops->writeToOutput(false);
-		$whoops->pushHandler($handler);
-		return $whoops->handleException($e);
 	}
 
 	/**
@@ -228,7 +265,7 @@ class Router extends WireData {
 		return $default;
 	}
 
-	protected function flattenRoutes(&$putInArray, $group, $prefix = '') {
+	protected static function flattenRoutes(&$putInArray, $group, $prefix = '') {
 		$prefix = rtrim($prefix, '/');
 
 		foreach ($group as $key => $item) {
