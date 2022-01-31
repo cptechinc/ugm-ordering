@@ -1,6 +1,8 @@
 <?php namespace Dplus\Ecomm\Items\Available;
 // ProcessWire
 use ProcessWire\WireData, ProcessWire\WireInput;
+use SalesOrderDetailQuery, SalesOrderDetail;
+use SalesOrder;
 // Dplus Warehouse Management
 use Dplus\Wm\Inventory\Lots\Lookup as LotInventory;
 // Dplus Ecomm
@@ -45,11 +47,27 @@ class Items extends WireData {
 		return $this->inventory;
 	}
 
+	/**
+	 * Return Qty that is on Orders
+	 * @param  string $itemID Item ID
+	 * @return float
+	 */
+	public function getQtyOnOrder($itemID) {
+		$q = SalesOrderDetailQuery::create();
+		$q->useSalesOrderQuery()
+			->filterByStatus([SalesOrder::STATUS_CODES['new'], SalesOrder::STATUS_CODES['picked']])
+		->endUse();
+		$q->filterByItemid($itemID);
+		$q->withColumn('SUM('.SalesOrderDetail::aliasproperty('qty_ordered').')', 'qty');
+		$q->select('qty');
+		return floatval($q->findOne());
+	}
+
 /* =============================================================
 	Query Functions
 ============================================================= */
 	/**
-	 * Return Item ID Availability based on Inventory and Cart Lots
+	 * Return Item ID Availability based on Inventory, Qty on Order, Qty in Carts
 	 * @param  string $itemID Item ID
 	 * @return int
 	 */
@@ -57,7 +75,8 @@ class Items extends WireData {
 		$cart = Cart::getInstance();
 		$qtyInventory = $this->inventory->getQtyByItemid($itemID);
 		$qtyInCart    = $cart->items->qtyItemidAllSessionids($itemID);
-		$available    = $qtyInventory - $qtyInCart;
+		$qtyOnOrder   = $this->getQtyOnOrder($itemID);
+		$available    = $qtyInventory - $qtyOnOrder - $qtyInCart;
 		return $available >= 0 ? $available : 0;
 	}
 }
