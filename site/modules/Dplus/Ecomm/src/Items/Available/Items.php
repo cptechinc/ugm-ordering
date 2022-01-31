@@ -56,7 +56,7 @@ class Items extends WireData {
 		$q = SalesOrderDetailQuery::create();
 		$q->useSalesOrderQuery()
 			->filterByStatus([SalesOrder::STATUS_CODES['new'], SalesOrder::STATUS_CODES['picked']])
-		->endUse();
+			->endUse();
 		$q->filterByItemid($itemID);
 		$q->withColumn('SUM('.SalesOrderDetail::aliasproperty('qty_ordered').')', 'qty');
 		$q->select('qty');
