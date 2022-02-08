@@ -371,4 +371,13 @@ class Cart extends WireData {
 		$m->setWhseID(1);
 		return $m;
 	}
+
+	/**
+	 * Empty All Carts
+	 * @return void
+	 */
+	public function clearAll() {
+		$this->items->query()->delete();
+		$this->lots->query()->delete();
+	}
 }
