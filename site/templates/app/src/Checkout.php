@@ -22,7 +22,7 @@ class Checkout extends Base {
 		$billing   = $checkoutm->get_billing();
 
 		if (empty($billing)) {
-			$session->redirect(Cart::checkoutUrl(), $http301 = false);
+			self::pw('session')->redirect(Cart::checkoutUrl(), $http301 = false);
 		}
 
 		if (empty($data->action) === false) {
