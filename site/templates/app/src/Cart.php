@@ -97,7 +97,7 @@ class Cart extends Base {
 		$html = '';
 
 		if ($session->response_qnote) {
-			$html .= self::pw('config')->render('util/ecomm-response.twig', ['response' => $session->response_qnote]);
+			$html .= self::pw('config')->twig->render('util/ecomm-response.twig', ['response' => $session->response_qnote]);
 			$session->remove('response_qnote');
 		}
 		return $html;
@@ -126,7 +126,7 @@ class Cart extends Base {
 	}
 
 	public static function checkoutUrl() {
-		$url = new Purl\Url($pages->get('template=cart')->url);
+		$url = new Purl(self::pw('pages')->get('template=cart')->url);
 		$url->query->set('action', 'checkout');
 		return $url->getUrl();
 	}
