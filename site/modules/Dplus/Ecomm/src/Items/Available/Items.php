@@ -98,7 +98,7 @@ class Items extends WireData {
 	Query Functions
 ============================================================= */
 	/**
-	 * Return Item ID Availability based on Inventory, Qty in QC bins Qty on Order, Qty in Carts
+	 * Return Item ID Availability based on Inventory, Qty in QC bins, Qty on Order, Qty in Carts
 	 * @param  string $itemID Item ID
 	 * @return int
 	 */
