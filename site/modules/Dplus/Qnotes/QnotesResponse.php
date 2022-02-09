@@ -26,6 +26,10 @@ class QnotesResponse extends WireData {
 		return boolval($this->error);
 	}
 
+	public function hasError() {
+		return boolval($this->error);
+	}
+
 	public function set_success(bool $success) {
 		$this->success = $success;
 	}
