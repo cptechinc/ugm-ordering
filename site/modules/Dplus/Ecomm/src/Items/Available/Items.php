@@ -1,8 +1,12 @@
 <?php namespace Dplus\Ecomm\Items\Available;
+// Propel ORM Library
+use Propel\Runtime\ActiveQuery\Criteria;
 // ProcessWire
 use ProcessWire\WireData, ProcessWire\WireInput;
 use SalesOrderDetailQuery, SalesOrderDetail;
 use SalesOrder;
+use WarehouseBinQuery, WarehouseBin;
+use InvWhseLotQuery, InvWhseLot;
 // Dplus Warehouse Management
 use Dplus\Wm\Inventory\Lots\Lookup as LotInventory;
 // Dplus Ecomm
@@ -63,11 +67,38 @@ class Items extends WireData {
 		return floatval($q->findOne());
 	}
 
+	/**
+	 * Return the Qty found in QC Bins
+	 * @param  string $itemID Item ID
+	 * @return float
+	 */
+	public function getQtyInQcBins($itemID) {
+		$colQty = InvWhseLot::aliasproperty('qty');
+
+		$q = $this->inventory->queryWhseBins();
+		$q->filterByBinid($this->getQcBinids());
+		$q->filterByItemid($itemID);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return intval($q->findOne());
+	}
+
+	/**
+	 * Return Binids with the Q (quality control) bin type
+	 * @return array
+	 */
+	protected function getQcBinids() {
+		$q = WarehouseBinQuery::create();
+		$q->select(WarehouseBin::aliasproperty('from'));
+		$q->filterByType('Q');
+		return $q->find()->toArray();
+	}
+
 /* =============================================================
 	Query Functions
 ============================================================= */
 	/**
-	 * Return Item ID Availability based on Inventory, Qty on Order, Qty in Carts
+	 * Return Item ID Availability based on Inventory, Qty in QC bins Qty on Order, Qty in Carts
 	 * @param  string $itemID Item ID
 	 * @return int
 	 */
@@ -76,7 +107,8 @@ class Items extends WireData {
 		$qtyInventory = $this->inventory->getQtyByItemid($itemID);
 		$qtyInCart    = $cart->items->qtyItemidAllSessionids($itemID);
 		$qtyOnOrder   = $this->getQtyOnOrder($itemID);
-		$available    = $qtyInventory - $qtyOnOrder - $qtyInCart;
+		$qtyInQc      = $this->getQtyInQcBins($itemID);
+		$available    = $qtyInventory - $qtyInQc - $qtyOnOrder - $qtyInCart;
 		return $available >= 0 ? $available : 0;
 	}
 }
