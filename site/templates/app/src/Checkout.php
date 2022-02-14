@@ -92,7 +92,7 @@ class Checkout extends Base {
 		$html = '';
 
 		if ($session->response_qnote) {
-			$html .= self::pw('config')->render('util/dplus-response.twig', ['response' => $session->response_qnote]);
+			$html .= self::pw('config')->twig->render('util/dplus-response.twig', ['response' => $session->response_qnote]);
 			$session->remove('response_qnote');
 		}
 		return $html;
