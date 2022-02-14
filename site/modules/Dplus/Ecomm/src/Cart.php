@@ -78,6 +78,7 @@ class Cart extends WireData {
 		$validateItem = $this->wire('modules')->get('ValidateItem');
 		$itemID = $values->text('itemID');
 		$qty    = $values->int('qty') ? $values->int('qty') : 1;
+		$qty += $this->items->qtyItemid($itemID);
 
 		if ($validateItem->validate($itemID)) {
 			$this->requestItemAdd($itemID, $qty);
