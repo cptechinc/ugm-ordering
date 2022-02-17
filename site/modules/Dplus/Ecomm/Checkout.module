@@ -60,6 +60,15 @@ class Checkout extends WireData implements Module {
 		return boolval($q->count());
 	}
 
+	/**
+	 * Delete Billing record
+	 * @return bool
+	 */
+	public function delete_billing() {
+		$q = $this->get_query();
+		return boolval($q->delete());
+	}
+
 /* =============================================================
 	CRUD Processing Functions
 ============================================================= */

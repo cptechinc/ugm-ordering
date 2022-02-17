@@ -10,6 +10,7 @@ use Dplus\Ecomm\Response;
 use Controllers\Base;
 use Controllers\Checkout;
 use Controllers\Items\Item;
+use Controllers\Cart;
 
 class Confirmed extends Checkout {
 /* =============================================================
@@ -23,7 +24,7 @@ class Confirmed extends Checkout {
 		$billing   = $checkoutm->get_billing();
 
 		if (empty($billing)) {
-			$session->redirect(Cart::checkoutUrl(), $http301 = false);
+			self::pw('session')->redirect(Cart::checkoutUrl(), $http301 = false);
 		}
 		return self::confirmed($data);
 	}
@@ -46,9 +47,12 @@ class Confirmed extends Checkout {
 			$q->filterByShiptoid($billing->shiptoid);
 			$session->setFor('order', 'created', $q->findOne());
 		}
-		CartCRUD::getInstance()->items->clear();
 		self::pw('config')->scripts->append(self::pw('modules')->get('FileHasher')->getHashUrl('scripts/lib/jquery-validate.js'));
-		return self::displayConfirmed($data);
+		$html = self::displayConfirmed($data);
+		CartCRUD::getInstance()->items->clear();
+		$checkoutm->delete_billing();
+		self::pw('modules')->get('QnotesCart')->delete_all();
+		return $html;
 	}
 
 /* =============================================================

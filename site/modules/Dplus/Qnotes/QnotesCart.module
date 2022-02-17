@@ -104,6 +104,20 @@ class QnotesCart extends WireData implements Module {
 		return true;
 	}
 
+	/**
+	 * Delete All notes for this session
+	 * @return bool
+	 */
+	public function delete_all() {
+		$q = $this->get_query();
+		$q->filterBySessionid($this->sessionid);
+
+		if ($q->count()) {
+			return $q->delete();
+		}
+		return true;
+	}
+
 /* =============================================================
 	CRUD Processing Functions
 ============================================================= */
