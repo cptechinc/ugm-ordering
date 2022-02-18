@@ -138,8 +138,7 @@ class Search extends WireData {
 		$inventory = $this->getWhseLots();
 		$items     = $this->wire('pages')->find($selector);
 		$itemIDs   = $items->explode('itemid');
-
-		return $inventory->countInstockByItemid($itemIDs);
+		return $inventory->countInstockByItemidDistinct($itemIDs);
 	}
 
 	/**
@@ -152,7 +151,6 @@ class Search extends WireData {
 		$start    = $pagenbr > 1 ? ($pagenbr * $limit) - $limit : 0;
 		$selector = $this->getQuerySelector();
 		$items    = $this->wire('pages')->find($selector);
-
 		$items = $this->inStockOnly ? $this->findStocked($items) : $items;
 
 		if ($limit) {
@@ -160,7 +158,6 @@ class Search extends WireData {
 		}
 		$selector .= ", sort=" . $this->pwSortrule();
 		$this->selector = $selector;
-		$results = $items->find($selector);
 		return $items->find($selector);
 	}
 
@@ -172,7 +169,7 @@ class Search extends WireData {
 	 */
 	public function findStocked(PageArray $items) {
 		$inventory = $this->getWhseLots();
-		$itemIDs = $inventory->getItemidsWithQty($items->explode('itemid'));
+		$itemIDs   = $inventory->getItemidsWithQty($items->explode('itemid'));
 		return $items->find('itemid='.implode('|', $itemIDs));
 	}
 

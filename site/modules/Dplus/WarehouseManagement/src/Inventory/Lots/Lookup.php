@@ -3,6 +3,7 @@
 use Propel\Runtime\ActiveQuery\Criteria;
 // Dplus Models
 use InvWhseLotQuery, InvWhseLot;
+use WarehouseBinQuery, WarehouseBin;
 // ProcessWire
 use ProcessWire\WireData;
 // Dplus Inventory
@@ -133,6 +134,7 @@ class Lookup extends WireData {
 		$q->filterByItemid($itemID);
 		$q->filterByQty(1, Criteria::GREATER_EQUAL);
 		$q->select(InvWhseLot::aliasproperty('itemid'));
+		$q->distinct();
 		return $q->find()->toArray();
 	}
 
@@ -177,6 +179,21 @@ class Lookup extends WireData {
 	}
 
 	/**
+	 * Count Item IDs that are in stock
+	 * @param  string|array $itemID  Item ID
+	 * @return int
+	 */
+	public function countInstockByItemidDistinct($itemID) {
+		$col = InvWhseLot::aliasproperty('itemid');
+		$q = $this->queryWhseBins();
+		$q->filterByItemid($itemID);
+		$q->filterByQty(1, Criteria::GREATER_EQUAL);
+		$q->withColumn("COUNT(DISTINCT($col))", 'count');
+		$q->select('count');
+		return intval($q->findOne());
+	}
+
+	/**
 	 * Return Lot
 	 * @param  string $lotserial  Lot / Serial #
 	 * @return InvWhseLot
@@ -196,5 +213,16 @@ class Lookup extends WireData {
 		$lotnbrs = $this->getLotnbrsByItemid($itemID);
 		$lotm    = Lotm::getInstance();
 		return $lotm->lotsHaveImages($lotnbrs);
+	}
+
+	/**
+	 * Return Binids with the Q (quality control) bin type
+	 * @return array
+	 */
+	protected function getQcBinids() {
+		$q = WarehouseBinQuery::create();
+		$q->select(WarehouseBin::aliasproperty('from'));
+		$q->filterByType('Q');
+		return $q->find()->toArray();
 	}
 }

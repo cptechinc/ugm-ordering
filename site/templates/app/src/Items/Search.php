@@ -42,7 +42,7 @@ class Search extends Base {
 	Display Functions
 ============================================================= */
 	private static function displaySearch($data, SearchItems $search) {
-		$items  = $search->find(self::pw('input')->pageNum, 12);
+		$items   = $search->find(self::pw('input')->pageNum, 12);
 		$config = self::pw('config');
 		$html = '';
 
