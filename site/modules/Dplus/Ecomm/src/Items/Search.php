@@ -95,6 +95,18 @@ class Search extends WireData {
 		$selector .= $this->restrictItems ? $this->getRestrictedItemsSelector() : '';
 		$selector .= $this->query ? ", ($searchFields%=$q)" : '';
 		$selector .= $this->query ? ", ($searchFields~=$q)" : '';
+
+		if ($this->query) {
+			$subselector = '';
+			$words = explode(' ', $q);
+
+			foreach ($words as $word) {
+				$subselector .= ",$searchFields*=$word";
+			}
+			$subselector = ltrim($subselector, ",");
+			$selector .= ", ($subselector)";
+		}
+		// $selector .= $this->query ? ", ($searchFields~%=$q)" : '';
 		return $selector;
 	}
 
