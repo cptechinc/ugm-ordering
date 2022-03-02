@@ -47,6 +47,7 @@ class Confirmed extends Checkout {
 			$q->filterByShiptoid($billing->shiptoid);
 			$session->setFor('order', 'created', $q->findOne());
 		}
+		$checkoutm->request_sessionclear();
 		self::pw('config')->scripts->append(self::pw('modules')->get('FileHasher')->getHashUrl('scripts/lib/jquery-validate.js'));
 		$html = self::displayConfirmed($data);
 		CartCRUD::getInstance()->items->clear();
