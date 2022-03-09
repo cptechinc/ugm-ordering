@@ -125,7 +125,8 @@ $page->showonpage = $session->display;
 $rm = strtolower($input->requestMethod());
 $values = $input->$rm;
 
-$modules->get('UgmOrderingPagesItem')->createPagesForNewItems();
+Dplus\UgmOrdering\Pages\Item::instance()->createPagesForNewItems();
+
 include($modules->get('Mvc')->controllersPath().'vendor/autoload.php');
 
 if ($session->getFor('cart', 'add')) {
