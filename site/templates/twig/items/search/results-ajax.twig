@@ -16,7 +16,7 @@
 			<div class="col-sm-2 text-right">Qty In Cart</div>
 		</div>
 	</div>
-	
+
 	{% if items.count() == 0 %}
 		<div class="list-group-item item-result">
 			<div class="text-center">
@@ -36,9 +36,10 @@
 					<h5 class="mb-1">
 						<a href="#" class="link item-lookup-itemid item-link" data-islotted="{{ item.item.is_itemtype_lotted(item.item.itemtype) ? 'true' : 'true'}}" data-itemid="{{ item.itemid }}">{{ item.itemid }}</a>
 					</h5>
-					<p class="mb-1 text-muted item-description">{{ item.description1 }}</p>
+					<small class="mb-1 text-muted item-description">{{ item.description1 }}</small> <br>
+					<small class="mb-1 text-muted item-description">{{ item.item.description2 }}</small>
 				</div>
-				<div class="col-sm-1 text-right uom">{{ uom_desc }}</div>
+				<div class="col-sm-1 text-right uom"><small>{{ uom_desc }}</small></div>
 				<div class="col-sm-2 text-right available">{{ qtyAvailable }}</div>
 				<div class="col-sm-2 text-center">
 					{% if inventory.getInventory().itemidLotsHaveImages(item.itemid) %}

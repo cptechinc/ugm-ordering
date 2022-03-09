@@ -9,10 +9,11 @@
 			<h5 class="card-title">{{ item.itemid }}</h5>
 
 			<div class="card-text">
-				<small>{{ item.description1 }}</small>
+				<small>{{ item.description1 }}</small><br>
+				<small>{{ item.item.description2 }}</small>
 				<div class="row">
 					<div class="col-6">
-						UoM : {{ uom_desc }}
+						<small>UoM : {{ uom_desc }}</small>
 					</div>
 					<div class="col-6 text-right">
 						{% if inventory.getInventory().itemidLotsHaveImages(item.itemid) %}
