@@ -47,10 +47,11 @@ class Confirmed extends Checkout {
 			$q->filterByShiptoid($billing->shiptoid);
 			$session->setFor('order', 'created', $q->findOne());
 		}
-		$checkoutm->request_sessionclear();
+
 		self::pw('config')->scripts->append(self::pw('modules')->get('FileHasher')->getHashUrl('scripts/lib/jquery-validate.js'));
 		$html = self::displayConfirmed($data);
 		CartCRUD::getInstance()->items->clear();
+		$checkoutm->request_sessionclear();
 		$checkoutm->delete_billing();
 		self::pw('modules')->get('QnotesCart')->delete_all();
 		return $html;
