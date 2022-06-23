@@ -241,11 +241,12 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		$itemID = is_object($item) ? $item->itemid : $item;
 		$exists = $this->itemidPageExists($itemID);
 
-		if ($exists === false) {
-			$itemID = $this->wire('sanitizer')->pageName($itemID);
-			return $this->itemidPageExists($itemID);
+		if ($exists) {
+			return true;
 		}
-		return $exists;
+
+		$itemID = $this->wire('sanitizer')->pageName($itemID);
+		return $this->itemidPageExists($itemID) || $this->itemidPageNameExists($itemID);
 	}
 
 	/**
@@ -259,6 +260,13 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 		return boolval($p->id);
 	}
 
+	public function itemidPageNameExists($itemID) {
+		$itemID = $this->wire('sanitizer')->pageName($itemID);
+		$template = self::TEMPLATE_ITEM;
+		$p = $this->wire('pages')->get("template=$template, name=$itemID, include=all");
+		return boolval($p->id);
+	}
+
 	/**
 	 * Returns Item Page
 	 * @param  ItemMasterItem|string $item         Item | Item ID
@@ -266,12 +274,20 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	 */
 	public function getPage($item) {
 		$itemID = is_object($item) ? $item->itemid : $item;
+
 		$p = $this->getItemidPage($itemID);
-		if (boolval($p->id) === false) {
-			$itemID = $this->wire('sanitizer')->pageName($itemID);
-			return $this->getItemidPage($itemID);
+
+		if (boolval($p->id)) {
+			return $p;
 		}
-		return $p;
+
+		if ($this->itemidPageExists($itemID)) {
+			return $this->getItemidPage($this->wire('sanitizer')->pageName($itemID));
+		}
+		if ($this->itemidPageNameExists($itemID)) {
+			return $this->getItemidNamedPage($itemID);
+		}
+		return false;
 	}
 
 	/**
@@ -282,6 +298,17 @@ class UgmOrderingPagesItem extends PwPages implements Module {
 	public function getItemidPage($itemID) {
 		$template = self::TEMPLATE_ITEM;
 		return $this->wire('pages')->get("template=$template, itemid=$itemID, include=all");
+	}
+
+	/**
+	 * Return Page(template=item) for Item ID based on Page Name
+	 * @param  string $itemID Item ID
+	 * @return Page
+	 */
+	public function getItemidNamedPage($itemID) {
+		$itemID = $this->wire('sanitizer')->pageName($itemID);
+		$template = self::TEMPLATE_ITEM;
+		return $this->wire('pages')->get("template=$template, name=$itemID, include=all");
 	}
 
 /* =============================================================
