@@ -7,9 +7,10 @@
 	qnotes                 module QnotesSalesOrder
 	customer               Customer
 #}
+
 {% set imitem = editm.get_item(item.itemid) %}
 <div class="row">
-	<div class="col-3">
+	<div class="col-4">
 		{{ item.itemid }} <br>
 		<small class="text-muted">{{ item.desc1 }}</small>
 	</div>
@@ -37,6 +38,14 @@
 			</div>
 		</form>
 	</div>
+	<div class="col-1 text-center">
+		{% if inventory.itemidLotsHaveImages(item.itemid) %}
+			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ item.linenbr|attrJS }}-lots" aria-expanded="false" aria-controls="{{ item.linenbr|attrJS }}-lots">
+				<i class="fa fa-list" aria-hidden="true"></i>
+			</button>
+		{% endif %}
+	</div>
+
 	<div class="col-1 text-right">
 		$ {{ item.price|currency }}
 	</div>
