@@ -10,7 +10,11 @@
 <div class="row">
 	{% for lot in lots %}
 		<div class="col-md-4">
-			{% include 'items/item/lot.twig' %}
+			{% if input.get.offsetExists('ordn') %}
+				{% include 'items/item/lot-for-order.twig' %}
+			{% else %}
+				{% include 'items/item/lot-for-cart.twig' %}
+			{% endif %}
 		</div>
 	{% endfor %}
  </div>

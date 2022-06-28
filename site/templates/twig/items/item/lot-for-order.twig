@@ -4,11 +4,11 @@
 	page                   ProcessWire\Page(template=item)
 	lot                    ['lot' => $lotnbr, 'qty' => $qty]
 	docm                   Dplus\DocManagement\Finders\Lt\Img
+	cart                   Dplus\Ecomm\Cart
 #}
-{% set query = input.get %}
-<div class="card mb-4 shadow-sm">
-	{% if docm.hasImage(lot.lotserial) %}
-		<img src="{{ docm.getViewer().url(docm.getImageFilename(lot.lotserial)) }}" class="card-img-top img-fluid vh-40" alt="Lot #{{ lot.lot }} Image">
+<div class="card mb-4 shadow-sm lot" data-lot="{{ lot.lot }}" data-itemid="{{ page.itemid }}">
+	{% if docm.hasImage(lot.lot) %}
+		<img src="{{ docm.getViewer().url(docm.getImageFilename(lot.lot)) }}" class="card-img-top img-fluid vh-40" alt="Lot #{{ lot.lot }} Image">
 	{% else %}
 		<svg class="bd-placeholder-img card-img-top vh-40" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
 			<title>Placeholder</title>
@@ -18,14 +18,13 @@
 	{% endif %}
 
 	<div class="card-body">
-		<h5>Lot # {{ lot.lotserial }}</h5>
+		<h5>Lot # {{ lot.lot }}</h5>
 
-		<form action="{{ pages.get('template=order-edit').url }}" method="POST">
+		<form action="{{ pages.get('template=order-edit').url }}" class="add-lot-form" method="POST">
 			<input type="hidden" name="action" value="add-lot">
 			<input type="hidden" name="ordn" value="{{ input.get.text('ordn') }}">
 			<input type="hidden" name="itemID" value="{{ page.itemid }}">
-			<input type="hidden" name="lot" value="{{ lot.lotserial }}">
-
+			<input type="hidden" name="lot" value="{{ lot.lot }}">
 			{% if config.ajax == false %}
 				<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
 			{% endif %}
@@ -33,7 +32,7 @@
 				<div class="col-6"></div>
 				<div class="col-6 text-right">
 					<span class="badge bg-dark text-light">
-						On Order: {{ orderEditor.allocatedLots.qty(input.get.text('ordn'), lot.lotserial) + 0 }}
+						On Order: {{ orderEditor.allocatedLots.qty(input.get.text('ordn'), lot.lot) + 0 }}
 					</span>
 				</div>
 			</div>
@@ -42,7 +41,7 @@
 					<label for="qty">Qty</label>
 				</div>
 				<div class="col-6 text-right">
-					Available: {{ lot.available + 0 }}
+					Available: <span class="lot-qty">{{ lot.available + 0 }}</span>
 				</div>
 			</div>
 			<div class="row">
