@@ -23,6 +23,7 @@
 			<input type="hidden" name="action" value="add-lot">
 			<input type="hidden" name="itemID" value="{{ page.itemid }}">
 			<input type="hidden" name="lot" value="{{ lot.lotserial }}">
+
 			{% if config.ajax == false %}
 				<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
 			{% endif %}

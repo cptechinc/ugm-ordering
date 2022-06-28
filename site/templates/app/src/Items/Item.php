@@ -45,10 +45,13 @@ class Item extends Base {
 /* =============================================================
 	URL Functions
 ============================================================= */
-	public static function itemLotUrl($itemID, $lotserial) {
+	public static function itemLotUrl($itemID, $lotserial, $ordn = '') {
 		$url = new Purl(self::pw('pages')->get("template=item,itemid=$itemID")->url);
 		$url->path->add('lots');
 		$url->path->add($lotserial);
+		if ($ordn) {
+			$url->query->set('ordn', $ordn);
+		}
 		return $url->getUrl();
 	}
 

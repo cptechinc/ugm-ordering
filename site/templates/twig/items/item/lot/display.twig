@@ -1,5 +1,9 @@
 <div class="row">
 	<div class="col-sm-4">
-		{% include 'items/item/lot/lot.twig' %}
+		{% if input.get.offsetExists('ordn') %}
+			{% include 'items/item/lot/lot-for-order.twig' %}
+		{% else %}
+			{% include 'items/item/lot/lot-for-cart.twig' %}
+		{% endif %}
 	</div>
 </div>

@@ -1,0 +1,74 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page(template=item)
+	lot                    ['lot' => $lotnbr, 'qty' => $qty]
+	docm                   Dplus\DocManagement\Finders\Lt\Img
+#}
+{% set query = input.get %}
+<div class="card mb-4 shadow-sm">
+	{% if docm.hasImage(lot.lotserial) %}
+		<img src="{{ docm.getViewer().url(docm.getImageFilename(lot.lotserial)) }}" class="card-img-top img-fluid vh-40" alt="Lot #{{ lot.lot }} Image">
+	{% else %}
+		<svg class="bd-placeholder-img card-img-top vh-40" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+			<title>Placeholder</title>
+			<rect width="100%" height="100%" fill="#55595c"></rect>
+			<text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+		</svg>
+	{% endif %}
+
+	<div class="card-body">
+		<h5>Lot # {{ lot.lotserial }}</h5>
+
+		<form action="{{ pages.get('template=order-edit').url }}" method="POST">
+			<input type="hidden" name="action" value="add-lot">
+			<input type="hidden" name="ordn" value="{{ input.get.text('ordn') }}">
+			<input type="hidden" name="itemID" value="{{ page.itemid }}">
+			<input type="hidden" name="lot" value="{{ lot.lotserial }}">
+
+			{% if config.ajax == false %}
+				<input type="hidden" name="page" value="{{ page.fullURL.getUrl() }}">
+			{% endif %}
+			<div class="row mb-1">
+				<div class="col-6"></div>
+				<div class="col-6 text-right">
+					<span class="badge bg-dark text-light">
+						On Order: {{ orderEditor.allocatedLots.qtyItemid(input.get.text('ordn'), lot.itemid) + 0 }}
+					</span>
+				</div>
+			</div>
+			<div class="row mb-1">
+				<div class="col-6">
+					<label for="qty">Qty</label>
+				</div>
+				<div class="col-6 text-right">
+					Available: {{ lot.available + 0 }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					{% include 'util/bootstrap/form/input.twig' with {
+							'input': {
+								'id': '',
+								'name': 'qty',
+								'type': 'number',
+								'addclasses': ['text-right'],
+								'value': '1',
+								'attributes': {
+									'size': '4',
+									'disabled': lot.available == 0,
+									'max': lot.available + 0
+								}
+							}
+						}
+					%}
+				</div>
+				<div class="col-6 text-right">
+					<button class="btn btn-success" type="submit" {{ lot.available > 0 ? '' : 'disabled' }}>
+						<i class="fa fa-cart-plus" aria-hidden="true"></i> Add
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
