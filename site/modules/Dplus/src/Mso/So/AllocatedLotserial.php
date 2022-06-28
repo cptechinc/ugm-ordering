@@ -78,4 +78,74 @@ class AllocatedLotserial extends WireData {
 		$q = $this->querySoLinenbr($ordn, $linenbr);
 		return $q->find();
 	}
+
+	/**
+	 * Return Total Lot Qty for Item ID
+	 * @param  string $ordn     Sales Order Number
+	 * @param  string $itemID   Item ID
+	 * @return float
+	 */
+	public function qtyItemid($ordn, $itemID) {
+		$colQty = SoAllocatedLotserial::aliasproperty('qtyship');
+
+		$q = $this->querySo($ordn);
+		$q->filterByItemid($itemID);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return $q->findOne();
+	}
+
+	/**
+	 * Return if Lot Exists for Line #
+	 * @param  string $ordn       Sales Order Number
+	 * @param  string $linenbr    Line Number
+	 * @param  string $lotserial  Lot / Serial #
+	 * @return bool
+	 */
+	public function existsByLinenbr($ordn, $linenbr, $lotserial) {
+		$q = $this->querySoLinenbr($ordn, $linenbr);
+		$q->filterByLotserial($lotserial);
+		return boolval($q->count());
+	}
+
+	/**
+	 * Return Allocated Lot
+	 * @param  string $ordn       Sales Order Number
+	 * @param  string $linenbr    Line Number
+	 * @param  string $lotserial  Lot / Serial #
+	 * @return SoAllocatedLotserial
+	 */
+	public function lot($ordn, $linenbr, $lotserial) {
+		$q = $this->querySoLinenbr($ordn, $linenbr);
+		$q->filterByLotserial($lotserial);
+		return $q->findOne();
+	}
+
+	/**
+	 * Return Qty allocated for whole order
+	 * @param  string $ordn       Sales Order Number
+	 * @param  string $lotserial  Lot / Serial #
+	 * @return float
+	 */
+	public function qty($ordn, $lotserial) {
+		$colQty = SoAllocatedLotserial::aliasproperty('qtyship');
+
+		$q = $this->querySo($ordn);
+		$q->filterByLotserial($lotserial);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return $q->findOne();
+	}
+
+	/**
+	 * Return if Lot exists on order
+	 * @param  string $ordn       Sales Order Number
+	 * @param  string $lotserial  Lot / Serial #
+	 * @return bool
+	 */
+	public function existsOnOrder($ordn, $lotserial) {
+		$q = $this->querySo($ordn);
+		$q->filterByLotserial($lotserial);
+		return boolval($q->count());
+	}
 }

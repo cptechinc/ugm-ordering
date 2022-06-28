@@ -83,7 +83,6 @@ class SalesOrder extends WireData {
 	 */
 	public function isEditable($ordn) {
 		$q = $this->queryOrdernumber($ordn);
-		$q->select([SoModel::aliasproperty('status'), SoModel::aliasproperty('heldby')]);
 		$order = $q->findOne();
 
 		if (empty($order)) {
