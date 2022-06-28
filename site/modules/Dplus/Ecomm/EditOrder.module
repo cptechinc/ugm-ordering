@@ -431,7 +431,7 @@ class EditOrder extends WireData implements Module {
 	 */
 	public function get_order_editURL($ordn) {
 		$url = new Url($this->wire('pages')->get('template=order-edit')->url);
-		$url->query->set('ordn', $ordn);
+		$url->path->add($ordn);
 		return $url->getUrl();
 	}
 
