@@ -2,7 +2,7 @@
 	var                    Description / Instance of
 	-------------------------------------------------
 	page                   ProcessWire\Page
-	editm                  module EditOrder
+	editor                 Dplus\Ecomm\Order\Edit
 	orderedit              Ordrhed
 	qnotes                 module QnotesSalesOrder
 	customer               Customer
@@ -24,9 +24,12 @@
 		<div class="list-group-item bg-primary">
 			{% include 'cart/cart/headings.twig' %}
 		</div>
-		{% for item in editm.get_order_details(orderedit.ordernumber) %}
+		{% for item in editor.items.items(orderedit.ordernumber) %}
 			<div class="list-group-item">
 				{% include 'orders/order/edit/item.twig' %}
+			</div>
+			<div class="list-group list-group-flush collapse" id="{{ item.linenbr|attrJS }}-lots">
+				{% include 'orders/order/edit/item-lots.twig' %}
 			</div>
 			<div class="list-group-item collapse">
 				<textarea name="name" id="notes-line-{{ item.linenbr }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(orderedit.ordernumber, item.linenbr, qnotes.get_default_forms_string())|join('\r') }}</textarea>
