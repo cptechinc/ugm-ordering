@@ -496,29 +496,29 @@ class EditOrder extends WireData implements Module {
 			$event->return = $this->get_order_editURL($ordn);
 		});
 
-		$this->addHook('Page(template=order|order-edit)::url_deleteitem', function($event) {
-			$ordn    = $event->arguments(0);
-			$linenbr = $event->arguments(1);
-			$event->return = $this->get_order_deleteitemURL($ordn, $linenbr);
-		});
-
-		$this->addHook('Page(template=order-edit)::url_exitorder', function($event) {
-			$ordn = $event->arguments(0);
-			$event->return = $this->get_order_exitURL($ordn);
-		});
-
-		$this->addHook('Page(template=order-edit)::url_vieworder', function($event) {
-			$ordn = $event->arguments(0);
-			$event->return = $this->get_order_viewURL($ordn);
-		});
-
-		$this->addHookProperty('Page(template=order-edit)::url_search', function($event) {
-			$event->return = $this->wire('pages')->get('template=items-search')->url;
-		});
-
-		$this->addHookProperty('Page(template=order-edit)::url_itemjson', function($event) {
-			$event->return = $this->wire('pages')->get('template=items-json')->url;
-		});
+		// $this->addHook('Page(template=order|order-edit)::url_deleteitem', function($event) {
+		// 	$ordn    = $event->arguments(0);
+		// 	$linenbr = $event->arguments(1);
+		// 	$event->return = $this->get_order_deleteitemURL($ordn, $linenbr);
+		// });
+		//
+		// $this->addHook('Page(template=order-edit)::url_exitorder', function($event) {
+		// 	$ordn = $event->arguments(0);
+		// 	$event->return = $this->get_order_exitURL($ordn);
+		// });
+		// 
+		// $this->addHook('Page(template=order-edit)::url_vieworder', function($event) {
+		// 	$ordn = $event->arguments(0);
+		// 	$event->return = $this->get_order_viewURL($ordn);
+		// });
+		//
+		// $this->addHookProperty('Page(template=order-edit)::url_search', function($event) {
+		// 	$event->return = $this->wire('pages')->get('template=items-search')->url;
+		// });
+		//
+		// $this->addHookProperty('Page(template=order-edit)::url_itemjson', function($event) {
+		// 	$event->return = $this->wire('pages')->get('template=items-json')->url;
+		// });
 
 	}
 }
