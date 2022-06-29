@@ -55,6 +55,11 @@ class Edit extends WireData {
 			case 'add-lot':
 				$this->allocatedLots->processInput($input);
 				break;
+			case 'update-notes':
+			case 'delete-notes':
+				$qnotes = $this->wire('modules')->get('QnotesSalesOrder');
+				$qnotes->process_input($input);
+				break;
 		}
 	}
 }
