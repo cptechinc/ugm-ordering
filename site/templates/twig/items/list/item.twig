@@ -35,7 +35,11 @@
 					<div class="col-6"></div>
 					<div class="col-6 text-right">
 						<span class="badge bg-dark text-light">
-							In Cart: {{ cart.items.qtyItemid(item.itemid) }}
+							{% if input.get.offsetExists('ordn') %}
+								On Order: {{ orderEditor.allocatedLots.qty(input.get.text('ordn'), lot.lot) + 0 }}
+							{% else %}
+								In Cart: {{ cart.items.qtyItemid(item.itemid) }}
+							{% endif %}
 						</span>
 					</div>
 				</div>

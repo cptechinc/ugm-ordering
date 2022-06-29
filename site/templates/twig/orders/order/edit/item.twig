@@ -40,7 +40,7 @@
 		</form>
 	</div>
 	<div class="col-1 text-center">
-		{% if editor.allocatedLots.hasAllocated(item.orderno, item.linenbr) %}
+		{% if editor.allocatedLots.hasAllocated(item.orderno, item.linenbr) or editor.items.inventory.getInventory().itemidLotsHaveImages(item.itemid) %}
 			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ item.linenbr|attrJS }}-lots" aria-expanded="false" aria-controls="{{ item.linenbr|attrJS }}-lots">
 				<i class="fa fa-list" aria-hidden="true"></i>
 			</button>

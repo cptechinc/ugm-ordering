@@ -29,6 +29,7 @@ class Order extends Base {
 		if (empty($data->ordn)) {
 			return self::displayError("Order Number not provided", 'Enter an Order # below');
 		}
+		self::pw('input')->get->ordn = $data->ordn;
 		return self::order($data);
 	}
 

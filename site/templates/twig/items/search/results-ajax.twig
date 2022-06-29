@@ -13,7 +13,13 @@
 			<div class="col-sm-1 text-right">UoM</div>
 			<div class="col-sm-2 text-right">Available</div>
 			<div class="col-sm-2 text-center">View Lots</div>
-			<div class="col-sm-2 text-right">Qty In Cart</div>
+			<div class="col-sm-2 text-right">
+				{% if input.get.offsetExists('ordn') %}
+					Qty In Order
+				{% else %}
+					Qty In Cart
+				{% endif %}
+			</div>
 		</div>
 	</div>
 
@@ -43,13 +49,17 @@
 				<div class="col-sm-2 text-right available">{{ qtyAvailable }}</div>
 				<div class="col-sm-2 text-center">
 					{% if inventory.getInventory().itemidLotsHaveImages(item.itemid) %}
-						<a href="{{ item.url }}" class="btn btn-sm btn-primary paginator-link">
+						<a href="{{ item.url }}{{ input.get.offsetExists('ordn') ? '?ordn=' ~ input.get.text('ordn') : '' }}" class="btn btn-sm btn-primary paginator-link">
 							<i class="fa fa-list" aria-hidden="true"></i>
 						</a>
 					{% endif %}
 				</div>
 				<div class="col-sm-2 text-right">
-					{{ cart.items.qtyItemid(item.itemid) }}
+					{% if input.get.offsetExists('ordn') %}
+						{{ orderEditor.items.qtyItemid(input.get.text('ordn'), item.itemid) + 0 }}
+					{% else %}
+						{{ cart.items.qtyItemid(item.itemid) }}
+					{% endif %}
 				</div>
 			</div>
 		</div>

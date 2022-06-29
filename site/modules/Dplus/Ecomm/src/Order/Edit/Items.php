@@ -7,8 +7,10 @@ use ProcessWire\WireInput;
 // Dplus
 use Dplus\Mso\So\SalesOrder as SalesOrders;
 use Dplus\Min\Itm;
+
 // Ecomm
 use Ecomm\Response;
+use Dplus\Ecomm\Items\Available\Lots as LotAvailability;
 
 /**
  * Handles Order Items Editing
@@ -16,6 +18,7 @@ use Ecomm\Response;
 class Items extends WireData {
 	public function __construct($sessionID = '') {
 		$this->sessionID = $sessionID ? $sessionID : session_id();
+		$this->inventory = LotAvailability::getInstance();
 	}
 
 	public function setSessionID($sessionID) {
@@ -92,6 +95,16 @@ class Items extends WireData {
 	public function hasDetails($ordn) {
 		$q = $this->queryOrdn($ordn);
 		return boolval($q->count());
+	}
+
+	public function qtyItemid($ordn, $itemID) {
+		$colQty = Ordrdet::get_aliasproperty('qty');
+
+		$q = $this->queryOrdn($ordn);
+		$q->filterByItemid($itemID);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return $q->findOne();
 	}
 
 /* =============================================================
