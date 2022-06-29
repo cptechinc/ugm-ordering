@@ -1,0 +1,24 @@
+<div class="row">
+	<div class="col-sm-3">
+		{{ detail.itemid }} <br>
+		<small>{{ detail.desc1 }}</small>
+	</div>
+	<div class="col-sm-1">
+		{{ detail.item.uom_sale }}
+	</div>
+	<div class="col-sm-1 text-right">{{ detail.qty_ordered|number_format(0) }}</div>
+	<div class="col-sm-1 text-right">
+		{% if detail.countSoAllocatedLotserials() %}
+			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ detail.linenbr|attrJS }}-lots" aria-expanded="false" aria-controls="{{ detail.linenbr|attrJS }}-lots">
+				<i class="fa fa-list" aria-hidden="true"></i>
+			</button>
+		{% endif %}
+	</div>
+	<div class="col-sm-2 text-right">$ {{ detail.price|number_format(2) }}</div>
+	<div class="col-sm-2 text-right">$ {{ detail.total_price|number_format(2) }}</div>
+	<div class="col-sm-1 text-right">
+		<a data-toggle="collapse" href="#line-{{ detail.linenbr }}-note" role="button" aria-expanded="false" aria-controls="line-{{ detail.linenbr }}-note" class="h4 {{ detail.has_notes() ? 'text-success' : 'text-muted'}}">
+			<i class="fa fa-commenting" aria-hidden="true"></i>
+		</a>
+	</div>
+</div>

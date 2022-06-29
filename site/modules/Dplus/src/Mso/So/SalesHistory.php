@@ -3,6 +3,7 @@
 use SalesHistoryQuery, SalesHistory as SoModel;
 // ProcessWire
 use ProcessWire\WireData;
+use ProcessWire\User;
 
 /**
  * So\SalesHistorys
@@ -73,5 +74,17 @@ class SalesHistory extends WireData {
 		$q = $this->queryOrdernumber($ordn);
 		$q->select(SoModel::aliasproperty('custid'));
 		return $q->findOne();
+	}
+
+	/**
+	 * Returns if User can view order according to their custid
+	 * @param  string $ordn Order #
+	 * @param  User   $user User
+	 * @return bool
+	 */
+	public function orderUser($ordn, User $user) {
+		$q = $this->queryOrdernumber($ordn);
+		$q->filterByCustid($user->custid);
+		return boolval($q->count());
 	}
 }

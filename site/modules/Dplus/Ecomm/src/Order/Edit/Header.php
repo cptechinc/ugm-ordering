@@ -138,15 +138,18 @@ class Header extends WireData {
 ============================================================= */
 	/**
 	 * Send Create Order Edit Request to Dplus
+	 * NOTE: Keep public for controller
+	 * @param  string $ordn  Sales Order #
 	 * @return void
 	 */
-	private function requestOrder($ordn) {
-		$data = ["DBNAME=$dplusdb", "ORDRDET=$ordn"];
+	public function requestOrder($ordn) {
+		$data = ["ORDRDET=$ordn"];
 		$this->sendRequest($data);
 	}
 
 	/**
 	 * Send Update Order Request to Dplus
+	 * @param  Ordrhed $order
 	 * @return void
 	 */
 	private function requestUpdate(Ordrhed $order) {
@@ -155,7 +158,8 @@ class Header extends WireData {
 	}
 
 	/**
-	 * Send Update Order Request to Dplus
+	 * Send Unlock Order Request to Dplus
+	 * @param  string $ordn  Sales Order #
 	 * @return void
 	 */
 	private function requestExit($ordn) {

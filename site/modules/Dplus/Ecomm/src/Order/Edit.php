@@ -62,4 +62,19 @@ class Edit extends WireData {
 				break;
 		}
 	}
+
+/* =============================================================
+	Response Functions
+============================================================= */
+	public function setResponse(Response $response) {
+		$this->wire('session')->setFor('order', 'response', $response);
+	}
+
+	public function getResponse() {
+		return $this->wire('session')->getFor('order', 'response');
+	}
+
+	public function deleteResponse() {
+		return $this->wire('session')->removeFor('order', 'response');
+	}
 }

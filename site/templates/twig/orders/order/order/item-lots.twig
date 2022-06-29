@@ -1,0 +1,45 @@
+<div class="list-group-item bg-light border-bottom">
+	<div class="row">
+		<div class="col-sm-4">
+			<b>{{ detail.itemid }} Requested Lots</b>
+		</div>
+		<div class="col-sm-2 text-center"></div>
+	</div>
+</div>
+<div class="list-group-item">
+	<div class="row">
+		<div class="col-sm-2"></div>
+		<div class="col-sm-3"><b>Lot #</b></div>
+		<div class="col-sm-2 text-right"><b>Requested Qty</b></div>
+		<div class="col-sm-2"></div>
+		<div class="col-sm-3"></div>
+	</div>
+</div>
+{% for lot in detail.getSoAllocatedLotserials() %}
+	<div class="list-group-item">
+		<div class="row">
+			<div class="col-sm-2">
+				{% include 'util/bootstrap/html/button.twig' with {
+						'button': {
+							'size': 'sm',
+							'colorclass': 'btn-secondary',
+							'text': 'fa fa-file-image-o'|icon,
+							'attributes': {
+								'title': 'Lot #' ~ lot.lotserial,
+								'data-toggle': 'modal',
+								'data-target': '#ajax-modal',
+								'data-lookupurl': page.lotUrl(detail.itemid, lot.lotserial)
+							}
+						}
+					}
+				%}
+			</div>
+			<div class="col-sm-3">{{ lot.lotserial }}</div>
+			<div class="col-sm-2 text-right">
+				{{ lot.qtyship + 0 }}
+			</div>
+			<div class="col-sm-2"></div>
+			<div class="col-sm-3 text-center"></div>
+		</div>
+	</div>
+{% endfor %}

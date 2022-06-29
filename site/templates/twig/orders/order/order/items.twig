@@ -1,0 +1,32 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	order                  SalesOrder
+	order.items            SalesOrderDetail[]
+	qnotes                 QnotesSales
+#}
+<div class="list-group">
+	<div class="list-group-item bg-primary">
+		<div class="row">
+			<div class="col-sm-3">Item ID</div>
+			<div class="col-sm-1">UoM</div>
+			<div class="col-sm-1 text-right">Qty</div>
+			<div class="col-sm-1 text-right">Lots</div>
+			<div class="col-sm-2 text-right">Price</div>
+			<div class="col-sm-2 text-right">Total Price</div>
+			<div class="col-sm-1 text-right">Notes</div>
+		</div>
+	</div>
+	{% for detail in order.items %}
+		<div class="list-group-item">
+			{% include 'orders/order/order/item.twig' %}
+		</div>
+		<div class="list-group list-group-flush collapse" id="{{ detail.linenbr|attrJS }}-lots">
+			{% include 'orders/order/order/item-lots.twig' %}
+		</div>
+		<div class="list-group-item bg-light collapse" id="line-{{ detail.linenbr }}-note">
+			{% include 'orders/order/order/item-qnotes.twig' %}
+		</div>
+	{% endfor %}
+</div>

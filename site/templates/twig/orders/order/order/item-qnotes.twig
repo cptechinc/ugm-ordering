@@ -1,0 +1,4 @@
+<textarea name="name" id="notes-line-{{ detail.linenbr }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(order.ordernumber, detail.linenbr, qnotes.get_default_forms_string())|join('\r') }}</textarea>
+<button class="btn btn-warning" type="button" data-toggle="modal" data-target="#notes-modal" data-linenbr="{{ detail.linenbr }}">
+	<i class="fa fa-pencil" aria-hidden="true"></i> Edit
+</button>
