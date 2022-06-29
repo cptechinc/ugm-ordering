@@ -68,6 +68,10 @@ $(function() {
 		}
 	});
 
+	$('#ajax-modal').on('hidden.bs.modal', function () {
+		$('#loading-fade').removeClass('show');
+	});
+
 	$.notifyDefaults({
 		type: 'success',
 		allow_dismiss: true,
