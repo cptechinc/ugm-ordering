@@ -84,6 +84,35 @@ class Edit extends Base {
 		return self::pw('config')->twig->render('orders/order/error.twig', ['error' => $error]);
 	}
 
+	private static function displayResponse($data) {
+		$session = self::pw('session');
+		$html = '';
+
+		if ($session->response_edit) {
+			$html .= self::pw('config')->twig->render('util/dplus-response.twig', ['response' => $session->response_edit]);
+		}
+		$editor = OrderEditor::instance();
+		$response = $editor->getResponse();
+
+		if ($response) {
+			$html .= self::pw('config')->twig->render('util/dplus-response.twig', ['response' => $response]);
+		}
+		$session->remove('response_edit');
+		$editor->deleteResponse();
+		return $html;
+	}
+
+	private static function displayResponseQnotes($data) {
+		$session = self::pw('session');
+		$html = '';
+
+		if ($session->response_qnotes) {
+			$html .= self::pw('config')->twig->render('util/dplus-response.twig', ['response' => $session->response_qnotes]);
+		}
+		$session->remove('response_qnotes');
+		return $html;
+	}
+
 	private static function displayOrder($data, Ordrhed $order) {
 		$html = '';
 
@@ -93,6 +122,9 @@ class Edit extends Base {
 		$library = SalesOrders::instance();
 		$orderStatic = $library->order($data->ordn);
 		$qnotes = self::pw('modules')->get('QnotesSalesOrder');
+
+		$html .= self::displayResponse($data);
+		$html .= self::displayResponseQnotes($data);
 		$html .= self::pw('config')->twig->render('orders/order/edit/order.twig', ['orderedit' => $order, 'orderstatic' => $orderStatic, 'editor' => OrderEditor::instance(), 'qnotes' => $qnotes]);
 		$html .= self::pw('config')->twig->render('orders/order/qnotes/modal.twig', ['ordn' => $data->ordn, 'qnotes' => $qnotes]);
 		return $html;
