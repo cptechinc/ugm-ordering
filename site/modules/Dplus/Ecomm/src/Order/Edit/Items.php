@@ -217,6 +217,7 @@ class Items extends WireData {
 		}
 
 		$item = $this->item($ordn, $linenbr);
+		$item->setQty(0);
 		$item->save();
 		$this->requestDelete($item);
 	}
