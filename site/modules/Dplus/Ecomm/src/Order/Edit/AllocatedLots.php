@@ -169,7 +169,7 @@ class AllocatedLots extends WireData {
 			return false;
 		}
 
-		$qtyAvailable = $lotAvailability->getLotAvailability($lot->lotnbr);
+		$qtyAvailable = $lotAvailability->getLotAvailability($lot->lotserial);
 
 		if ($qtyAvailable < $lot->qty) {
 			$msg = $qtyAvailable == 0 ? "Lot $lot->lotserial is Out of Stock" : "Lot $lot->lotserial only has $qtyAvailable left";
@@ -179,14 +179,12 @@ class AllocatedLots extends WireData {
 
 		$this->requestLotAdd($lot);
 
-		if ($this->existsOnOrder($lot->ordernumber, $lot->lotserial)) {
-			$response = Response::createSuccess("$lot->itemid Lot $lot->lotserial was added to the Order");
-			$this->setResponse($response);
-			return true;
+		if ($this->existsOnOrder($lot->ordernumber, $lot->lotserial) === false) {
+			$this->setResponse(Response::createError("$lot->itemid Lot $lot->lotserial was not added to the order"));
+			return false;
 		}
-
-		$this->setResponse(Response::createError("$lot->itemid Lot $lot->lotserial was added to the Order"));
-		return false;
+		$this->setResponse(Response::createSuccess("$lot->itemid Lot $lot->lotserial was added to the order"));
+		return true;
 	}
 
 /* =============================================================
