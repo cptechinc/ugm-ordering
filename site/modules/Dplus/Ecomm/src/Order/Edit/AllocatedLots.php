@@ -155,7 +155,7 @@ class AllocatedLots extends WireData {
 		$lot->itemid      = $values->text('itemID');
 		$lot->lotserial   = $values->text('lot');
 		$lot->qty         = $values->int('qty') ? $values->int('qty') : 1;
-
+		$lot->linenbr     = $values->int('linenbr');
 
 		if (Itm::getInstance()->exists($lot->itemid) === false) {
 			$this->setResponse(Response::createError("Item $lot->itemid not found"));
@@ -255,7 +255,7 @@ class AllocatedLots extends WireData {
 	 * @return void
 	 */
 	private function requestLotAdd(WireData $lot) {
-		$data = ["ADDLOTTOSALESORDER", "ORDERNO=$lot->ordernumber", "ITEMID=$lot->itemid", "LOTSER=$lot->lotserial", "QTY=$lot->qty"];
+		$data = ["ADDLOTTOSALESORDER", "ORDERNO=$lot->ordernumber", "ITEMID=$lot->itemid", "LOTSER=$lot->lotserial", "QTY=$lot->qty", "LINENBR=$lot->linenbr"];
 		$this->sendRequest($data);
 	}
 

@@ -20,9 +20,10 @@
 	<div class="card-body">
 		<h5>Lot # {{ lot.lot }}</h5>
 
-		<form action="{{ pages.get('template=order-edit').url }}" class="add-lot-form" method="POST">
+		<form action="{{ pages.get('template=order-edit').url }}" class="" method="POST">
 			<input type="hidden" name="action" value="add-lot">
 			<input type="hidden" name="ordn" value="{{ input.get.text('ordn') }}">
+			<input type="hidden" name="linenbr" value="{{ input.get.int('linenbr') }}">
 			<input type="hidden" name="itemID" value="{{ page.itemid }}">
 			<input type="hidden" name="lot" value="{{ lot.lot }}">
 			{% if config.ajax == false %}

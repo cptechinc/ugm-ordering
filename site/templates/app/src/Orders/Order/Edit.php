@@ -170,9 +170,15 @@ class Edit extends Base {
 		return $url->getUrl();
 	}
 
-	public static function itemUrl($itemID, $ordn = '') {
+	public static function itemUrl($itemID, $ordn = '', $linenbr = 0) {
 		$url = new Purl(self::pw('pages')->get("template=item,itemid=$itemID")->url);
-		$url->query->set('ordn', $ordn);
+
+		if ($ordn) {
+			$url->query->set('ordn', $ordn);
+			if ($linenbr) {
+				$url->query->set('linenbr', $linenbr);
+			}
+		}
 		return $url->getUrl();
 	}
 
@@ -205,9 +211,10 @@ class Edit extends Base {
 		});
 
 		$m->addHook('Page(template=order-edit)::itemLotsUrl', function($event) {
-			$itemID = $event->arguments(0);
-			$ordn   = $event->arguments(1);
-			$event->return = self::itemUrl($itemID, $ordn);
+			$itemID  = $event->arguments(0);
+			$ordn    = $event->arguments(1);
+			$linenbr = $event->arguments(2);
+			$event->return = self::itemUrl($itemID, $ordn, $linenbr);
 		});
 
 		$m->addHook('Page(template=order-edit)::itemsJsonUrl', function($event) {

@@ -25,7 +25,7 @@
 			{% include 'cart/cart/headings.twig' %}
 		</div>
 		{% for item in editor.items.items(orderedit.ordernumber) %}
-			<div class="list-group-item">
+			<div class="list-group-item order-line">
 				{% include 'orders/order/edit/item.twig' %}
 			</div>
 			<div class="list-group list-group-flush collapse" id="{{ item.linenbr|attrJS }}-lots">
@@ -35,7 +35,7 @@
 				<textarea name="name" id="notes-line-{{ item.linenbr }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(orderedit.ordernumber, item.linenbr, qnotes.get_default_forms_string())|join('\r') }}</textarea>
 			</div>
 		{% endfor %}
-		<div class="list-group-item">
+		<div class="list-group-item order-line">
 			{% include 'orders/order/edit/lookup-form.twig' %}
 		</div>
 	</div>
