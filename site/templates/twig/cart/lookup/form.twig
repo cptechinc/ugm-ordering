@@ -1,41 +1,34 @@
 <form action="{{ page.url }}" method="post" id="add-item-form">
 	<input type="hidden" name="action" value="add-item">
 
-	{% block misc_fields %}
-	
-	{% endblock %}
-
 	<div class="row lookup-item">
 		<div class="col-4">
-			{% block input_itemid %}
-				{% include 'util/bootstrap/form/input-group.twig' with {
-						'inputgroup': {
-							'type': 'prepend',
-							'size': 'sm',
-							'input': {
-								'name': 'itemID',
-								'value': '',
-								'attributes': {
-									'placeholder': 'Item ID / Description',
-									'aria-label':  'Item ID',
-									'oninput': 'this.value = this.value.toUpperCase()'
-								}
-							},
-							'button': {
-								'colorclass': 'btn-secondary',
-								'text': 'fa fa-search'|icon,
-								'attributes': {
-									'title': 'Search Items',
-									'data-toggle': 'modal',
-									'data-target': '#ajax-modal',
-									'data-lookupurl': pages.get('template=items-search').url,
-									'data-input': '#itemID'
-								}
+			{% include 'util/bootstrap/form/input-group.twig' with {
+					'inputgroup': {
+						'type': 'prepend',
+						'size': 'sm',
+						'input': {
+							'name': 'itemID',
+							'value': '',
+							'attributes': {
+								'placeholder': 'Item ID / Description',
+								'aria-label':  'Item ID'
+							}
+						},
+						'button': {
+							'colorclass': 'btn-secondary',
+							'text': 'fa fa-search'|icon,
+							'attributes': {
+								'title': 'Search Items',
+								'data-toggle': 'modal',
+								'data-target': '#ajax-modal',
+								'data-lookupurl': pages.get('template=items-search').url,
+								'data-input': '#itemID'
 							}
 						}
 					}
-				%}
-			{% endblock %}
+				}
+			%}
 			<small class="text-muted description1">Description</small> <br>
 			<small class="text-muted description2"></small> <br>
 			<span class="availability">

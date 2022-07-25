@@ -16,6 +16,7 @@
 			<i class="fa fa-chevron-up" aria-hidden="true"></i>
 			<span class="sr-only">Go Back to the Top</span>
 		</a>
+		
 		<?php include ('./_foot-blank.php'); ?>
 	</body>
 </html>

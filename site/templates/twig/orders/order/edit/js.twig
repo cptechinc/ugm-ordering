@@ -1,5 +1,4 @@
 $(function() {
-	var modalAjax = $('#ajax-modal');
 	var customer = {{ editm.get_customer_js()|json_encode()|raw }};
 	var shiptos  = {{ editm.get_shiptos_js()|json_encode()|raw }};
 	var form = $('#order-form');
@@ -17,47 +16,6 @@ $(function() {
 		var placard = $(this);
 		var qty = placard.find('input[name=qty]').attr('data-qty');
 		placard.find('.placard-header').find('.qty').text(': ' + qty);
-	});
-
-/* =============================================================
-	Ajax Modal Functions
-============================================================= */
-	modalAjax.on('show.bs.modal', function (event) {
-		var button = $(event.relatedTarget); // Button that triggered the modal
-		var modal = $(this);
-
-		modal.attr('data-input', button.data('input'));
-		modal.find('.modal-title').text(button.attr('title'));
-		modal.resizeModal('xl');
-		modal.find('.modal-body').loadin(button.data('lookupurl'), function() {});
-	});
-
-	$("body").on('click', '.item-link', function(e) {
-		e.preventDefault();
-		var button = $(this);
-		var modal  = button.closest('.modal');
-		var input  = $(modal.attr('data-input'));
-
-		input.val(button.data('itemid'));
-		modal.modal('hide');
-	});
-
-	$("body").on('submit', '#ajax-modal form.item-search', function(e) {
-		e.preventDefault();
-		var form = $(this);
-		var query  = form.serialize();
-		var action = form.attr('action');
-		var search = form.find('input[name=q]').val();
-		var url = action + '?' + query;
-		form.closest('.modal').find('.modal-title').text('Searching for ' + search);
-		form.closest('.modal').find('.modal-body').loadin(url, function() {});
-	});
-
-	$("body").on('click', '#ajax-modal .paginator-link', function(e) {
-		e.preventDefault();
-		var button = $(this);
-		var modal  = button.closest('.modal');
-		modal.find('.modal-body').load(button.attr('href'));
 	});
 
 /* =============================================================
@@ -92,7 +50,7 @@ $(function() {
 	Validation Functions
 ============================================================= */
 	jQuery.validator.addMethod("ponbr", function(value, element) {
-		return validate_require_ponbr(value);
+		return  validate_require_ponbr(value);
 	}, "PO number is required");
 
 	form.validate({

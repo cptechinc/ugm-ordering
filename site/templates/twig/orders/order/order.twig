@@ -5,41 +5,38 @@
 	order                  SalesOrder|SalesHistory
 	docm                   module DocumentManagementSo
 	qnotes                 module QnotesSales
+	editm                  module EditOrder
 #}
-{% include 'orders/order/page/links.twig' with {'docm': docm} %}
+{% include 'orders/order/page/links.twig' with {'page': page, 'docm': docm} %}
 
 <div class="mb-3">
-	{% if order.isInvoice %}
-		{% include 'orders/invoices/invoice/order/header.twig' with {'order': order} %}
+	{% if page.is_invoice %}
+		{% include 'orders/invoices/invoice/page/header.twig' with {'page': page, 'order': order} %}
 	{% else %}
-		{% include 'orders/order/order/header.twig' with {'order': order} %}
+		{% include 'orders/order/page/header.twig' with {'page': page, 'order': order} %}
 	{% endif %}
 </div>
 
 <div class="mb-3">
 	<div class="d-flex w-100 justify-content-between">
 		<h3 class="text-secondary">Items</h3>
-		{% if order.isEditable %}
-			<a href="{{ page.orderEditUrl(order.ordernumber) }}" class="btn btn-warning">
+		{% if editm.can_edit_order(order.ordernumber) %}
+			<a href="{{ page.url_editorder(order.ordernumber) }}" class="btn btn-warning">
 				<i class="fa fa-pencil" aria-hidden="true"></i> Edit Order
 			</a>
 		{% endif %}
 	</div>
-	{% if order.isInvoice %}
-		{% include 'orders/invoices/invoice/order/items.twig' with {'order': order} %}
-	{% else %}
-		{% include 'orders/order/order/items.twig' with {'order': order, 'qnotes': qnotes} %}
-	{% endif %}
+	{% include 'orders/order/page/items.twig' with {'page': page, 'order': order, 'qnotes': qnotes} %}
 </div>
 
 <div id="documents">
 	<h3 class="text-secondary">
 		Documents <i class="fa fa-file-text" aria-hidden="true"></i>
 	</h3>
-	{% include 'orders/order/documents/list.twig' with {'ordn': order.ordernumber, 'documents': docm.get_documents(order.ordernumber)} %}
+	{% include 'orders/order/documents/list.twig' with {'page': page, 'ordn': order.ordernumber, 'documents': docm.get_documents(order.ordernumber)} %}
 </div>
 
 <div class="mb-3">
 	<h3 class="text-secondary">Notes <i class="fa fa-commenting" aria-hidden="true"></i></h3>
-	{% include 'orders/order/page/notes.twig' with {'ordn': order.ordernumber, 'qnotes': qnotes} %}
+	{% include 'orders/order/page/notes.twig' with {'page': page, 'ordn': order.ordernumber, 'qnotes': qnotes} %}
 </div>

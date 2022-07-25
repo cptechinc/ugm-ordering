@@ -1,35 +1,4 @@
-{% extends 'cart/lookup/form.twig' %}
-
+{% extends 'cart/lookup-form.twig' %}
 {% block misc_fields %}
-	<input type="hidden" name="ordn" value="{{ input.get.text('ordn') }}">
-{% endblock %}
-
-{% block input_itemid %}
-	{% include 'util/bootstrap/form/input-group.twig' with {
-			'inputgroup': {
-				'type': 'prepend',
-				'size': 'sm',
-				'input': {
-					'name': 'itemID',
-					'value': '',
-					'attributes': {
-						'placeholder': 'Item ID / Description',
-						'aria-label':  'Item ID',
-						'oninput': 'this.value = this.value.toUpperCase()'
-					}
-				},
-				'button': {
-					'colorclass': 'btn-secondary',
-					'text': 'fa fa-search'|icon,
-					'attributes': {
-						'title': 'Search Items',
-						'data-toggle': 'modal',
-						'data-target': '#ajax-modal',
-						'data-lookupurl': pages.get('template=items-search').url ~ '?ordn=' ~ input.get.text('ordn'),
-						'data-input': '#itemID'
-					}
-				}
-			}
-		}
-	%}
+	<input type="hidden" name="ordn" value="{{ ordn }}">
 {% endblock %}

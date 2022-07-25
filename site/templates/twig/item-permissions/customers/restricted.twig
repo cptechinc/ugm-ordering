@@ -1,0 +1,26 @@
+<table class="table table-sm">
+	<thead>
+		<tr>
+			<th>CustID</th>
+			<th>Name</th>
+			<th>Has Restrictions?</th>
+			<th>Edit</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for customer in customers %}
+			<tr>
+				<td>{{ customer.custid }}</td>
+				<td>{{ customer.title }}</td>
+				<td>
+					<i class="fa {{ customer.has_restrictions() ? 'fa-check-circle-o' : 'fa-circle-o' }}" aria-hidden="true"></i>
+				</td>
+				<td>
+					<a href="" class="btn btn-sm btn-warning">
+						<i class="fa fa-pencil" aria-hidden="true"></i> Edit
+					</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

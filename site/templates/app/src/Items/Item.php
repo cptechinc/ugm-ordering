@@ -8,7 +8,6 @@ use Dplus\DocManagement\Copier;
 // Dplus Ecomm
 use Dplus\Ecomm\Cart as CartCRUD;
 use Dplus\Ecomm\Items\Available\Lots as LotInventory;
-use Dplus\Ecomm\Order\Edit as OrderEditor;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -22,9 +21,8 @@ class Item extends Base {
 		$docm = self::getDocm();
 		self::copyImage($data, $lots);
 		$cart = CartCRUD::getInstance();
-		$orderEditor = OrderEditor::instance();
 
-		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'docm' => $docm, 'cart' => $cart, 'orderEditor' => $orderEditor]);
+		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'docm' => $docm, 'cart' => $cart]);
 	}
 
 	private static function copyImage($data, $lots) {
@@ -47,13 +45,10 @@ class Item extends Base {
 /* =============================================================
 	URL Functions
 ============================================================= */
-	public static function itemLotUrl($itemID, $lotserial, $ordn = '') {
+	public static function itemLotUrl($itemID, $lotserial) {
 		$url = new Purl(self::pw('pages')->get("template=item,itemid=$itemID")->url);
 		$url->path->add('lots');
 		$url->path->add($lotserial);
-		if ($ordn) {
-			$url->query->set('ordn', $ordn);
-		}
 		return $url->getUrl();
 	}
 

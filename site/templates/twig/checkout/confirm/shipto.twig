@@ -1,0 +1,15 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	checkoutm              module Checkout
+	billing                Billing
+	customer               Customer
+#}
+<address class="">
+	{{ billing.sname }} <br>
+	{{ billing.sconame }} ({{ billing.shiptoid }}) <br>
+	{{ billing.saddress }} <br>
+	{{ billing.saddress2 }} <br>
+	{{ billing.scity }}, {{ billing.sst }} {{ billing.szip }}
+</address>

@@ -1,0 +1,17 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+#}
+<form action="{{ page.searchurl }}" method="GET">
+	<div class="form-group">
+		<div class="input-group">
+			<input type="text" class="form-control" name="q" placeholder="ItemID, Description">
+			<span class="input-group-btn">
+				<button type="submit" class="btn btn-primary">
+					<span class="fa fa-search" aria-hidden="true"></span> <span class="sr-only">Search</span>
+				</button>
+			</span>
+		</div>
+	</div>
+</form>

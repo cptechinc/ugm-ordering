@@ -5,7 +5,6 @@ use ProcessWire\Exceptions;
 use Dplus\Ecomm\Items\Search as SearchItems;
 use Dplus\Ecomm\Cart as CartCRUD;
 use Dplus\Ecomm\Items\Available\Items as ItemInventory;
-use Dplus\Ecomm\Order\Edit as OrderEditor;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -48,17 +47,16 @@ class Search extends Base {
 		$html = '';
 
 		$itemAvailability = ItemInventory::getInstance();
-		$cart = CartCRUD::getInstance();
-		$orderEditor = OrderEditor::instance();
+		$cart     = CartCRUD::getInstance();
 
 		$html  = '';
 		$html .= $config->twig->render('items/search/form.twig', ['q' => $data->q]);
 
 		if ($config->ajax) {
-			$html .= $config->twig->render('items/search/results-ajax.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'orderEditor' => $orderEditor, 'inventory' => $itemAvailability]);
+			$html .= $config->twig->render('items/search/results-ajax.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $itemAvailability]);
 		}
 		if ($config->ajax === false) {
-			$html .= $config->twig->render('items/search/results.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'orderEditor' => $orderEditor, 'inventory' => $itemAvailability]);
+			$html .= $config->twig->render('items/search/results.twig', ['q' => $data->q, 'items' => $items, 'cart' => $cart, 'inventory' => $itemAvailability]);
 		}
 		$html .= $config->twig->render('util/paginator.twig', ['resultscount' => $search->count()]);
 		return $html;

@@ -8,6 +8,7 @@
 		if ($values->text('action') != 'logout') {
 			$session->redirect($page->url, $http301 = false);
 		}
+
 	} elseif ($user->isLoggedInDplus()) {
 		$session->redirect($pages->get('/')->url, $http301 = false);
 	}

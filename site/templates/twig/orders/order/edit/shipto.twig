@@ -2,7 +2,7 @@
 	var                    Description / Instance of
 	-------------------------------------------------
 	page                   ProcessWire\Page
-	editor                 Dplus\Ecomm\Order\Edit
+	editm              module Checkout
 	orderedit              Ordrhed
 	customer               Customer
 #}
@@ -41,8 +41,8 @@
 	<div class="form-group col-sm-4">
 		<label for="shipstate">State</label>
 		<select name="shipstate" id="shipstate" class="form-control form-control-sm">
-			{% for state in editor.header.getStates() %}
-				<option value="{{ state.abbreviation }}" {{ state.abbreviation == orderedit.shipstate ? 'selected' : ''}}>{{ state.name }}</option>
+			{% for state in editm.get_states() %}
+				<option value="{{ state.abbreviation }}" {{ state.abbreviation == orderedit.sst ? 'selected' : ''}}>{{ state.name }}</option>
 			{% endfor %}
 		</select>
 	</div>

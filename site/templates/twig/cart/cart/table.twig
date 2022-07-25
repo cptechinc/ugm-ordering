@@ -1,0 +1,64 @@
+<table class="table table-sm">
+	<thead>
+		<tr>
+			<td>Allocated</td>
+			<th>Item ID</th>
+			<th>UoM</th>
+			<th>Qty</th>
+			<th>Price</th>
+			<th>Total</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in cart.items.items() %}
+			{% set imitem = cart.getItem(item.itemid) %}
+			<tr>
+				<td></td>
+				<td>
+					{{ item.itemid }} <br>
+					<small class="text-muted s-70">{{ item.desc1 }}</small>
+				</td>
+				<td>
+					{{ imitem.uom_sale }}
+				</td>
+				<td>
+					<form action="{{ input.url() }}" method="POST">
+						<input type="hidden" name="action" value="update-item-qty">
+						<input type="hidden" name="itemID" value="{{ item.itemid }}">
+
+						<div class="placard placard-qty" data-ellipsis="true" data-initialize="placard">
+							<div class="placard-popup"></div>
+							<div class="placard-header">
+								<b>Qty</b> <span class="qty"></span>
+							</div>
+							<input class="form-control placard-field form-control-sm text-right pull-right w-50 qty-input" type="number" name="qty" value="{{ item.qty }}" data-qty="{{ item.qty }}" autocomplete="off">
+							<div class="placard-footer">
+								<a class="placard-cancel" href="#">Cancel</a>
+								<button class="btn btn-success btn-sm placard-accept" type="button">
+									<i class="fa fa-floppy-o" aria-hidden="true"></i> Save
+								</button>
+							</div>
+						</div>
+					</form>
+				</td>
+				<td class="text-right">
+					$ {{ item.price|currency }}
+				</td>
+				<td class="text-right">
+					$ {{ item.amount|currency }}
+				</td>
+				<td>
+					<a href="{{ page.url_item_delete(item.itemid) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
+						<i class="fa fa-trash" aria-hidden="true"></i> Delete
+					</a>
+					&nbsp;
+					{% set notesclass = qnotes.notes_exist(item.itemid) ? 'btn-info text-white' : 'btn-light border border-dark' %}
+					<button class="btn btn-sm {{ notesclass }}" type="button" data-toggle="modal" data-target="#notes-modal" aria-controls="notes-modal" data-itemid="{{ item.itemid }}">
+						<i class="fa fa-commenting" aria-hidden="true"></i> Notes
+					</button>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Controllers\\Admin\\RebuildPages' => $baseDir . '/src/Admin/RebuildPages.php',
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Controllers\\Api\\Base' => $baseDir . '/src/Api/Base.php',
     'Controllers\\Api\\Cart' => $baseDir . '/src/Api/Cart.php',
     'Controllers\\Api\\Items' => $baseDir . '/src/Api/Items.php',

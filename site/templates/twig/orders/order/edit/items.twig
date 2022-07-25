@@ -2,7 +2,7 @@
 	var                    Description / Instance of
 	-------------------------------------------------
 	page                   ProcessWire\Page
-	editor                 Dplus\Ecomm\Order\Edit
+	editm                  module EditOrder
 	orderedit              Ordrhed
 	qnotes                 module QnotesSalesOrder
 	customer               Customer
@@ -24,19 +24,16 @@
 		<div class="list-group-item bg-primary">
 			{% include 'cart/cart/headings.twig' %}
 		</div>
-		{% for item in editor.items.items(orderedit.ordernumber) %}
-			<div class="list-group-item order-line">
+		{% for item in editm.get_order_details(orderedit.ordernumber) %}
+			<div class="list-group-item">
 				{% include 'orders/order/edit/item.twig' %}
-			</div>
-			<div class="list-group list-group-flush collapse" id="{{ item.linenbr|attrJS }}-lots">
-				{% include 'orders/order/edit/item-lots.twig' %}
 			</div>
 			<div class="list-group-item collapse">
 				<textarea name="name" id="notes-line-{{ item.linenbr }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(orderedit.ordernumber, item.linenbr, qnotes.get_default_forms_string())|join('\r') }}</textarea>
 			</div>
 		{% endfor %}
-		<div class="list-group-item order-line">
-			{% include 'orders/order/edit/lookup-form.twig' %}
+		<div class="list-group-item">
+			{% include 'orders/order/edit/lookup-form.twig' with {'page': page, 'ordn': orderedit.ordernumber} %}
 		</div>
 	</div>
 	<div class="card-body collapse bg-light">

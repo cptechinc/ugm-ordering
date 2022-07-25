@@ -7,8 +7,6 @@ use Dplus\DocManagement\Folders;
 use Dplus\DocManagement\Copier;
 // Dplus Ecomm
 use Dplus\Ecomm\Cart as CartCRUD;
-use Dplus\Ecomm\Order\Edit as OrderEditor;
-use Dplus\Ecomm\Items\Available\Lots as LotAvailability;
 // Mvc Controllers
 use Controllers\Base;
 
@@ -22,20 +20,20 @@ class Lots extends Base {
 		if ($data->lot) {
 			return self::lot($data);
 		}
+
+
 	}
 
 	private static function lot($data) {
 		$whseLots = new WhseLots();
 		$whseLots->setWhseID(1);
-		$lotAvailability = LotAvailability::getInstance();
 		$lot = $whseLots->getLot($data->lot);
-		$lot->available = $lotAvailability->getLotAvailability($data->lot);
+		$lot->available = 12;
 		self::copyImage($data, $lot);
 
 		$docm = self::getDocm();
 		$cart = CartCRUD::getInstance();
-		$orderEditor = OrderEditor::instance();
-		return self::pw('config')->twig->render('items/item/lot/display.twig', ['lot' => $lot, 'docm' => $docm, 'cart' => $cart, 'orderEditor' => $orderEditor]);
+		return self::pw('config')->twig->render('items/item/lot/display.twig', ['lot' => $lot, 'docm' => $docm, 'cart' => $cart]);
 	}
 
 	private static function copyImage($data, $lot) {

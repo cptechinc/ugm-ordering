@@ -1,0 +1,15 @@
+{#
+	var                    Description / Instance of
+	-------------------------------------------------
+	page                   ProcessWire\Page
+	ordn                   Sales Order Number
+	qnotes                 QnotesSalesOrder
+#}
+{% if qnotes.notes_exist(ordn, 0) %}
+	<textarea name="name" id="notes-line-0" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(ordn, 0, qnotes.get_default_forms_string())|join('\r') }}</textarea>
+{% else %}
+	No Header Notes
+{% endif %}
+<button class="btn btn-warning" type="button" data-toggle="modal" data-target="#notes-modal" data-linenbr="0">
+	<i class="fa fa-pencil" aria-hidden="true"></i> Edit
+</button>

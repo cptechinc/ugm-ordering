@@ -2,16 +2,14 @@
 	var                    Description / Instance of
 	-------------------------------------------------
 	page                   ProcessWire\Page
-	editor                 Dplus\Ecomm\Order\Edit
+	editm                  module EditOrder
 	orderedit              Ordrhed
 	qnotes                 module QnotesSalesOrder
 #}
-{% set customer = orderstatic.customer %}
-
+{% set customer = editm.get_customer(orderedit.ordernumber) %}
 {% include 'orders/order/edit/billto.twig' %}
-
 <div class="mb-3">
-	<form id="order-form" action="{{ input.url() }}" method="POST">
+	<form id="order-form" action="{{ page.url }}">
 		<input type="hidden" name="action" value="update-order">
 		<input type="hidden" name="ordn" value="{{ orderedit.ordernumber }}">
 
@@ -30,7 +28,7 @@
 			<button type="submit" class="btn btn-success">
 				<i aria-hidden="true" class="fa fa-floppy-o"></i> Save
 			</button>
-			<a href="{{ page.orderExitUrl(orderedit.ordernumber) }}" class="btn btn-warning">
+			<a href="{{ page.url_exitorder(orderedit.ordernumber) }}" class="btn btn-warning">
 				<i aria-hidden="true" class="fa fa-sign-out"></i> Exit
 			</a>
 		</div>

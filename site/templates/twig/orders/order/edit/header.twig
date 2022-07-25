@@ -1,0 +1,10 @@
+<h3 class="font-weight-bold text-secondary mt-4">Bill-To</h3>
+<address>
+	{{ customer.name }} ({{ customer.id }})
+	<br>
+	{{ customer.address1 }} <br>
+	{% if customer.address2 %}
+		{{ customer.address2 }} <br>
+	{% endif %}
+	{{ customer.city ~ ', ' ~ customer.state ~ ' ' ~ customer.zip }}
+</address>

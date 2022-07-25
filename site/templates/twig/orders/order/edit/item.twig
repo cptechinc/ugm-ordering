@@ -2,16 +2,14 @@
 	var                    Description / Instance of
 	-------------------------------------------------
 	page                   ProcessWire\Page
-	editor                 Dplus\Ecomm\Order\Edit
+	editm                  module EditOrder
 	orderedit              Ordrhed
 	qnotes                 module QnotesSalesOrder
 	customer               Customer
 #}
-
-{% set imitem = editor.items.getItm().item(item.itemid) %}
-
+{% set imitem = editm.get_item(item.itemid) %}
 <div class="row">
-	<div class="col-4">
+	<div class="col-3">
 		{{ item.itemid }} <br>
 		<small class="text-muted">{{ item.desc1 }}</small>
 	</div>
@@ -19,7 +17,7 @@
 		{{ imitem.uom_sale }}
 	</div>
 	<div class="col-2 text-right">
-		<form action="{{ input.url() }}" method="POST">
+		<form action="{{ page.url }}" method="post">
 			<input type="hidden" name="action" value="update-item-qty">
 			<input type="hidden" name="ordn" value="{{ item.ordernumber }}">
 			<input type="hidden" name="linenbr" value="{{ item.linenbr }}">
@@ -39,13 +37,6 @@
 			</div>
 		</form>
 	</div>
-	<div class="col-1 text-center">
-		{% if editor.allocatedLots.hasAllocated(item.orderno, item.linenbr) or editor.items.inventory.getInventory().itemidLotsHaveImages(item.itemid) %}
-			<button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#{{ item.linenbr|attrJS }}-lots" aria-expanded="false" aria-controls="{{ item.linenbr|attrJS }}-lots">
-				<i class="fa fa-list" aria-hidden="true"></i>
-			</button>
-		{% endif %}
-	</div>
 	<div class="col-1 text-right">
 		$ {{ item.price|currency }}
 	</div>
@@ -53,7 +44,7 @@
 		$ {{ item.totalprice|currency }}
 	</div>
 	<div class="col-2 text-center">
-		<a href="{{ page.itemDeleteUrl(item.orderno, item.linenbr) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
+		<a href="{{ page.url_deleteitem(orderedit.ordernumber, item.linenbr) }}" class="btn btn-sm btn-danger delete-item" data-itemid="{{ item.itemid }}">
 			<i class="fa fa-trash" aria-hidden="true"></i> Delete
 		</a>
 		{% set notesclass = qnotes.notes_exist(orderedit.ordernumber, item.linenbr) ? 'btn-info text-white' : 'btn-light border border-dark' %}
