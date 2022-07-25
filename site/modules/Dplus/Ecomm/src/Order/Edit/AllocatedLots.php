@@ -5,7 +5,6 @@ use SoAllocatedLotserial;
 use ProcessWire\WireData;
 use ProcessWire\WireInput;
 // Dplus
-use Dplus\Mso\So\SalesOrder as SalesOrders;
 use Dplus\Mso\So\AllocatedLotserial;
 use Dplus\Min\Itm;
 // Ecomm
@@ -129,7 +128,7 @@ class AllocatedLots extends WireData {
 		$values  = $input->$rm;
 		$ordn    = $values->text('ordn');
 		$linenbr = $values->int('linenbr');
-		$lotnbr   = $values->text('lot');
+		$lotnbr  = $values->text('lot');
 		$qty     = $values->int('qty');
 
 		if ($this->existsByLinenbr($ordn, $linenbr, $lotnbr) === false) {
@@ -138,6 +137,9 @@ class AllocatedLots extends WireData {
 		}
 		$lot = $this->allocatedLots->lot($ordn, $linenbr, $lotnbr);
 		$lot->setQtyship($qty);
+		$item = $this->item($ordn, $linenbr);
+		$item->setQty($item->qty + $values->int('qty'));
+		$item->save();
 		$this->requestLotUpdateQty($lot);
 	}
 
