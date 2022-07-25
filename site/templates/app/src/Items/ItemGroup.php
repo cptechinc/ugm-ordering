@@ -44,8 +44,8 @@ class ItemGroup extends Base {
 	}
 
 	private static function getInstockItems() {
-		$itemIDs  = self::getInstockItemids();
-		return self::pw('page')->children("template=item,itemid=".implode('|', $itemIDs) . ',sort=itemid');
+		$itemIDs = self::getInstockItemids();
+		return self::pw('page')->children('template=item,sort=itemid');
 	}
 
 /* =============================================================

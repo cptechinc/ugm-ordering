@@ -26,7 +26,7 @@ class Search extends WireData {
 		$this->user     = $this->wire('user');
 		$this->selector = self::SELECTOR_TEMPLATE;
 		$this->query = '';
-		$this->inStockOnly = true;
+		$this->inStockOnly = false;
 		$this->sortby   = 'itemid';
 		$this->sortrule = 'asc';
 		$this->restrictItems = true;
