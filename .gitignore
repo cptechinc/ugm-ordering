@@ -7,7 +7,7 @@ site/modules/JqueryDataTables
 site/modules/ProcessExportProfile
 
 # Project Configurations
-site/config.php
+site/config*.php
 /vendor
 test.php
 site/modules/Pauldro/Mvc/vendor
