@@ -10,7 +10,7 @@ use ProcessWire\WireData;
  *
  * @property bool    $success            Did the function succeed?
  * @property bool    $error              Was there an error?
- * @property bool    $message            Error Message / Success Message
+ * @property string  $message            Error Message / Success Message
  */
 class Response extends WireData {
 
@@ -68,6 +68,19 @@ class Response extends WireData {
 	 * @return DplusResponse
 	 */
 	public static function create_success($message) {
+		$response = new Response();
+		$response->set_error(false);
+		$response->set_success(true);
+		$response->set_message($message);
+		return $response;
+	}
+
+	/**
+	 * Return Success Response with Provided Message
+	 * @param  string $message    Error Message
+	 * @return DplusResponse
+	 */
+	public static function createSuccess($message) {
 		$response = new Response();
 		$response->set_error(false);
 		$response->set_success(true);
