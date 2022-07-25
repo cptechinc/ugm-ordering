@@ -52,30 +52,34 @@
 						Available: {{ qtyAvailable }}
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-6">
-						{% include 'util/bootstrap/form/input.twig' with {
-								'input': {
-									'id': '',
-									'name': 'qty',
-									'type': 'number',
-									'addclasses': ['text-right'],
-									'value': '1',
-									'attributes': {
-										'size': '4',
-										'disabled': qtyAvailable == 0,
-										'max': qtyAvailable + 0
+				{% if qtyAvailable > 0 %}
+					<div class="row">
+						<div class="col-6">
+							{% include 'util/bootstrap/form/input.twig' with {
+									'input': {
+										'id': '',
+										'name': 'qty',
+										'type': 'number',
+										'addclasses': ['text-right'],
+										'value': '1',
+										'attributes': {
+											'size': '4',
+											'disabled': qtyAvailable == 0,
+											'max': qtyAvailable + 0
+										}
 									}
 								}
-							}
-						%}
+							%}
+						</div>
+						<div class="col-6 text-right">
+							<button class="btn btn-success" type="submit" {{ qtyAvailable > 0 ? '' : 'disabled' }}>
+								<i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
+							</button>
+						</div>
 					</div>
-					<div class="col-6 text-right">
-						<button class="btn btn-success" type="submit" {{ qtyAvailable > 0 ? '' : 'disabled' }}>
-							<i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
-						</button>
-					</div>
-				</div>
+				{% else %}
+					<span class="btn btn-block btn-warning">Out of Stock</span>
+				{% endif %}
 			</form>
 		</div>
 	</div>
