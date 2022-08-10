@@ -24,7 +24,10 @@ class Item extends Base {
 		$cart = CartCRUD::getInstance();
 		$orderEditor = OrderEditor::instance();
 
-		return self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'docm' => $docm, 'cart' => $cart, 'orderEditor' => $orderEditor]);
+		$html = '';
+		$html .= self::pw('config')->twig->render('items/search/form.twig');
+		$html .= self::pw('config')->twig->render('items/item/display.twig', ['lots' => $lots, 'docm' => $docm, 'cart' => $cart, 'orderEditor' => $orderEditor]);
+		return $html;
 	}
 
 	private static function copyImage($data, $lots) {
