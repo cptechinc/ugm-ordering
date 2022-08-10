@@ -9,6 +9,6 @@
 	$router->setRoutes($routes);
 	$router->setRoutePrefix($page->url);
 	$page->body = $router->route();
-	$page->show_breadcrumbs = false;
+	// $page->show_breadcrumbs = false;
 
 	include __DIR__ . "/basic-page.php";
