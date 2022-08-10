@@ -11,7 +11,6 @@
 	<?php endif; ?>
 
 	<div class='container page'>
-		<?= $config->twig->render('util/loading-modal.twig'); ?>
 		<?= $page->body; ?>
 	</div>
 <?php include('./_foot.php'); ?>
