@@ -52,7 +52,7 @@
 						Available: {{ qtyAvailable }}
 					</div>
 				</div>
-				{% if qtyAvailable > 0 %}
+				{% if qtyAvailable > 0 and inventory.getInventory().itemidLotsHaveImages(item.itemid) == false %}
 					<div class="row">
 						<div class="col-6">
 							{% include 'util/bootstrap/form/input.twig' with {
@@ -77,6 +77,8 @@
 							</button>
 						</div>
 					</div>
+				{% elseif inventory.getInventory().itemidLotsHaveImages(item.itemid) %}
+
 				{% else %}
 					<span class="btn btn-block btn-warning">Out of Stock</span>
 				{% endif %}
