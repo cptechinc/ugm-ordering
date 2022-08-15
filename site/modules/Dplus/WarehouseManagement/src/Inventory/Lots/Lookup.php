@@ -12,10 +12,14 @@ use Dplus\Wm\Inventory\Lotm;
 /**
  * WhseInventory
  * Class for filtering querying Whse Lots
+ *
+ * @property string $whseID      Warehouse ID
+ * @property bool   $inStockOnly Only use In Stock Lotss
  */
 class Lookup extends WireData {
 	private static $instance;
 	private $whseID;
+	private $inStockOnly = false;
 
 	public static function getInstance() {
 		if (empty(self::$instance)) {
@@ -30,6 +34,10 @@ class Lookup extends WireData {
 ============================================================= */
 	public function setWhseID($whseID) {
 		$this->whseID = $whseID;
+	}
+
+	public function setInStockOnly($inStock = true) {
+		$this->inStockOnly = $inStock;
 	}
 
 /* =============================================================
@@ -91,6 +99,10 @@ class Lookup extends WireData {
 		$colLot = InvWhseLot::aliasproperty('lotserial');
 		$q = $this->queryWhseBins();
 		$q->filterByItemid($itemID);
+
+		if ($this->inStockOnly) {
+			$q->filterByQty(1, Criteria::GREATER_EQUAL);
+		}
 		$q->addAsColumn('qty', "SUM($colQty)");
 		$q->withColumn($colLot, 'lot');
 		$q->select(['lot', 'qty']);

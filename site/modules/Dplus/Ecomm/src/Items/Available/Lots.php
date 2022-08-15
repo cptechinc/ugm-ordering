@@ -35,6 +35,7 @@ class Lots extends WireData {
 	public function setInventory(LotInventory $inventory) {
 		$this->inventory = $inventory;
 		$this->inventory->setWhseID(1);
+		$this->inventory->setInStockOnly(true);
 	}
 
 	/**
