@@ -24,6 +24,7 @@ class ItemGroup extends Base {
 		$cart = CartCRUD::getInstance();
 
 		$html  = '';
+		// $html .= self::pw('config')->twig->render('items/item-group/breadcrumbs.twig');
 		$html .= self::pw('config')->twig->render('items/search/form.twig');
 		$html .= self::pw('config')->twig->render('items/list.twig', ['items' => $items, 'inventory' => ItemInventory::getInstance(), 'cart' => $cart]);
 		return $html;
