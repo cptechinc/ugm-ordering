@@ -55,7 +55,11 @@ if ($page->template != 'database-error') {
 		$user->setup();
 	}
 
-	$templates_nosignin = array('login', 'build', 'validate', 'reset');
+	if ($page->template != 'maintenance' && $pages->count('template=maintenance,status=published') > 0) {
+		$session->redirect($pages->get('template=maintenance')->url, $http301 = false);
+	}
+
+	$templates_nosignin = array('login', 'build', 'validate', 'reset', 'maintenance');
 
 	if (!in_array($page->template, $templates_nosignin) && !$user->isLoggedInDplus()) {
 		$session->redirect($pages->get('template=login')->url, $http301 = false);
