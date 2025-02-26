@@ -84,6 +84,38 @@ class Items extends WireData {
 	}
 
 	/**
+	 * Return the Qty found in QC Bins
+	 * @param  string $itemID Item ID
+	 * @return float
+	 */
+	public function getQtyInTransferBins($itemID) {
+		$colQty = InvWhseLot::aliasproperty('qty');
+
+		$q = $this->inventory->queryWhseBins();
+		$q->filterByBinid($this->getTransferBinids());
+		$q->filterByItemid($itemID);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return intval($q->findOne());
+	}
+
+	/**
+	 * Return the Qty found in QC Bins
+	 * @param  string $itemID Item ID
+	 * @return float
+	 */
+	public function getQtyInPackBins($itemID) {
+		$colQty = InvWhseLot::aliasproperty('qtyinship');
+
+		$q = $this->inventory->queryWhse();
+		$q->filterByBinid(['PACK']);
+		$q->filterByItemid($itemID);
+		$q->addAsColumn('qty', "SUM($colQty)");
+		$q->select('qty');
+		return intval($q->findOne());
+	}
+
+	/**
 	 * Return Binids with the Q (quality control) bin type
 	 * @return array
 	 */
@@ -91,6 +123,17 @@ class Items extends WireData {
 		$q = WarehouseBinQuery::create();
 		$q->select(WarehouseBin::aliasproperty('from'));
 		$q->filterByType('Q');
+		return $q->find()->toArray();
+	}
+
+	/**
+	 * Return Binids with the T (Transfer) bin type
+	 * @return array
+	 */
+	protected function getTransferBinids() {
+		$q = WarehouseBinQuery::create();
+		$q->select(WarehouseBin::aliasproperty('from'));
+		$q->filterByType('T');
 		return $q->find()->toArray();
 	}
 
@@ -105,10 +148,25 @@ class Items extends WireData {
 	public function getAvailability($itemID) {
 		$cart = Cart::getInstance();
 		$qtyInventory = $this->inventory->getQtyByItemid($itemID);
-		$qtyInCart    = $cart->items->qtyItemidAllSessionids($itemID);
-		$qtyOnOrder   = $this->getQtyOnOrder($itemID);
-		$qtyInQc      = $this->getQtyInQcBins($itemID);
-		$available    = $qtyInventory - $qtyInQc - $qtyOnOrder - $qtyInCart;
+		// echo $this->modules->get('DplusDatabase')->getExecutedQuery();
+
+		$qtyInCart    = floatval($cart->items->qtyItemidAllSessionids($itemID));
+		$qtyOnOrder   = floatval($this->getQtyOnOrder($itemID));
+		$qtyInQc      = floatval($this->getQtyInQcBins($itemID));
+		$qtyInPack    = floatval($this->getQtyInPackBins($itemID));
+		
+		$totalQty     = $qtyInventory + $qtyInQc + $qtyInPack;
+		
+		$totals = [
+			'inv'   => $qtyInventory,
+			'cart'  => $qtyInCart,
+			'order' => $qtyOnOrder,
+			'qc'    => $qtyInQc,
+			'pack'  => $qtyInPack,
+		];
+		
+		// echo json_encode($totals);
+		$available    = $totalQty - $qtyInQc - $qtyOnOrder - $qtyInCart;
 		return $available >= 0 ? $available : 0;
 	}
 }
