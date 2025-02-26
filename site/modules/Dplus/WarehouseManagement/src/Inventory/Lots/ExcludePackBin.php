@@ -19,6 +19,14 @@ class ExcludePackBin extends Base {
 		}
 		return self::$instance;
 	}
+
+	/**
+	 * Return Query
+	 * @return InvWhseLotQuery
+	 */
+	public function queryWhseBinsIncludePack() {
+		return parent::queryWhseBins();
+	}
 	
 	/**
 	 * Return Query
