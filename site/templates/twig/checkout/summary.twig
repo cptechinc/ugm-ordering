@@ -30,7 +30,7 @@
 				<i class="fa fa-commenting" aria-hidden="true"></i> Header Notes
 			</button>
 			<div class="collapse">
-				<textarea name="name" id="notes-header" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array('header')|join('\r') }}</textarea>
+				<textarea name="name" id="notes-header" cols="{{ qnotes.get_column_count() }}" data-itemid="header" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array('header')|join('\r') }}</textarea>
 			</div>
 			<button class="btn btn-dark btn-sm" type="button" data-toggle="collapse" data-target="#items" aria-expanded="false" aria-controls="items">
 				Show / Hide Items
@@ -47,7 +47,7 @@
 				{% include 'checkout/cart/item.twig' %}
 
 				<div class="collapse">
-					<textarea name="name" id="notes-{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
+					<textarea name="name" id="notes-{{ item.itemid }}" data-itemid="{{ item.itemid }}" cols="{{ qnotes.get_column_count() }}" class="form-control-plaintext notes" readonly>{{ qnotes.get_notes_form_array(item.itemid)|join('\r') }}</textarea>
 				</div>
 			</div>
 			{% if inventory.itemidLotsHaveImages(item.itemid) %}

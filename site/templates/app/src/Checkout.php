@@ -68,7 +68,7 @@ class Checkout extends Base {
 		$html = '';
 		$html .= self::displayResponses($data);
 		$html .= $config->twig->render('checkout/checkout.twig', ['checkoutm' => $checkoutm, 'user' => self::pw('user'), 'qnotes' => $qnotes, 'cart' => $cart, 'inventory' => self::getWhseLots()]);
-		$html .= $config->twig->render('cart/notes/modal.twig', ['qnotes' => $qnotes]);
+		$html .= self::pw('config')->twig->render('cart/notes/modal.twig', ['cart' => $cart, 'qnotes' => $qnotes]);
 		return $html;
 	}
 
