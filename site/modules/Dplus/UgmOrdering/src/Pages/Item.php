@@ -281,6 +281,10 @@ class Item extends Base {
 	public function updatePage(ActiveRecordInterface $item) {
 		$parent = Itemgroup::instance()->getPage($item->itemgroup);
 
+		if ($parent->id == 0) {
+			return false;
+		}
+
 		$p = $this->getPage($item);
 		$p->of(false);
 		$p->parent       = $parent;

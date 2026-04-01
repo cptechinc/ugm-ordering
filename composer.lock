@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d60d1250d2efbf702084dde5fd85d330",
+    "content-hash": "a647b021a7b2e084a96309799eef9914",
     "packages": [
         {
             "name": "cptechinc/dplus-model",
@@ -12,17 +12,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cptechinc/dplus-model.git",
-                "reference": "eba8e90a157c6736090d5f6079c9491175b93af7"
+                "reference": "7dfa7073af8c1e6a583042cac90ae5ef68fdc8f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cptechinc/dplus-model/zipball/eba8e90a157c6736090d5f6079c9491175b93af7",
-                "reference": "eba8e90a157c6736090d5f6079c9491175b93af7",
+                "url": "https://api.github.com/repos/cptechinc/dplus-model/zipball/7dfa7073af8c1e6a583042cac90ae5ef68fdc8f9",
+                "reference": "7dfa7073af8c1e6a583042cac90ae5ef68fdc8f9",
                 "shasum": ""
             },
             "require": {
                 "propel/propel": "dev-master#3087361bd27f3598f3ecd70e9fd272a5c2575b88"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -38,7 +39,11 @@
                 "data",
                 "dplus-model"
             ],
-            "time": "2022-01-24T15:04:33+00:00"
+            "support": {
+                "issues": "https://github.com/cptechinc/dplus-model/issues",
+                "source": "https://github.com/cptechinc/dplus-model/tree/master"
+            },
+            "time": "2025-03-17T18:02:25+00:00"
         },
         {
             "name": "cptechinc/dpluso-model",
@@ -1635,12 +1640,12 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "jwage/purl": 20,
-        "twig/twig": 20,
-        "propel/propel": 20,
         "cptechinc/dplus-model": 20,
         "cptechinc/dpluso-model": 20,
-        "phpmailer/phpmailer": 20
+        "jwage/purl": 20,
+        "phpmailer/phpmailer": 20,
+        "propel/propel": 20,
+        "twig/twig": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
@@ -1648,5 +1653,9 @@
         "php": ">=7.0.0",
         "ext-gd": "*"
     },
-    "platform-dev": []
+    "platform-dev": {},
+    "platform-overrides": {
+        "php": "7.4.0"
+    },
+    "plugin-api-version": "2.6.0"
 }
