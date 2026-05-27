@@ -2,6 +2,8 @@
 
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 
+include_once (__DIR__.'/DplusDatabase.module');
+
 /**
  * DplusDatabaseDpluso
  *

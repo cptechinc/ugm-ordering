@@ -250,6 +250,9 @@ class Item extends Base {
 	 */
 	public function createPage(ActiveRecordInterface $item) {
 		$parent = Itemgroup::instance()->getPage($item->itemgroup);
+		if ($parent->id == 0) {
+			return false;
+		}
 		$p = new Page();
 		$p->of(false);
 		$p->parent    = $parent;
